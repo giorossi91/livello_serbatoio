@@ -13,76 +13,113 @@
  */
 #include<LiquidCrystal.h>
 
-const int echo = 10;
-const int trig = 8;
-const int led_capienza = 2;
-const int bottone_lcd = 3;
-const int luce_lcd = 13;
+const int echo_dpin = 10;
+const int trig_dpin = 8;
+const int led_capacity_dpin = 2;
+const int lcd_button_dpin = 3;
+const int lcd_light_dpin = 13;
 
+const double TANK_RADIUS_CM = 10;//34;  //cm
+const double TANK_HEIGHT_CM = 30;//125;  //cm
+const double SENSOR_DISTANCE = 10; //cm
+const int TANK_NUMBER = 2;
+const double CM3_PER_LITER = 1000.0; //1 l = 1000 cm^3
+const double LOW_LEVEL_THRESHOLD = 20.0;
 
-const double RAGGIO_SERBATOIO_CM = 25;  //cm
-const double ALTEZZA_SERBATOIO_CM = 254;  //cm
+double tank_capacity; //litri
 
+const int LCD_ON_TIMER = 10 * 1000; //ms
+const int MEASUREMENT_INTERVAL = 1 * 1000; //ms
 
-const double FATTORE_CONVERSIONE_LITRI = 1000.0; //1 l = 1000 cm^3
-const double CAPIENZA_SERBATOIO = 500.0; //litri
-const int NUMERO_SERBATOI = 2;
+double maximum_capacity = 0.0;
+volatile unsigned long timestamp_lcd_on;
+volatile unsigned long timestamp_measurement;
+volatile double distance = 0;
 
-const int TIMER_ACCENSIONE_LCD = 5 * 1000; //ms
-
-double capienza_massima = 0.0;
-volatile unsigned long time_on;
 
 //Formato (RS, E, DB4, DB5, DB6, DB7)
 LiquidCrystal lcd(12, 11, 4, 5, 6, 7);
 
-inline double calcola_litri(double misura_distanza)  {
-  return NUMERO_SERBATOI * ((RAGGIO_SERBATOIO_CM * RAGGIO_SERBATOIO_CM * PI * (ALTEZZA_SERBATOIO_CM - misura_distanza)) / FATTORE_CONVERSIONE_LITRI);
+/*           
+ *             sensor
+ *        +----| W |----+ ---
+ *        |      |      |     
+ *        |  (distance) |      SENSOR_DISTANCE
+ *        |      |      |  
+ *     ----------------------> TANK_HEIGHT_CM
+ *        |      |      |
+ *        |      V      |   
+ *     ----------------------> actual water level
+ *        |             |      
+ *        |             |
+ *     ----------------------> level 0
+ *        
+ *    real distance = distance - SENSOR_DISTANCE
+ * 
+ * 
+ * 
+ */
+inline double compute_liters(double read_distance)  {
+  read_distance -= SENSOR_DISTANCE;
+  return TANK_NUMBER * ((TANK_RADIUS_CM * TANK_RADIUS_CM * PI * (TANK_HEIGHT_CM - read_distance)) / CM3_PER_LITER);
 }
 
-inline double calcola_percentuale(double litri_letti)  {
-  return (litri_letti / capienza_massima) * 100.0;
+inline double compute_percentage(double read_liters)  {
+  return (read_liters / maximum_capacity) * 100.0;
 }
 
 
-void accendi_lcd() {
-  digitalWrite(luce_lcd, HIGH);
-  time_on = millis();
+void turn_on_lcd() {
+  digitalWrite(lcd_light_dpin, HIGH);
+  timestamp_lcd_on = millis();
 }
 
 void setup() {
-  //16 caratteri e 2 linee
+  //16 characters e 2 lines
   lcd.begin(16, 2);
 
-  capienza_massima = NUMERO_SERBATOI * CAPIENZA_SERBATOIO;
+  //compute tank parameters
+  tank_capacity = (TANK_RADIUS_CM * TANK_RADIUS_CM * PI * TANK_HEIGHT_CM) / CM3_PER_LITER;
+  maximum_capacity = TANK_NUMBER * tank_capacity;
 
-  pinMode(echo, INPUT);
-  pinMode(trig, OUTPUT);
-  pinMode(led_capienza, OUTPUT);
+  //pin setup
+  pinMode(echo_dpin, INPUT);
+  pinMode(trig_dpin, OUTPUT);
+  pinMode(led_capacity_dpin, OUTPUT);
 
-  pinMode(luce_lcd, OUTPUT);
-  pinMode(bottone_lcd, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(bottone_lcd), accendi_lcd, RISING);
+  pinMode(lcd_light_dpin, OUTPUT);
+  pinMode(lcd_button_dpin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(lcd_button_dpin), turn_on_lcd, RISING);
 
-  time_on = millis();
-  digitalWrite(luce_lcd, HIGH);
+  //lcd on
+  timestamp_lcd_on = millis();
+  digitalWrite(lcd_light_dpin, HIGH);
 }
 
 void loop() {
 
+  //lcd on timer
+  /*if((millis() - timestamp_lcd_on) > LCD_ON_TIMER) {
+    digitalWrite(lcd_light_dpin, LOW);
+  }*/
+
+  //measument timer
+  if((millis() - timestamp_measurement) > MEASUREMENT_INTERVAL) {
+    //activate distance measurement
+    digitalWrite(trig_dpin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trig_dpin, LOW);
   
-  if((millis() - time_on) > TIMER_ACCENSIONE_LCD) {
-    digitalWrite(luce_lcd, LOW);
+    int time = pulseIn(echo_dpin, HIGH);
+
+    distance = (double)time/(58.0); //convert to cm
+
+    timestamp_measurement = millis();
   }
- 
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trig, LOW);
-
-  int time = pulseIn(echo, HIGH);
-  double distance = (double)time/(58.0);
-
-  if(distance<2 || distance > ALTEZZA_SERBATOIO_CM) {
+  
+  if(distance<2 || distance > (TANK_HEIGHT_CM + SENSOR_DISTANCE)) {
+    //do not update lcd
+    //lcd.clear();
     //lcd.print("Fuori scala");
   } else {
     lcd.clear();
@@ -92,23 +129,30 @@ void loop() {
     lcd.print("cm");
 
     lcd.setCursor(0, 1);
-    double litri = calcola_litri(distance);
+    double liters = compute_liters(distance);
     lcd.print("l: ");
-    lcd.print((int)litri);
+    lcd.print((int)liters);
     lcd.print("L");
 
     lcd.setCursor(10,1);
-    double percentuale = calcola_percentuale(litri);
+    double percentage = compute_percentage(liters);
     lcd.print(" ");
-    lcd.print((int) percentuale);
+    
+    if(percentage >= 99.5) {
+      percentage = 100.0;
+    } else if (percentage <= 0.5) {
+      percentage = 0.0;
+    }
+    
+    lcd.print((int) percentage);
     lcd.print("%"); 
 
-    if(percentuale < 20) {
+    if(percentage < LOW_LEVEL_THRESHOLD) {
       lcd.setCursor(15,1);
       lcd.print("!");
-      digitalWrite(led_capienza, HIGH);
+      digitalWrite(led_capacity_dpin, HIGH);
     } else {
-      digitalWrite(led_capienza, LOW);
+      digitalWrite(led_capacity_dpin, LOW);
       //lcd.setCursor(15,1);
       //lcd.print(" ");
     }
