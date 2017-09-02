@@ -13,6 +13,8 @@
  */
 #include<LiquidCrystal.h>
 
+#define DEBUG 1
+
 const int echo_dpin = 10;
 const int trig_dpin = 8;
 const int led_capacity_dpin = 2;
@@ -24,21 +26,27 @@ const double TANK_HEIGHT_CM = 30;//125;  //cm
 const double SENSOR_DISTANCE = 10; //cm
 const int TANK_NUMBER = 2;
 const double CM3_PER_LITER = 1000.0; //1 l = 1000 cm^3
-const double LOW_LEVEL_THRESHOLD = 20.0;
+const double LOW_LEVEL_THRESHOLD = 20.0; //%
 
-double tank_capacity; //litri
+double tank_capacity; //L
 
 const int LCD_ON_TIMER = 10 * 1000; //ms
 const int MEASUREMENT_INTERVAL = 1 * 1000; //ms
 
-double maximum_capacity = 0.0;
-volatile unsigned long timestamp_lcd_on;
-volatile unsigned long timestamp_measurement;
-volatile double distance = 0;
+double maximum_capacity = 0.0; //L
+volatile unsigned long timestamp_lcd_on; //ms
+volatile unsigned long timestamp_measurement; //ms
+volatile double distance = 0; //cm
 
+const int RS = 12;
+const int  E = 11;
+const int DB4 = 4;
+const int DB5 = 5;
+const int DB6 = 6;
+const int DB7 = 7;
 
 //Formato (RS, E, DB4, DB5, DB6, DB7)
-LiquidCrystal lcd(12, 11, 4, 5, 6, 7);
+LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
 
 /*           
  *             sensor
@@ -92,16 +100,18 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(lcd_button_dpin), turn_on_lcd, RISING);
 
   //lcd on
-  timestamp_lcd_on = millis();
+  timestamp_lcd_on = millis();  
   digitalWrite(lcd_light_dpin, HIGH);
+
+  timestamp_measurement = millis();
 }
 
 void loop() {
 
   //lcd on timer
-  /*if((millis() - timestamp_lcd_on) > LCD_ON_TIMER) {
+  if((millis() - timestamp_lcd_on) > LCD_ON_TIMER) {
     digitalWrite(lcd_light_dpin, LOW);
-  }*/
+  }
 
   //measument timer
   if((millis() - timestamp_measurement) > MEASUREMENT_INTERVAL) {
@@ -122,20 +132,22 @@ void loop() {
     //lcd.clear();
     //lcd.print("Fuori scala");
   } else {
+    double liters = compute_liters(distance);
+    double percentage = compute_percentage(liters);
+#if DEBUG
     lcd.clear();
+
     lcd.setCursor(0, 0);
     lcd.print("d: ");
     lcd.print((int)distance);
     lcd.print("cm");
 
     lcd.setCursor(0, 1);
-    double liters = compute_liters(distance);
     lcd.print("l: ");
     lcd.print((int)liters);
     lcd.print("L");
 
     lcd.setCursor(10,1);
-    double percentage = compute_percentage(liters);
     lcd.print(" ");
     
     if(percentage >= 99.5) {
@@ -145,8 +157,8 @@ void loop() {
     }
     
     lcd.print((int) percentage);
-    lcd.print("%"); 
-
+    lcd.print("%");
+    
     if(percentage < LOW_LEVEL_THRESHOLD) {
       lcd.setCursor(15,1);
       lcd.print("!");
@@ -156,6 +168,66 @@ void loop() {
       //lcd.setCursor(15,1);
       //lcd.print(" ");
     }
+#else
+/*
+ *  |----------------| 
+ *  | xxxx L   yyy % |
+ *  | ##########     |
+ *  |----------------|
+ *  
+ *  <xxxx> = [0, 9999] L
+ *  <yyy> = [0, 100] %
+ *  # X 16 => 0 = 0%, 16 = 100%
+ *  
+ */
+    lcd.clear();
+    lcd.setCursor(6,0);
+    lcd.print("L");
+    lcd.setCursor(14,0);
+    lcd.print("%");
+
+    int index = 4;
+    int l = (int) liters;
+    if(l < 10) {
+    } else if(l < 100) {
+      index --;
+    } else if(l < 1000) {
+      index --;
+    } else if(l < 10000) {
+      index --;
+    }
+    lcd.setCursor(index, 0);    
+    lcd.print(l);
+
+    if(percentage >= 99.5) {
+      percentage = 100.0;
+    } else if (percentage <= 0.5) {
+      percentage = 0.0;
+    }
+    int p = (int) percentage;
+    index = 12;
+    if(p < 10) {
+    } else if(p < 100) {
+      index --;
+    } else if( < 1000) {
+      index --;
+    }
+    lcd.setCursor(index, 0);
+    lcd.print(p);
+
+    lcd.setCursor(1, 1);
+    int howmany = (16 * p) / 100;
+    for(int i = 0; i < howmany; i++) {
+      lcd.print("\n");   
+    }
+    
+    if(percentage < LOW_LEVEL_THRESHOLD) {
+      digitalWrite(led_capacity_dpin, HIGH);
+    } else {
+      digitalWrite(led_capacity_dpin, LOW);
+    }
+
+#endif
   }
   delay(100);
 }
