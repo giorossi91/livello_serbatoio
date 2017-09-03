@@ -13,7 +13,7 @@
  */
 #include<LiquidCrystal.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 const int echo_dpin = 10;
 const int trig_dpin = 8;
@@ -27,6 +27,10 @@ const double SENSOR_DISTANCE = 10; //cm
 const int TANK_NUMBER = 2;
 const double CM3_PER_LITER = 1000.0; //1 l = 1000 cm^3
 const double LOW_LEVEL_THRESHOLD = 20.0; //%
+const double EMPTY_LEVEL_THRESHOLD = 5.0; //%
+
+bool led_on;
+bool led_status;
 
 double tank_capacity; //L
 
@@ -37,6 +41,8 @@ double maximum_capacity = 0.0; //L
 volatile unsigned long timestamp_lcd_on; //ms
 volatile unsigned long timestamp_measurement; //ms
 volatile double distance = 0; //cm
+
+double percentage = 100.0;
 
 const int RS = 12;
 const int  E = 11;
@@ -103,6 +109,9 @@ void setup() {
   timestamp_lcd_on = millis();  
   digitalWrite(lcd_light_dpin, HIGH);
 
+  led_on = false;
+  led_status = false;
+
   timestamp_measurement = millis();
 }
 
@@ -133,7 +142,7 @@ void loop() {
     //lcd.print("Fuori scala");
   } else {
     double liters = compute_liters(distance);
-    double percentage = compute_percentage(liters);
+    percentage = compute_percentage(liters);
 #if DEBUG
     lcd.clear();
 
@@ -158,21 +167,21 @@ void loop() {
     
     lcd.print((int) percentage);
     lcd.print("%");
-    
-    if(percentage < LOW_LEVEL_THRESHOLD) {
-      lcd.setCursor(15,1);
-      lcd.print("!");
-      digitalWrite(led_capacity_dpin, HIGH);
-    } else {
-      digitalWrite(led_capacity_dpin, LOW);
-      //lcd.setCursor(15,1);
-      //lcd.print(" ");
-    }
 #else
 /*
  *  |----------------| 
  *  | xxxx L   yyy % |
- *  | ##########     |
+ *  | ############## |
+ *  |----------------|
+ *  
+ *  |----------------| 
+ *  | xxxx L   yyy % |
+ *  | ##  Riserva    |
+ *  |----------------|
+ *  
+ *  |----------------| 
+ *  | xxxx L   yyy % |
+ *  |     Vuoto      |
  *  |----------------|
  *  
  *  <xxxx> = [0, 9999] L
@@ -209,27 +218,42 @@ void loop() {
     if(p < 10) {
     } else if(p < 100) {
       index --;
-    } else if( < 1000) {
+    } else if(p < 1000) {
       index --;
     }
     lcd.setCursor(index, 0);
     lcd.print(p);
 
     lcd.setCursor(1, 1);
-    int howmany = (16 * p) / 100;
+    int howmany = (14 * p) / 100;
     for(int i = 0; i < howmany; i++) {
-      lcd.print("\n");   
-    }
-    
-    if(percentage < LOW_LEVEL_THRESHOLD) {
-      digitalWrite(led_capacity_dpin, HIGH);
-    } else {
-      digitalWrite(led_capacity_dpin, LOW);
+      lcd.print("#");   
     }
 
+    if(howmany == 0) {
+      lcd.setCursor(5, 1);
+      lcd.print("Vuoto");
+    } else if(howmany <= 2) {
+      lcd.setCursor(5, 1);
+      lcd.print("Riserva");
+    }
 #endif
+
+
+
   }
-  delay(100);
+  if(percentage <= EMPTY_LEVEL_THRESHOLD) {
+    led_status = true;
+    led_on = !led_on;
+  } else if(percentage < LOW_LEVEL_THRESHOLD)  {
+    led_status = true;
+    led_on = true;
+  } else {
+    led_status = false;
+    led_on = false;
+  }
+  digitalWrite(led_capacity_dpin, led_on);
+  delay(500);
 }
 
 
