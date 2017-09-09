@@ -14,12 +14,19 @@
 #include<LiquidCrystal.h>
 
 #define DEBUG 0
-
+/*
 const int echo_dpin = 10;
 const int trig_dpin = 8;
 const int led_capacity_dpin = 2;
 const int lcd_button_dpin = 3;
 const int lcd_light_dpin = 13;
+*/
+
+const int echo_dpin = 12;
+const int trig_dpin = 11;
+const int led_capacity_dpin = 13;
+const int lcd_button_dpin = 2;
+const int lcd_light_dpin = 9;
 
 const double TANK_RADIUS_CM = 10;//34;  //cm
 const double TANK_HEIGHT_CM = 30;//125;  //cm
@@ -44,12 +51,12 @@ volatile double distance = 0; //cm
 
 double percentage = 100.0;
 
-const int RS = 12;
-const int  E = 11;
-const int DB4 = 4;
-const int DB5 = 5;
-const int DB6 = 6;
-const int DB7 = 7;
+const int RS = 3;
+const int  E = 4;
+const int DB4 = 5;
+const int DB5 = 6;
+const int DB6 = 7;
+const int DB7 = 8;
 
 //Formato (RS, E, DB4, DB5, DB6, DB7)
 LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
