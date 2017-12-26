@@ -28,9 +28,10 @@ const int led_capacity_dpin = 13;
 const int lcd_button_dpin = 2;
 const int lcd_light_dpin = 9;
 
-const double TANK_RADIUS_CM = 10;//34;  //cm
-const double TANK_HEIGHT_CM = 30;//125;  //cm
-const double SENSOR_DISTANCE = 10; //cm
+const double TANK_RADIUS_CM = 36.5;  //cm
+const double TANK_HEIGHT_CM = 137.0;//125;  //cm
+const double SENSOR_DISTANCE = 17; //cm
+const double WATER_MAX_HEIGHT_CM = TANK_HEIGHT_CM - SENSOR_DISTANCE;
 const int TANK_NUMBER = 2;
 const double CM3_PER_LITER = 1000.0; //1 l = 1000 cm^3
 const double LOW_LEVEL_THRESHOLD = 20.0; //%
@@ -82,7 +83,7 @@ LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
  */
 inline double compute_liters(double read_distance)  {
   read_distance -= SENSOR_DISTANCE;
-  return TANK_NUMBER * ((TANK_RADIUS_CM * TANK_RADIUS_CM * PI * (TANK_HEIGHT_CM - read_distance)) / CM3_PER_LITER);
+  return TANK_NUMBER * ((TANK_RADIUS_CM * TANK_RADIUS_CM * PI * (WATER_MAX_HEIGHT_CM - read_distance)) / CM3_PER_LITER);
 }
 
 inline double compute_percentage(double read_liters)  {
@@ -100,7 +101,7 @@ void setup() {
   lcd.begin(16, 2);
 
   //compute tank parameters
-  tank_capacity = (TANK_RADIUS_CM * TANK_RADIUS_CM * PI * TANK_HEIGHT_CM) / CM3_PER_LITER;
+  tank_capacity = (TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM) / CM3_PER_LITER;
   maximum_capacity = TANK_NUMBER * tank_capacity;
 
   //pin setup
@@ -125,9 +126,11 @@ void setup() {
 void loop() {
 
   //lcd on timer
+#if !DEBUG
   if((millis() - timestamp_lcd_on) > LCD_ON_TIMER) {
     digitalWrite(lcd_light_dpin, LOW);
   }
+#endif
 
   //measument timer
   if((millis() - timestamp_measurement) > MEASUREMENT_INTERVAL) {
@@ -149,6 +152,12 @@ void loop() {
     //lcd.print("Fuori scala");
   } else {
     double liters = compute_liters(distance);
+    if(liters < 0.5) {
+      liters = 0.0;
+    }
+    if(liters > maximum_capacity) {
+      liters = maximum_capacity;
+    }
     percentage = compute_percentage(liters);
 #if DEBUG
     lcd.clear();
