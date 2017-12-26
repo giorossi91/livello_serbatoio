@@ -11,7 +11,8 @@
  DB4, DB5, DB6, DB7
  4 ,  5 ,  6 ,  7  (DIGITAL)
  */
-#include<LiquidCrystal.h>
+#include <LiquidCrystal.h>
+#include <MedianFilter.h>
 
 #define DEBUG 0
 
@@ -44,19 +45,17 @@ bool led_status;
 double tank_capacity; //L
 
 const int LCD_ON_TIMER = 30 * 1000; //ms
-const int MEASUREMENT_INTERVAL = 10 * 1000; //ms
+const int MEASUREMENT_INTERVAL = 1   * 1000; //ms
 
 double maximum_capacity = 0.0; //L
 volatile unsigned long timestamp_lcd_on; //ms
 volatile unsigned long timestamp_measurement; //ms
 volatile double distance = 0; //cm
 
-const unsigned int DIST_ARRAY_SIZE = 10;
-
-double dist_reads[DIST_ARRAY_SIZE];
-volatile unsigned int dist_index;
 volatile double dist_avgs;
 const double eta = 0.9;
+
+MedianFilter filter(31, 0);
 
 double percentage = 100.0;
 
@@ -104,14 +103,6 @@ void turn_on_lcd() {
   timestamp_lcd_on = millis();
 }
 
-inline double get_avg_dist() {
-  double sum = 0.0;
-  for(unsigned int i = 0; i < DIST_ARRAY_SIZE; i++) {
-    sum += dist_reads[i];
-  }
-  return sum / (double)DIST_ARRAY_SIZE;
-}
-
 void setup() {
   //16 characters e 2 lines
   lcd.begin(16, 2);
@@ -128,11 +119,7 @@ void setup() {
   pinMode(lcd_light_dpin, OUTPUT);
   pinMode(lcd_button_dpin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(lcd_button_dpin), turn_on_lcd, RISING);
-
-  for(unsigned int i = 0; i < DIST_ARRAY_SIZE; i++) {
-    dist_reads[i] = 0.0;
-  }
-  dist_index = 0;
+  
   dist_avgs = 0.0; 
   //lcd on
   timestamp_lcd_on = millis();  
@@ -167,25 +154,18 @@ void loop() {
     int time = pulseIn(echo_dpin, HIGH);
 
     distance = (double)time/(58.0); //convert to cm
-    //dist_reads[dist_index] = distance;
-    //(++dist_index) %= DIST_ARRAY_SIZE;
+    filter.in(distance);
 
     timestamp_measurement = millis();
   }
 
-#if 0
-  for(unsigned int i = 0; i < DIST_ARRAY_SIZE; i++) {
-    Serial.println(dist_reads[i]);
-  }
-  Serial.println("=====");
-#endif
 
   //calcola la media delle ultime DIST_ARRAY_SIZE misure
-  //distance = get_avg_dist();
   
-  dist_avgs = (eta * distance) + ((1.0 - eta) * dist_avgs);
+  //dist_avgs = (eta * distance) + ((1.0 - eta) * dist_avgs);
+  //distance = dist_avgs;
+  distance = filter.out();
   
-  distance = dist_avgs;
   if(distance<2 || distance > (TANK_HEIGHT_CM + SENSOR_DISTANCE)) {
     //do not update lcd
     //lcd.clear();
