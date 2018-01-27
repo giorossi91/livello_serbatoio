@@ -106,6 +106,7 @@ void turn_on_lcd() {
 void setup() {
   //16 characters e 2 lines
   lcd.begin(16, 2);
+  lcd.print("    Avvio...");
 
   //compute tank parameters
   tank_capacity = (TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM) / CM3_PER_LITER;
@@ -289,7 +290,7 @@ void loop() {
     led_on = false;
   }
   digitalWrite(led_capacity_dpin, led_on);
-  delay(500);
+  delay(1500);
 }
 
 
