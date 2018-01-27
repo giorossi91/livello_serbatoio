@@ -47,6 +47,7 @@ double tank_capacity; //L
 const int LCD_ON_TIMER = 30 * 1000; //ms
 const int MEASUREMENT_INTERVAL = 1   * 1000; //ms
 
+bool first_measure_done;
 double maximum_capacity = 0.0; //L
 volatile unsigned long timestamp_lcd_on; //ms
 volatile unsigned long timestamp_measurement; //ms
@@ -55,7 +56,7 @@ volatile double distance = 0; //cm
 volatile double dist_avgs;
 const double eta = 0.9;
 
-MedianFilter filter(31, 0);
+MedianFilter filter(5, 0);
 
 double percentage = 100.0;
 
@@ -107,6 +108,7 @@ void setup() {
   //16 characters e 2 lines
   lcd.begin(16, 2);
   lcd.print("    Avvio...");
+  first_measure_done = false;
 
   //compute tank parameters
   tank_capacity = (TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM) / CM3_PER_LITER;
@@ -155,9 +157,14 @@ void loop() {
     int time = pulseIn(echo_dpin, HIGH);
 
     distance = (double)time/(58.0); //convert to cm
+#if DEBUG
+    Serial.println(distance);
+#endif    
     filter.in(distance);
 
+
     timestamp_measurement = millis();
+    first_measure_done = true;
   }
 
 
@@ -167,11 +174,16 @@ void loop() {
   //distance = dist_avgs;
   distance = filter.out();
   
-  if(distance<2 || distance > (TANK_HEIGHT_CM + SENSOR_DISTANCE)) {
-    //do not update lcd
-    //lcd.clear();
-    //lcd.print("Fuori scala");
-  } else {
+  if(distance < SENSOR_DISTANCE) {
+    distance = SENSOR_DISTANCE;
+  } 
+    
+  else if(distance > (TANK_HEIGHT_CM + SENSOR_DISTANCE)) {
+    distance = TANK_HEIGHT_CM + SENSOR_DISTANCE;
+  } 
+
+
+  if(first_measure_done) {
     double liters = compute_liters(distance);
     if(liters < 0.5) {
       liters = 0.0;
@@ -275,9 +287,6 @@ void loop() {
       lcd.print("Riserva");
     }
 #endif
-
-
-
   }
   if(percentage <= EMPTY_LEVEL_THRESHOLD) {
     led_status = true;
