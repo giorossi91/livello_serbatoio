@@ -11,11 +11,18 @@
  DB4, DB5, DB6, DB7
  4 ,  5 ,  6 ,  7  (DIGITAL)
  */
+
+/* ======== INCLUDE ======== */
 #include <LiquidCrystal.h>
 #include <MedianFilter.h>
 
+
+/* ======== DEFINE  ======== */
 #define DEBUG 0
 
+#define roundf(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
+
+/* ======== CONSTANTS ====== */
 /*
 const int echo_dpin = 10;
 const int trig_dpin = 8;
@@ -30,31 +37,30 @@ const int led_capacity_dpin = 13;
 const int lcd_button_dpin = 2;
 const int lcd_light_dpin = 9;
 
-const double TANK_RADIUS_CM = 36.5;  //cm
-const double TANK_HEIGHT_CM = 137.0;//125;  //cm
-const double SENSOR_DISTANCE = 17; //cm
+const double TANK_RADIUS_CM = 35.0;  //cm
+const double TANK_HEIGHT_CM = 156.0;//137.0;//125;  //cm
+const double SENSOR_DISTANCE = 26.0; //cm
 const double WATER_MAX_HEIGHT_CM = TANK_HEIGHT_CM - SENSOR_DISTANCE;
-const int TANK_NUMBER = 2;
+const int    TANK_NUMBER = 2;
 const double CM3_PER_LITER = 1000.0; //1 l = 1000 cm^3
-const double LOW_LEVEL_THRESHOLD = 20.0; //%
+const double LOW_LEVEL_THRESHOLD = 25.0; //%
 const double EMPTY_LEVEL_THRESHOLD = 5.0; //%
 
+const int LCD_ON_TIMER = 30 * 1000; //ms
+const int MEASUREMENT_INTERVAL = 10   * 1000; //ms
+
+/* ======== VARIABLES ====== */
 bool led_on;
 bool led_status;
 
 double tank_capacity; //L
 
-const int LCD_ON_TIMER = 30 * 1000; //ms
-const int MEASUREMENT_INTERVAL = 1   * 1000; //ms
 
 bool first_measure_done;
 double maximum_capacity = 0.0; //L
 volatile unsigned long timestamp_lcd_on; //ms
 volatile unsigned long timestamp_measurement; //ms
 volatile double distance = 0; //cm
-
-volatile double dist_avgs;
-const double eta = 0.9;
 
 MedianFilter filter(5, 0);
 
@@ -72,14 +78,14 @@ LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
 
 /*           
  *             sensor
- *        +----| W |----+ ---
- *        |      |      |     
- *        |  (distance) |      SENSOR_DISTANCE
- *        |      |      |  
- *     ----------------------> TANK_HEIGHT_CM
+ *        +----| W |----+ ---  TANK_HEIGHT_CM
+ *        |      |      |    } 
+ *        |  (distance) |    > SENSOR_DISTANCE
+ *        |      |      |    }
+ *     ----------------------> WATER_MAX_HEIGHT_CM
  *        |      |      |
  *        |      V      |   
- *     ----------------------> actual water level
+ *     ----------------------> current water level
  *        |             |      
  *        |             |
  *     ----------------------> level 0
@@ -123,7 +129,6 @@ void setup() {
   pinMode(lcd_button_dpin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(lcd_button_dpin), turn_on_lcd, RISING);
   
-  dist_avgs = 0.0; 
   //lcd on
   timestamp_lcd_on = millis();  
   digitalWrite(lcd_light_dpin, HIGH);
@@ -135,11 +140,18 @@ void setup() {
 
 #if DEBUG 
   Serial.begin(9600);
+  Serial.print("Tank Radius (cm): ");
+  Serial.println(TANK_RADIUS_CM);
+
+  Serial.print("Water Max Height (cm): ");
+  Serial.println(WATER_MAX_HEIGHT_CM);
+
+  Serial.print("Maximum Capacity (L): ");
+  Serial.println(maximum_capacity);
 #endif 
 }
 
 void loop() {
-
   //lcd on timer
 #if !DEBUG
   if((millis() - timestamp_lcd_on) > LCD_ON_TIMER) {
@@ -158,9 +170,12 @@ void loop() {
 
     distance = (double)time/(58.0); //convert to cm
 #if DEBUG
-    Serial.println(distance);
+    Serial.print("dist: ");
+    Serial.print(distance);
+    Serial.print(" round: ");
+    Serial.println(roundf(distance));
 #endif    
-    filter.in(distance);
+    filter.in(roundf(distance));
 
 
     timestamp_measurement = millis();
@@ -168,10 +183,6 @@ void loop() {
   }
 
 
-  //calcola la media delle ultime DIST_ARRAY_SIZE misure
-  
-  //dist_avgs = (eta * distance) + ((1.0 - eta) * dist_avgs);
-  //distance = dist_avgs;
   distance = filter.out();
   
   if(distance < SENSOR_DISTANCE) {
@@ -246,12 +257,16 @@ void loop() {
 
     int index = 4;
     int l = (int) liters;
-    if(l < 10) {
-    } else if(l < 100) {
+    if(l >= 10) {
       index --;
-    } else if(l < 1000) {
+    } 
+    if(l >= 100) {
       index --;
-    } else if(l < 10000) {
+    }
+    if(l >= 1000) {
+      index --;
+    }
+    if(l >= 10000) {
       index --;
     }
     lcd.setCursor(index, 0);    
