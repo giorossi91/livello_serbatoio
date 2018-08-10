@@ -31,11 +31,13 @@ const int lcd_button_dpin = 3;
 const int lcd_light_dpin = 13;
 */
 
+
 const int echo_dpin = 12;
 const int trig_dpin = 11;
 const int led_capacity_dpin = 13;
 const int lcd_button_dpin = 2;
 const int lcd_light_dpin = 9;
+const byte lcd_up_arrow[] = {4, 14, 21, 4, 4, 0, 0, 0};
 
 const double TANK_RADIUS_CM = 35.0;  //cm
 const double TANK_HEIGHT_CM = 156.0;//137.0;//125;  //cm
@@ -48,6 +50,16 @@ const double EMPTY_LEVEL_THRESHOLD = 5.0; //%
 
 const int LCD_ON_TIMER = 30 * 1000; //ms
 const int MEASUREMENT_INTERVAL = 10   * 1000; //ms
+const int FILLING_TIMER = 5 * 60 * 1000; //ms (5 min)
+
+const byte UP_ARROW_CHAR = 0;
+const int RS = 3;
+const int  E = 4;
+const int DB4 = 5;
+const int DB5 = 6;
+const int DB6 = 7;
+const int DB7 = 8;
+
 
 /* ======== VARIABLES ====== */
 bool led_on;
@@ -60,18 +72,14 @@ bool first_measure_done;
 double maximum_capacity = 0.0; //L
 volatile unsigned long timestamp_lcd_on; //ms
 volatile unsigned long timestamp_measurement; //ms
+volatile unsigned long timestamp_last_filling; //ms
 volatile double distance = 0; //cm
+volatile bool is_filling;
+volatile double previous_distance;
 
 MedianFilter filter(5, 0);
 
 double percentage = 100.0;
-
-const int RS = 3;
-const int  E = 4;
-const int DB4 = 5;
-const int DB5 = 6;
-const int DB6 = 7;
-const int DB7 = 8;
 
 //Formato (RS, E, DB4, DB5, DB6, DB7)
 LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
@@ -113,12 +121,16 @@ void turn_on_lcd() {
 void setup() {
   //16 characters e 2 lines
   lcd.begin(16, 2);
+  
   lcd.print("    Avvio...");
+  lcd.createChar(UP_ARROW_CHAR, lcd_up_arrow);
   first_measure_done = false;
+  is_filling = false;
 
   //compute tank parameters
   tank_capacity = (TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM) / CM3_PER_LITER;
   maximum_capacity = TANK_NUMBER * tank_capacity;
+  previous_distance = distance;
 
   //pin setup
   pinMode(echo_dpin, INPUT);
@@ -137,6 +149,7 @@ void setup() {
   led_status = false;
 
   timestamp_measurement = millis();
+  timestamp_last_filling = millis();
 
 #if DEBUG 
   Serial.begin(9600);
@@ -177,22 +190,29 @@ void loop() {
 #endif    
     filter.in(roundf(distance));
 
-
     timestamp_measurement = millis();
     first_measure_done = true;
   }
-
 
   distance = filter.out();
   
   if(distance < SENSOR_DISTANCE) {
     distance = SENSOR_DISTANCE;
-  } 
-    
-  else if(distance > (TANK_HEIGHT_CM + SENSOR_DISTANCE)) {
-    distance = TANK_HEIGHT_CM + SENSOR_DISTANCE;
+  } else if(distance > (WATER_MAX_HEIGHT_CM + SENSOR_DISTANCE)) {
+    distance = WATER_MAX_HEIGHT_CM + SENSOR_DISTANCE;
   } 
 
+
+  if((millis() - timestamp_last_filling) > FILLING_TIMER) {
+    timestamp_last_filling = millis();
+    // if the new distance is lower than the previous one, then the water level is greater, so the tank is filling.
+    if(distance < previous_distance) {
+      is_filling = true;
+    } else {
+      is_filling = false;
+    }
+    previous_distance = distance;
+  }
 
   if(first_measure_done) {
     double liters = compute_liters(distance);
@@ -217,7 +237,8 @@ void loop() {
     lcd.print("L");
 
     lcd.setCursor(10,1);
-    lcd.print(" ");
+    lcd.write(UP_ARROW_CHAR);
+    //lcd.print(" ");
     
     if(percentage >= 99.5) {
       percentage = 100.0;
@@ -232,6 +253,12 @@ void loop() {
  *  |----------------| 
  *  | xxxx L   yyy % |
  *  | ############## |
+ *  |----------------|
+ *  
+ *  es.
+ *  |----------------| 
+ *  |  876 L ^  87 % |
+ *  | ############   |
  *  |----------------|
  *  
  *  |----------------| 
@@ -254,6 +281,11 @@ void loop() {
     lcd.print("L");
     lcd.setCursor(14,0);
     lcd.print("%");
+
+    if(is_filling) {
+      lcd.setCursor(8,0);
+      lcd.write(UP_ARROW_CHAR);
+    }
 
     int index = 4;
     int l = (int) liters;
@@ -314,7 +346,7 @@ void loop() {
     led_on = false;
   }
   digitalWrite(led_capacity_dpin, led_on);
-  delay(1500);
+  delay(MEASUREMENT_INTERVAL);
 }
 
 
