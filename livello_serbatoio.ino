@@ -51,6 +51,7 @@ const double EMPTY_LEVEL_THRESHOLD = 5.0; //%
 const int LCD_ON_TIMER = 30 * 1000; //ms
 const int MEASUREMENT_INTERVAL = 10   * 1000; //ms
 const int FILLING_TIMER = 5 * 60 * 1000; //ms (5 min)
+const int SLEEP_TIME = 1500; //ms
 
 const byte UP_ARROW_CHAR = 0;
 const int RS = 3;
@@ -202,7 +203,7 @@ void loop() {
     distance = WATER_MAX_HEIGHT_CM + SENSOR_DISTANCE;
   } 
 
-
+/*
   if((millis() - timestamp_last_filling) > FILLING_TIMER) {
     timestamp_last_filling = millis();
     // if the new distance is lower than the previous one, then the water level is greater, so the tank is filling.
@@ -213,6 +214,7 @@ void loop() {
     }
     previous_distance = distance;
   }
+*/
 
   if(first_measure_done) {
     double liters = compute_liters(distance);
@@ -237,8 +239,8 @@ void loop() {
     lcd.print("L");
 
     lcd.setCursor(10,1);
-    lcd.write(UP_ARROW_CHAR);
-    //lcd.print(" ");
+    //lcd.write(UP_ARROW_CHAR);
+    lcd.print(" ");
     
     if(percentage >= 99.5) {
       percentage = 100.0;
@@ -282,10 +284,12 @@ void loop() {
     lcd.setCursor(14,0);
     lcd.print("%");
 
+/*      
     if(is_filling) {
       lcd.setCursor(8,0);
       lcd.write(UP_ARROW_CHAR);
     }
+*/
 
     int index = 4;
     int l = (int) liters;
@@ -346,7 +350,7 @@ void loop() {
     led_on = false;
   }
   digitalWrite(led_capacity_dpin, led_on);
-  delay(MEASUREMENT_INTERVAL);
+  delay(SLEEP_TIME);
 }
 
 
