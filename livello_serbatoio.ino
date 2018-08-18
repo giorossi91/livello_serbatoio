@@ -38,6 +38,7 @@ const int led_capacity_dpin = 13;
 const int lcd_button_dpin = 2;
 const int lcd_light_dpin = 9;
 const byte lcd_up_arrow[] = {4, 14, 21, 4, 4, 0, 0, 0};
+const byte lcd_progress[] = {0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F};
 
 const double TANK_RADIUS_CM = 35.0;  //cm
 const double TANK_HEIGHT_CM = 156.0;//137.0;//125;  //cm
@@ -54,6 +55,8 @@ const int FILLING_TIMER = 5 * 60 * 1000; //ms (5 min)
 const int SLEEP_TIME = 1500; //ms
 
 const byte UP_ARROW_CHAR = 0;
+const byte PROGRESS_CHAR = 1;
+
 const int RS = 3;
 const int  E = 4;
 const int DB4 = 5;
@@ -125,6 +128,8 @@ void setup() {
   
   lcd.print("    Avvio...");
   lcd.createChar(UP_ARROW_CHAR, lcd_up_arrow);
+  lcd.createChar(PROGRESS_CHAR, lcd_progress);
+
   first_measure_done = false;
   is_filling = false;
 
@@ -139,7 +144,7 @@ void setup() {
   pinMode(led_capacity_dpin, OUTPUT);
 
   pinMode(lcd_light_dpin, OUTPUT);
-  pinMode(lcd_button_dpin, INPUT_PULLUP);
+  pinMode(lcd_button_dpin, INPUT);
   attachInterrupt(digitalPinToInterrupt(lcd_button_dpin), turn_on_lcd, RISING);
   
   //lcd on
@@ -327,7 +332,8 @@ void loop() {
     lcd.setCursor(1, 1);
     int howmany = (14 * p) / 100;
     for(int i = 0; i < howmany; i++) {
-      lcd.print("#");   
+      lcd.write(PROGRESS_CHAR);
+      //lcd.print("#");   
     }
 
     if(howmany == 0) {
