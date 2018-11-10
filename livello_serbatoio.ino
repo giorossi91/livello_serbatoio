@@ -32,33 +32,33 @@ const int lcd_light_dpin = 13;
 */
 
 
-const int echo_dpin = 12;
-const int trig_dpin = 11;
-const int led_capacity_dpin = 13;
-const int lcd_button_dpin = 2;
-const int lcd_light_dpin = 9;
-const byte lcd_up_arrow[] = {4, 14, 21, 4, 4, 0, 0, 0};
-const byte lcd_progress[] = {0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F};
+const int  echo_dpin         = 12;
+const int  trig_dpin         = 11;
+const int  led_capacity_dpin = 13;
+const int  lcd_button_dpin   = 2;
+const int  lcd_light_dpin    = 9;
+const byte lcd_up_arrow[]    = {4, 14, 21, 4, 4, 0, 0, 0};
+const byte lcd_progress[]    = {0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F};
 
-const double TANK_RADIUS_CM = 35.0;  //cm
-const double TANK_HEIGHT_CM = 156.0;//137.0;//125;  //cm
-const double SENSOR_DISTANCE = 26.0; //cm
-const double WATER_MAX_HEIGHT_CM = TANK_HEIGHT_CM - SENSOR_DISTANCE;
-const int    TANK_NUMBER = 2;
-const double CM3_PER_LITER = 1000.0; //1 l = 1000 cm^3
-const double LOW_LEVEL_THRESHOLD = 25.0; //%
+const double TANK_RADIUS_CM        = 35.0;  //cm
+const double TANK_HEIGHT_CM        = 156.0;//137.0;//125;  //cm
+const double SENSOR_DISTANCE       = 26.0; //cm
+const double WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE;
+const int    TANK_NUMBER           = 2;
+const double CM3_PER_LITER         = 1000.0; //1 l = 1000 cm^3
+const double LOW_LEVEL_THRESHOLD   = 25.0; //%
 const double EMPTY_LEVEL_THRESHOLD = 5.0; //%
 
-const int LCD_ON_TIMER = 30 * 1000; //ms
+const int LCD_ON_TIMER         = 30 * 1000; //ms
 const int MEASUREMENT_INTERVAL = 10   * 1000; //ms
-const int FILLING_TIMER = 5 * 60 * 1000; //ms (5 min)
-const int SLEEP_TIME = 1500; //ms
+const int FILLING_TIMER        = 5 * 60 * 1000; //ms (5 min)
+const int SLEEP_TIME           = 1500; //ms
 
 const byte UP_ARROW_CHAR = 0;
 const byte PROGRESS_CHAR = 1;
 
-const int RS = 3;
-const int  E = 4;
+const int RS  = 3;
+const int  E  = 4;
 const int DB4 = 5;
 const int DB5 = 6;
 const int DB6 = 7;
@@ -186,6 +186,12 @@ void loop() {
     digitalWrite(trig_dpin, LOW);
   
     int time = pulseIn(echo_dpin, HIGH);
+    if(time == 0) {
+      lcd.clear();
+      lcd.setCursor(5, 1);
+      lcd.print("Errore");
+      return;
+    }
 
     distance = (double)time/(58.0); //convert to cm
 #if DEBUG
@@ -358,6 +364,3 @@ void loop() {
   digitalWrite(led_capacity_dpin, led_on);
   delay(SLEEP_TIME);
 }
-
-
-
