@@ -20,7 +20,7 @@
 /* ======== DEFINE  ======== */
 #define DEBUG 0
 
-#define roundf(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
+#define roundfvalue(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
 /* ======== CONSTANTS ====== */
 /*
@@ -37,22 +37,22 @@ const int  trig_dpin         = 11;
 const int  led_capacity_dpin = 13;
 const int  lcd_button_dpin   = 2;
 const int  lcd_light_dpin    = 9;
-const byte lcd_up_arrow[]    = {4, 14, 21, 4, 4, 0, 0, 0};
-const byte lcd_progress[]    = {0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F};
 
 const double TANK_RADIUS_CM        = 35.0;  //cm
-const double TANK_HEIGHT_CM        = 156.0;//137.0;//125;  //cm
-const double SENSOR_DISTANCE       = 26.0; //cm
+const double TANK_HEIGHT_CM        = 156.0; //137.0;//125;  //cm
+const double SENSOR_DISTANCE       = 26.0;  //cm
 const double WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE;
 const int    TANK_NUMBER           = 2;
 const double CM3_PER_LITER         = 1000.0; //1 l = 1000 cm^3
-const double LOW_LEVEL_THRESHOLD   = 25.0; //%
-const double EMPTY_LEVEL_THRESHOLD = 5.0; //%
+const double LOW_LEVEL_THRESHOLD   = 25.0;   //%
+const double EMPTY_LEVEL_THRESHOLD = 5.0;    //%
 
 const int LCD_ON_TIMER         = 30 * 1000; //ms
-const int MEASUREMENT_INTERVAL = 10   * 1000; //ms
-const int FILLING_TIMER        = 5 * 60 * 1000; //ms (5 min)
+const int MEASUREMENT_INTERVAL = 10 * 1000; //ms
+//const int FILLING_TIMER        = 5 * 60 * 1000; //ms (5 min) //OVERFLOW!! 
 const int SLEEP_TIME           = 1500; //ms
+
+const double SENSOR_CALIBRATION = 1.7; //cm
 
 const byte UP_ARROW_CHAR = 0;
 const byte PROGRESS_CHAR = 1;
@@ -64,6 +64,8 @@ const int DB5 = 6;
 const int DB6 = 7;
 const int DB7 = 8;
 
+byte lcd_up_arrow[]    = {4, 14, 21, 4, 4, 0, 0, 0};
+byte lcd_progress[]    = {0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F};
 
 /* ======== VARIABLES ====== */
 bool led_on;
@@ -72,13 +74,14 @@ bool led_status;
 double tank_capacity; //L
 
 
-bool first_measure_done;
+bool   first_measure_done;
 double maximum_capacity = 0.0; //L
+
 volatile unsigned long timestamp_lcd_on; //ms
 volatile unsigned long timestamp_measurement; //ms
 volatile unsigned long timestamp_last_filling; //ms
 volatile double distance = 0; //cm
-volatile bool is_filling;
+volatile bool   is_filling;
 volatile double previous_distance;
 
 MedianFilter filter(5, 0);
@@ -194,13 +197,18 @@ void loop() {
     }
 
     distance = (double)time/(58.0); //convert to cm
+    
+    double dist_compensated = distance + SENSOR_CALIBRATION; //compensate the constant error introduced by new sensor
+    
 #if DEBUG
     Serial.print("dist: ");
     Serial.print(distance);
+    Serial.print(" + calib: ");
+    Serial.print(dist_compensated);
     Serial.print(" round: ");
-    Serial.println(roundf(distance));
+    Serial.println(roundfvalue(dist_compensated));
 #endif    
-    filter.in(roundf(distance));
+    filter.in(roundfvalue(dist_compensated));
 
     timestamp_measurement = millis();
     first_measure_done = true;
