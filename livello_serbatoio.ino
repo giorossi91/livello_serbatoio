@@ -20,6 +20,11 @@
 /* ======== DEFINE  ======== */
 #define DEBUG 0
 
+#define SENSOR_HCSR04 0
+#define SENSOR_JSNSR04T 1
+
+#define SENSOR SENSOR_HCSR04
+
 #define roundfvalue(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
 /* ======== CONSTANTS ====== */
@@ -52,7 +57,13 @@ const int MEASUREMENT_INTERVAL = 10 * 1000; //ms
 //const int FILLING_TIMER        = 5 * 60 * 1000; //ms (5 min) //OVERFLOW!! 
 const int SLEEP_TIME           = 1500; //ms
 
+#if SENSOR == SENSOR_JSNSR04T
 const double SENSOR_CALIBRATION = 1.7; //cm
+#elif SENSOR == SENSOR_HCSR04
+const double SENSOR_CALIBRATION = 0.0; //cm
+#else
+const double SENSOR_CALIBRATION = 0.0; //cm
+#endif
 
 const byte UP_ARROW_CHAR = 0;
 const byte PROGRESS_CHAR = 1;
@@ -197,8 +208,10 @@ void loop() {
     }
 
     distance = (double)time/(58.0); //convert to cm
-    
-    double dist_compensated = distance + SENSOR_CALIBRATION; //compensate the constant error introduced by new sensor
+
+    //compensate the constant error introduced by new sensor
+    double dist_compensated = distance + SENSOR_CALIBRATION;
+    //
     
 #if DEBUG
     Serial.print("dist: ");
