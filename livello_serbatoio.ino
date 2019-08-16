@@ -353,8 +353,8 @@ inline double sanitize_data(double data, double min_val, double max_val, double 
   
   if (data < min_threshold) {
     sanitized_data = min_val;
-  } else if (distance > max_threshold) {
-    distance = max_val;
+  } else if (data > max_threshold) {
+    sanitized_data = max_val;
   } else {
     sanitized_data = data;
   }
@@ -495,11 +495,46 @@ inline void update_lcd_debug(double distance_to_print, double percentage, double
 
 #endif
 
+/**
+ * @brief Esegue un autotest dei controlli all'avvio.
+ * @details Permette di controllare stato dei LED del bottone e dell'LCD.
+ * 
+ */
+inline void autotest(void) {
+  digitalWrite(LCD_LIGHT_DPIN, LOW);
+  digitalWrite(LED_CAPACITY_DPIN, LOW);
+  lcd.clear();
+
+  delay(1000);
+  
+  digitalWrite(LCD_LIGHT_DPIN, HIGH);
+  digitalWrite(LED_CAPACITY_DPIN, HIGH);
+
+  delay(1000);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  for (uint16_t i = 0; i < 16; i++) {
+      lcd.write(PROGRESS_CHAR);
+  }
+  lcd.setCursor(0, 1);
+  for (uint16_t i = 0; i < 16; i++) {
+      lcd.write(PROGRESS_CHAR);
+  }
+
+  delay(3000);
+
+  digitalWrite(LED_CAPACITY_DPIN, LOW);
+  digitalWrite(LCD_LIGHT_DPIN, LOW);
+  lcd.clear();
+
+  delay(1000);
+}
+
 void setup(void) {
   //16 characters e 2 lines
   lcd.begin(16, 2);
   
-  lcd.print("    Avvio...");
   lcd.createChar(UP_ARROW_CHAR, LCD_UP_ARROW);
   lcd.createChar(PROGRESS_CHAR, LCD_PROGRESS);
   
@@ -515,6 +550,10 @@ void setup(void) {
   pinMode(LED_CAPACITY_DPIN, OUTPUT);
   pinMode(LCD_LIGHT_DPIN,    OUTPUT);
   pinMode(LCD_BUTTON_DPIN,   INPUT );
+
+  delay(1000);
+  autotest();
+  lcd.print("    Avvio...");
 
   attachInterrupt(digitalPinToInterrupt(LCD_BUTTON_DPIN), turn_on_lcd_light, RISING);
    
