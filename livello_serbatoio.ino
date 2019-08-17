@@ -24,6 +24,9 @@
 #include <LiquidCrystal.h>
 
 /* Define */
+
+#define VERSION "v0.2"
+
 #define CONF_DEBUG   1
 #define CONF_RELEASE 0
 
@@ -636,7 +639,9 @@ void setup(void) {
 
   delay(1000);
   autotest();
-  lcd.print("    Avvio...");
+  lcd.print("Avvio...");
+  lcd.setCursor(0,1);
+  lcd.print(VERSION);
 
   attachInterrupt(digitalPinToInterrupt(LCD_BUTTON_DPIN), turn_on_lcd_light, RISING);
    
