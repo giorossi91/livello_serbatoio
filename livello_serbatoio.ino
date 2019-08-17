@@ -133,8 +133,6 @@ public:
     last_millis = millis();
   }
 
-  
-
   void updateTime(void) {
     uint32_t now = millis();
     uint32_t millis_diff = now - last_millis;
@@ -155,16 +153,9 @@ public:
     if(minutes_passed >= 60) {
       hours_passed++;
       minutes_passed = 0;
+
+      updateBuffer();
     }
-
-    if(hours_passed >= 24) {
-      days_passed++;
-      hours_passed = 0;
-    }
-  }
-
-  void shiftStatVector(void) {
-
   }
 
   void resetTime(void) {
@@ -173,13 +164,13 @@ public:
     seconds_passed  = 0U;
     minutes_passed  = 0U;
     hours_passed    = 0U;
-    days_passed     = 0U;
   }
 
   void resetConsumption(void) {
     last_liters = 0;
+    consumption = 0;
     for(uint16_t i = 0; i < STAT_SIZE; i++) {
-      total_consumption[i] = 0.0;
+      consumption_samples[i] = 0U;
     }
   }
 
@@ -187,25 +178,76 @@ public:
     if(current_liters > last_liters) { // serbatoio riempito
       last_liters = current_liters;
     } else {
-      uint32_t consumption = last_liters - current_liters; //svuotamento
+      consumption += last_liters - current_liters; //svuotamento
       last_liters = current_liters;
     }
   }
 
+  uint32_t getConsumption1h(void) {
+    return sumSamples(1);
+  }
 
+  uint32_t getConsumption2h(void) {
+    return sumSamples(2);
+  }
+
+  uint32_t getConsumption12h(void) {
+    return sumSamples(12);
+  }
+
+  uint32_t getConsumption1d(void) {
+    return sumSamples(24);
+  }
+
+  uint32_t getConsumption3d(void) {
+    return sumSamples(24 * 3);
+  }
+  
 private:
-  static const uint16_t STAT_SIZE = 5;
+  uint32_t sumSamples(uint32_t back_time) {
+    uint32_t sum = 0U;
 
-  double total_consumption[STAT_SIZE] = { 0 }; // [ 1h 2h 12h 24h 1sett ]
+    int16_t i = (index > 0) ? (index - 1) : (STAT_SIZE - 1);
+    uint32_t time_index = back_time;
+    while(time_index != 0) {
 
-  volatile uint32_t last_liters = 0U;
+      sum += consumption_samples[i];
+      i--;
+      if(i < 0) {
+        i = STAT_SIZE - 1;
+      }
+
+      time_index--;
+    }
+
+    return sum;
+  }
+  
+  void updateBuffer(void) {
+    consumption_samples[index] = consumption;
+    
+    index ++;
+    if(index >= STAT_SIZE) {
+      index = 0;
+    }
+
+    consumption = 0;
+  }
+
+  static const uint16_t STAT_SIZE     = 24*3; //3gg
+
+  uint32_t index                      = 0U;
+
+  uint32_t consumption_samples[STAT_SIZE] = { 0 };
+
+  volatile uint32_t last_liters     = 0U;
+  volatile uint32_t consumption     = 0U;
 
   volatile uint32_t last_millis     = 0U;
   volatile uint32_t millis_passed   = 0U;
   volatile uint32_t seconds_passed  = 0U;
   volatile uint32_t minutes_passed  = 0U;
   volatile uint32_t hours_passed    = 0U;
-  volatile uint32_t days_passed     = 0U;
 };
 
 /* Costanti */
@@ -227,7 +269,7 @@ const double   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE; //cm
 
 const uint32_t LCD_ON_TIMER         = 30 * 1000; //ms
 const uint32_t MEASUREMENT_INTERVAL = 10 * 1000; //ms
-const uint32_t SLEEP_TIME           = 1500;      //ms
+const uint32_t SLEEP_TIME           = 1000;      //ms
 
 #if SENSOR == SENSOR_JSNSR04T
 const double SENSOR_CALIBRATION = 1.7;  //cm
@@ -280,6 +322,8 @@ double            percentage             = 100.0; //%
 LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
 
 MedianFilter filter(FILTER_SIZE, FILTER_SEED);
+
+StatisticheConsumo stats();
 
 /* Main SW */
 
