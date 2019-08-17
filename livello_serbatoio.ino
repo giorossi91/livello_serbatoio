@@ -122,6 +122,89 @@ private:
   byte    oldestDataPoint;   /// Oldest data point location in ring buffer
 };
 
+
+//Gestione statistiche
+class StatisticheConsumo {
+public:
+  StatisticheConsumo(void) {
+    last_millis = millis();
+  }
+
+  
+
+  void updateTime(void) {
+    uint32_t now = millis();
+    uint32_t millis_diff = now - last_millis;
+
+    last_millis = now;
+
+    millis_passed += millis_diff;
+    if(millis_passed >= 1000) {
+      seconds_passed ++;
+      millis_passed = 0;
+    }
+    
+    if(seconds_passed >= 60) {
+      minutes_passed ++;
+      seconds_passed = 0;
+    }
+
+    if(minutes_passed >= 60) {
+      hours_passed++;
+      minutes_passed = 0;
+    }
+
+    if(hours_passed >= 24) {
+      days_passed++;
+      hours_passed = 0;
+    }
+  }
+
+  void shiftStatVector(void) {
+
+  }
+
+  void resetTime(void) {
+    last_millis     = 0U;
+    millis_passed   = 0U;
+    seconds_passed  = 0U;
+    minutes_passed  = 0U;
+    hours_passed    = 0U;
+    days_passed     = 0U;
+  }
+
+  void resetConsumption(void) {
+    last_liters = 0;
+    for(uint16_t i = 0; i < STAT_SIZE; i++) {
+      total_consumption[i] = 0.0;
+    }
+  }
+
+  void updateConsumption(uint32_t current_liters) {
+    if(current_liters > last_liters) { // serbatoio riempito
+      last_liters = current_liters;
+    } else {
+      uint32_t consumption = last_liters - current_liters; //svuotamento
+      last_liters = current_liters;
+    }
+  }
+
+
+private:
+  static const uint16_t STAT_SIZE = 5;
+
+  double total_consumption[STAT_SIZE] = { 0 }; // [ 1h 2h 12h 24h 1sett ]
+
+  volatile uint32_t last_liters = 0U;
+
+  volatile uint32_t last_millis     = 0U;
+  volatile uint32_t millis_passed   = 0U;
+  volatile uint32_t seconds_passed  = 0U;
+  volatile uint32_t minutes_passed  = 0U;
+  volatile uint32_t hours_passed    = 0U;
+  volatile uint32_t days_passed     = 0U;
+};
+
 /* Costanti */
 const int16_t ECHO_DPIN         = 12;
 const int16_t TRIG_DPIN         = 11;
