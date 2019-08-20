@@ -270,6 +270,9 @@ const double   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE; //cm
 const uint32_t LCD_ON_TIMER         = 30 * 1000; //ms
 const uint32_t MEASUREMENT_INTERVAL = 10 * 1000; //ms
 const uint32_t SLEEP_TIME           = 1000;      //ms
+const uint32_t BTN_LONGPRESS_TIME   = 2000;      //ms
+const uint32_t TIME_PER_STAT        = 5000;      //ms
+
 
 #if SENSOR == SENSOR_JSNSR04T
 const double SENSOR_CALIBRATION = 1.7;  //cm
@@ -317,13 +320,16 @@ volatile uint32_t timestamp_last_filling = 0U;    //ms
 volatile double   distance               = 0.0;   //cm
 volatile double   previous_liters        = 0.0;   //L
 double            percentage             = 100.0; //%
+volatile byte     btn_status             = LOW;
+volatile byte     last_btn_status        = LOW;
+uint32_t          btn_press_timestamp    = 0U;
 
 //Formato (RS, E, DB4, DB5, DB6, DB7)
 LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
 
 MedianFilter filter(FILTER_SIZE, FILTER_SEED);
 
-StatisticheConsumo stats();
+StatisticheConsumo stats;
 
 /* Main SW */
 
@@ -661,6 +667,40 @@ inline void autotest(void) {
   delay(1000);
 }
 
+
+inline void print_stat(char *str, uint32_t stat) {
+  lcd.setCursor(0, 0);
+  lcd.print(str);
+  
+  lcd.setCursor(0, 1);
+  lcd.print(stat);
+  
+  delay(TIME_PER_STAT);
+  lcd.clear(); 
+}
+
+/**
+TODO: doc
+*/
+inline void show_stats(void) {
+  lcd.clear();
+  
+  //stampa 1h
+  print_stat("Consumo 1h", stats.getConsumption1h());
+  
+  //stampa 12h
+  print_stat("Consumo 12h", stats.getConsumption12h());
+  
+  //stampa 1d
+  print_stat("Consumo 1d", stats.getConsumption1d());
+
+  //stampa 3d
+  print_stat("Consumo 3d", stats.getConsumption3d());
+  
+  must_update_lcd = true;
+}
+
+
 void setup(void) {
   //16 characters e 2 lines
   lcd.begin(16, 2);
@@ -718,6 +758,24 @@ void setup(void) {
 
 void loop(void) {
   
+  stats.updateTime();
+  btn_status = digitalRead(LCD_BUTTON_DPIN);
+  
+  if (btn_status == HIGH && last_btn_status == LOW) {
+    last_btn_status     = HIGH;
+    btn_press_timestamp = millis();
+  } else if(btn_status == HIGH && last_btn_status == HIGH) {
+    if((millis() - btn_press_timestamp) > BTN_LONGPRESS_TIME) {
+      last_btn_status     = LOW;
+      btn_press_timestamp = 0;
+      
+      show_stats();      
+    }    
+  } else {
+    last_btn_status     = LOW;
+    btn_press_timestamp = 0;
+  }
+  
   //lcd on timer
   if ((millis() - timestamp_lcd_on) > LCD_ON_TIMER) {
     turn_off_lcd_light();
@@ -745,6 +803,7 @@ void loop(void) {
     previous_liters = liters;
     
     percentage = compute_percentage(liters);
+    stats.updateConsumption(liters);
       
 #if DEBUG
     update_lcd_debug(distance, percentage, liters);
