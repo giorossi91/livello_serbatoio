@@ -195,13 +195,15 @@ public:
     if(seconds_passed >= 60) {
       minutes_passed ++;
       seconds_passed = 0;
+
+      updateBuffer();
     }
 
     if(minutes_passed >= 60) {
       hours_passed++;
       minutes_passed = 0;
 
-      updateBuffer();
+      updateIndex();
     }
   }
 
@@ -241,8 +243,11 @@ public:
     if(current_liters > last_liters) { // serbatoio riempito
       last_liters = current_liters;
     } else {
-      consumption += last_liters - current_liters; //svuotamento
-      last_liters = current_liters;
+      uint32_t temp_consumption = (last_liters - current_liters);
+      if(temp_consumption > LITERS_THRESHOLD) {
+        consumption += temp_consumption; //svuotamento
+        last_liters = current_liters; 
+      }
     }
   }
 
@@ -314,7 +319,7 @@ private:
     
     uint32_t sum = 0U;
 
-    int16_t i = (index > 0) ? (index - 1) : (STAT_SIZE - 1);
+    int16_t i = index;//= (index >= 0) ? (index) : (STAT_SIZE - 1);
     uint32_t time_index = back_time;
     while(time_index != 0) {
 
@@ -332,34 +337,38 @@ private:
 
   /**
    * @brief Aggiorna il buffer con i consumi.
-   * @details Scrive i consumi accumulati nell'ultima ora nel buffer.
-   * 
+   * @details Aggiorna i consumi accumulati nell'ultima ora nel buffer.
    */
   void updateBuffer(void) {
-    consumption_samples[index] = consumption;
-    
+    consumption_samples[index] += consumption;
+    consumption = 0;
+  }
+
+  /**
+   * @brief Aggiorna l'indice del buffer
+   * @details Aggiorna l'indice del buffer e azzera la statistica più vecchia.
+   */
+  void updateIndex(void) {
     index ++;
     if(index >= STAT_SIZE) {
       index = 0;
     }
-
-    consumption = 0;
+    consumption_samples[index] = 0U; //reset della statistica vecchia
   }
 
-  static const uint16_t STAT_SIZE     = 24*3;      /// La dimensione dei campioni (3gg).
+  static const uint16_t STAT_SIZE         = 24*3;      /// La dimensione dei campioni (3gg).
+  static const uint32_t LITERS_THRESHOLD  = 15U;       /// Soglia di consumo minima per costituire un campione.
+  
+  uint32_t index                          = 0U;        /// L'indice corrente nel buffer.
+  uint32_t consumption_samples[STAT_SIZE] = { 0 };     /// Il buffer con i campioni. 
+  volatile uint32_t last_liters           = 0U;        /// L'ultima quantità nota di litri nel serbatoio.
+  volatile uint32_t consumption           = 0U;        /// Il consumo nell'ultima ora.
 
-  uint32_t index                      = 0U;        /// L'indice corrente nel buffer.
-
-  uint32_t consumption_samples[STAT_SIZE] = { 0 }; /// Il buffer con i campioni. 
-
-  volatile uint32_t last_liters     = 0U;          /// L'ultima quantità nota di litri nel serbatoio.
-  volatile uint32_t consumption     = 0U;          /// Il consumo nell'ultima ora.
-
-  volatile uint32_t last_millis     = 0U;          /// Ultimo timestamp rilevato.
-  volatile uint32_t millis_passed   = 0U;          /// Millisecondi passati dall'ultima invocazione di updateTime().
-  volatile uint32_t seconds_passed  = 0U;          /// Secondi passati dall'ultima invocazione di updateTime().
-  volatile uint32_t minutes_passed  = 0U;          /// Minuti passati dall'ultima invocazione di updateTime().
-  volatile uint32_t hours_passed    = 0U;          /// Ore passate dall'accensione.
+  volatile uint32_t last_millis           = 0U;        /// Ultimo timestamp rilevato.
+  volatile uint32_t millis_passed         = 0U;        /// Millisecondi passati dall'ultima invocazione di updateTime().
+  volatile uint32_t seconds_passed        = 0U;        /// Secondi passati dall'ultima invocazione di updateTime().
+  volatile uint32_t minutes_passed        = 0U;        /// Minuti passati dall'ultima invocazione di updateTime().
+  volatile uint32_t hours_passed          = 0U;        /// Ore passate dall'accensione.
 };
 
 /* Costanti */
