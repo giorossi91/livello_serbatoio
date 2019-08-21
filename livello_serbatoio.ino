@@ -40,8 +40,23 @@
 #define SENSOR SENSOR_HCSR04
 
 /* Classi */
+
+/**
+ * @brief Gestore del filtro mediano.
+ * @details Utilizza un buffer per la memorizzazione dei dati ed il ricavo del mediano.
+ */
 class MedianFilter {
 public:
+
+  /**
+   * @brief Costruttore.
+   * @details Crea un'istanza di MedianFilter.
+   * 
+   * @param size La dimensione del buffer.
+   * @param seed Il valore iniziale del buffer.
+   * 
+   * @return L'istanza di MedianFilter inizializzata.
+   */
   MedianFilter(const byte size, const int16_t seed) {
     medFilterWin    = max(size, 3);                           // number of samples in sliding median filter window - usually odd #
     medDataPointer  = size >> 1;                              // mid point of window
@@ -57,7 +72,15 @@ public:
       data[i]        = seed; // populate with seed value
     }
   } 
-    
+
+  /**
+   * @brief Inserisce un valore nel filtro.
+   * @details Una volta inserito il valore nel buffer calcola l'elemento mediano.
+   * 
+   * @param value Il valore da inserire.
+   * 
+   * @return L'elemento mediano.
+   */
   int16_t in(int16_t value) {
     // sort sizeMap
     // small vaues on the left (-)
@@ -111,28 +134,52 @@ public:
     
     return data[sizeMap[medDataPointer]];
   }
-    
+
+  /**
+   * @brief Recupera l'elemento mediano.
+   * @details Accede direttamente alla posizione nel buffer dove si trova l'elemento mediano.
+   * 
+   * @return L'elemento mediano.
+   */
   int16_t out(void) {
     return data[sizeMap[medDataPointer]];
   }
 
 private:
-  byte    medFilterWin;      /// Number of samples in sliding median filter window - usually odd #
-  byte    medDataPointer;    /// Mid point of window
-  int16_t *data;             /// Array pointer for data sorted by age in ring buffer
-  byte    *sizeMap;          /// Array pointer for locations data in sorted by size
-  byte    *locationMap;      /// Array pointer for data locations in history map
-  byte    oldestDataPoint;   /// Oldest data point location in ring buffer
+  byte    medFilterWin;      /// Numero di campioni nella finestra a scorrimento del filtro mediano - di solito dispari.
+  byte    medDataPointer;    /// Punto centrale della finestra del filtro.
+  int16_t *data;             /// Puntatore all'array dei dati ordinato per età nel buffer circolare.
+  byte    *sizeMap;          /// Puntatore all'array per la posizione dei dati ordinati per dimensione.
+  byte    *locationMap;      /// Puntatore all'array per la posizione dei dati nella mappa storica.
+  byte    oldestDataPoint;   /// Posizione del dato più vecchio nel buffer circolare.
 };
 
 
-//Gestione statistiche
+/**
+ * @brief Gestore delle statistiche.
+ * @details Calcola e raccoglie statistiche sui consumi.
+ * 
+ */
 class StatisticheConsumo {
 public:
+
+  /**
+   * @brief Costruttore.
+   * @details Crea un'istanza di StatisticheConsumo.
+   * 
+   * @return L'istanza di StatisticheConsumo inizializzata.
+   */
   StatisticheConsumo(void) {
     last_millis = millis();
   }
 
+  /**
+   * @brief Aggiorna i dati temporali.
+   * @details Tiene il conto di secondi, minuti, ore e giorni trascorsi dall'accensione.
+   *          Ogni ora aggiorna il buffer con i consumi totali.
+   * 
+   * @attention Va invocata in loop() ad ogni ciclo. 
+   */
   void updateTime(void) {
     uint32_t now = millis();
     uint32_t millis_diff = now - last_millis;
@@ -158,6 +205,10 @@ public:
     }
   }
 
+  /**
+   * @brief Esegue il reset dei dati temporali.
+   * @details
+   */
   void resetTime(void) {
     last_millis     = 0U;
     millis_passed   = 0U;
@@ -166,6 +217,10 @@ public:
     hours_passed    = 0U;
   }
 
+  /**
+   * @brief Esegue il reset dei consumi.
+   * @details
+   */
   void resetConsumption(void) {
     last_liters = 0;
     consumption = 0;
@@ -174,6 +229,14 @@ public:
     }
   }
 
+  /**
+   * @brief Aggiorna se necessario i consumi.
+   * @details Calcola i consumi correnti.
+   * 
+   * @param current_liters La quantità di acqua nel serbatoio in litri.
+   * 
+   * @attention Va chiamata in loop() non appena si hanno aggiornamenti dalla misurazione.
+   */
   void updateConsumption(uint32_t current_liters) {
     if(current_liters > last_liters) { // serbatoio riempito
       last_liters = current_liters;
@@ -183,28 +246,72 @@ public:
     }
   }
 
+  /**
+   * @brief Fornisce i consumi totali nell'ultima ora.
+   * @details Somma i consumi memorizzati.
+   * 
+   * @return Il consumo in litri.
+   */
   uint32_t getConsumption1h(void) {
     return sumSamples(1);
   }
 
+  /**
+   * @brief Fornisce i consumi totali nelle ultime 2 ore.
+   * @details Somma i consumi memorizzati.
+   * 
+   * @return Il consumo in litri.
+   */
   uint32_t getConsumption2h(void) {
     return sumSamples(2);
   }
 
+  /**
+   * @brief Fornisce i consumi totali nelle ultime 12 ore.
+   * @details Somma i consumi memorizzati.
+   * 
+   * @return Il consumo in litri.
+   */
   uint32_t getConsumption12h(void) {
     return sumSamples(12);
   }
 
+  /**
+   * @brief Fornisce i consumi totali nell'ultimo giorno.
+   * @details Somma i consumi memorizzati.
+   * 
+   * @return Il consumo in litri.
+   */
   uint32_t getConsumption1d(void) {
     return sumSamples(24);
   }
 
+
+  /**
+   * @brief Fornisce i consumi totali negli ultimi 3 giorni.
+   * @details Somma i consumi memorizzati.
+   * 
+   * @return Il consumo in litri.
+   */
   uint32_t getConsumption3d(void) {
-    return sumSamples(24 * 3);
+    return sumSamples((24 * 3) - 1);
   }
   
 private:
+
+  /**
+   * @brief Somma i campioni relativi ai consumi.
+   * @details Somma i campioni memorizzati indietro nel tempo della quantità passata.
+   * 
+   * @param back_time Il numero di ore nel passato.
+   * 
+   * @return 9999 se back_time è >= STAT_SIZE (3g) altrimenti il consumo totale in litri.
+   */
   uint32_t sumSamples(uint32_t back_time) {
+    if(back_time >= STAT_SIZE) {
+      return 9999U; //valore impossibile da raggiungere in 3gg (il serbatoio è da 1000L e non ci sono più di 2 riempimenti al giorno).
+    }
+    
     uint32_t sum = 0U;
 
     int16_t i = (index > 0) ? (index - 1) : (STAT_SIZE - 1);
@@ -222,7 +329,12 @@ private:
 
     return sum;
   }
-  
+
+  /**
+   * @brief Aggiorna il buffer con i consumi.
+   * @details Scrive i consumi accumulati nell'ultima ora nel buffer.
+   * 
+   */
   void updateBuffer(void) {
     consumption_samples[index] = consumption;
     
@@ -234,20 +346,20 @@ private:
     consumption = 0;
   }
 
-  static const uint16_t STAT_SIZE     = 24*3; //3gg
+  static const uint16_t STAT_SIZE     = 24*3;      /// La dimensione dei campioni (3gg).
 
-  uint32_t index                      = 0U;
+  uint32_t index                      = 0U;        /// L'indice corrente nel buffer.
 
-  uint32_t consumption_samples[STAT_SIZE] = { 0 };
+  uint32_t consumption_samples[STAT_SIZE] = { 0 }; /// Il buffer con i campioni. 
 
-  volatile uint32_t last_liters     = 0U;
-  volatile uint32_t consumption     = 0U;
+  volatile uint32_t last_liters     = 0U;          /// L'ultima quantità nota di litri nel serbatoio.
+  volatile uint32_t consumption     = 0U;          /// Il consumo nell'ultima ora.
 
-  volatile uint32_t last_millis     = 0U;
-  volatile uint32_t millis_passed   = 0U;
-  volatile uint32_t seconds_passed  = 0U;
-  volatile uint32_t minutes_passed  = 0U;
-  volatile uint32_t hours_passed    = 0U;
+  volatile uint32_t last_millis     = 0U;          /// Ultimo timestamp rilevato.
+  volatile uint32_t millis_passed   = 0U;          /// Millisecondi passati dall'ultima invocazione di updateTime().
+  volatile uint32_t seconds_passed  = 0U;          /// Secondi passati dall'ultima invocazione di updateTime().
+  volatile uint32_t minutes_passed  = 0U;          /// Minuti passati dall'ultima invocazione di updateTime().
+  volatile uint32_t hours_passed    = 0U;          /// Ore passate dall'accensione.
 };
 
 /* Costanti */
@@ -667,35 +779,57 @@ inline void autotest(void) {
   delay(1000);
 }
 
-
-inline void print_stat(char *str, uint32_t stat) {
+/**
+ * @brief Stampa su LCD l'informazione passata.
+ * @details Segue il formato:
+ *  |----------------| 
+ *  |<      str     >|
+ *  |Tot. <stat>   L |
+ *  |----------------|
+ *  
+ * @param str Il titolo della statistica.
+ * @param stat Il valore della statistica.
+ * 
+ */
+inline void print_stat(String str, uint32_t stat) {
   lcd.setCursor(0, 0);
   lcd.print(str);
   
   lcd.setCursor(0, 1);
+  lcd.print("Tot. ");
   lcd.print(stat);
+  //lcd.print(9999);
+  
+  lcd.setCursor(14, 1);
+  lcd.print("L");
   
   delay(TIME_PER_STAT);
   lcd.clear(); 
 }
 
 /**
-TODO: doc
-*/
+ * @brief Stampa su LCD le statistiche raccolte.
+ * @details Stampa a turno i consumi totali da:
+ *          - 1 ora;
+ *          - 12 ore;
+ *          - 1 giorno;
+ *          - 3 giorni.
+ *         
+ */
 inline void show_stats(void) {
   lcd.clear();
   
   //stampa 1h
-  print_stat("Consumo 1h", stats.getConsumption1h());
+  print_stat("Consumo 1 ora", stats.getConsumption1h());
   
   //stampa 12h
-  print_stat("Consumo 12h", stats.getConsumption12h());
+  print_stat("Consumo 12 ore", stats.getConsumption12h());
   
   //stampa 1d
-  print_stat("Consumo 1d", stats.getConsumption1d());
+  print_stat("Consumo 1 giorno", stats.getConsumption1d());
 
   //stampa 3d
-  print_stat("Consumo 3d", stats.getConsumption3d());
+  print_stat("Consumo 3 giorni", stats.getConsumption3d());
   
   must_update_lcd = true;
 }
