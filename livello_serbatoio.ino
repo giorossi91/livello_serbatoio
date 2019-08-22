@@ -240,12 +240,15 @@ public:
    * @attention Va chiamata in loop() non appena si hanno aggiornamenti dalla misurazione.
    */
   void updateConsumption(uint32_t current_liters) {
-    if(current_liters > last_liters) { // serbatoio riempito
-      last_liters = current_liters;
-    } else {
+    if(current_liters > last_liters) { // riempimento
+      uint32_t temp_refill = (current_liters - last_liters);
+      if(temp_refill > LITERS_THRESHOLD) {
+        last_liters = current_liters; 
+      }
+    } else { //svuotamento
       uint32_t temp_consumption = (last_liters - current_liters);
       if(temp_consumption > LITERS_THRESHOLD) {
-        consumption += temp_consumption; //svuotamento
+        consumption += temp_consumption; 
         last_liters = current_liters; 
       }
     }
