@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-Wall -Wextra -O0 -g2
-LIB=-lcppunit
+LIB=-lcppunit -lpthread
 INC=-I. -I..
 BUILDDIR=build
 

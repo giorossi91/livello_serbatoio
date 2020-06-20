@@ -3,6 +3,10 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <thread>
+#include <atomic>
+#include <cstdint>
+
 namespace livelloSerbatoio_tests {
 
 class LivelloSebatoioTests  : public CppUnit::TestFixture {
@@ -24,6 +28,16 @@ protected:
   // ==================
 
 private:
+  static const uint32_t TIME_STEP_MS;
+  
+  std::atomic<bool> time_on;
+  std::thread       time_thread;
+
+  void timesim_thread ( void );
+  
+  uint32_t cycle_num;
+  
+  void loopNTimes ( uint32_t n );
 
 };
 
