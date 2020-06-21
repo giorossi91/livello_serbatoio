@@ -21,7 +21,9 @@
  */
 
 /* Include */
+#ifndef UNIT_TEST
 #include <LiquidCrystal.h>
+#endif
 
 /* Define */
 

@@ -12,18 +12,20 @@ namespace livelloSerbatoio_tests {
 class LivelloSebatoioTests  : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE(LivelloSebatoioTests);
   // === Unit tests ===
+  CPPUNIT_TEST(testPinSetup);
   CPPUNIT_TEST(testSetup);
   // TODO da fare
   // ==================
   CPPUNIT_TEST_SUITE_END();
   
 public:
-  void setUp(void);
-  void tearDown(void);
+  void setUp   ( void );
+  void tearDown( void );
 
 protected:
   // === Unit tests ===
-  void testSetup(void);
+  void testSetup    ( void );
+  void testPinSetup ( void );
   
   // ==================
 
@@ -33,12 +35,11 @@ private:
   std::atomic<bool> time_on;
   std::thread       time_thread;
 
-  void timesim_thread ( void );
-  
   uint32_t cycle_num;
   
+  void timesim_thread ( void );
+  
   void loopNTimes ( uint32_t n );
-
 };
 
 }

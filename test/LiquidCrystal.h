@@ -1,14 +1,17 @@
 #ifndef LYQUIDCRYSTAL_H_
 #define LYQUIDCRYSTAL_H_
 
+#include <cppunit/extensions/HelperMacros.h>
+
 #include "arduino_types.h"
 #include "arduino_stubs.h"
 
+#include <sstream>
 
 class LiquidCrystal {
 public:
 
-  LiquidCrystal(const int16_t& RS, const int16_t& E, const int16_t& DB4, const int16_t& DB5, const int16_t& DB6, const int16_t& DB7) {
+  LiquidCrystal ( int16_t RS, int16_t E, int16_t DB4, int16_t DB5, int16_t DB6, int16_t DB7 ) {
     ( void ) RS;
     ( void ) E;
     ( void ) DB4;
@@ -38,6 +41,8 @@ public:
       
       cursor_col = 0;
       cursor_row = 0;
+    } else {
+      CPPUNIT_FAIL("Exceeded maximum LCD sizes");
     }
   }
   
@@ -57,7 +62,16 @@ public:
     cursor_row = 0;
   }
     
-  void setCursor(int col, int row) {
+  void setCursor ( int32_t col, int32_t row ) {
+    if ( ( ( col < 0 ) || ( col >= cols ) ) || ( ( row < 0 ) || ( row >= rows ) ) ) {
+      std::stringstream ss_fail;
+    
+      ss_fail << "Setting LCD cursor out of bounds " << "[ r=" << row << ", c=" << col << "]." << 
+        " Maximum: [ r=" << rows << ", c=" << cols << "]";
+
+      CPPUNIT_FAIL(ss_fail.str());
+    }   
+  
     cursor_col = col;
     cursor_row = row;
   }
@@ -70,7 +84,15 @@ public:
     if ( pStr != nullptr ) {
       uint32_t i = 0U;
       while ( pStr[i] != '\0' ) {
-        pLcdMatrix[cursor_row][cursor_col++] = pStr[i++];
+      
+        if( cursor_col >= cols ) {
+          CPPUNIT_FAIL ( "LCD cols limit exceeded."); 
+        } 
+      
+        pLcdMatrix[cursor_row][cursor_col] = pStr[i];
+        
+        cursor_col++;
+        i++;
       }
       
       if( pout == true ) {
@@ -80,11 +102,11 @@ public:
     }
   }
   
-  void print(int d, bool pout = true) {
+  void print ( int32_t d, bool pout = true ) {
     print ( std::to_string ( d ).c_str(), pout );
   }
 
-  void write(byte c) {
+  void write ( byte c ) {
     if ( c == 1 ) {
       print("#", true);
     } else {
@@ -118,13 +140,12 @@ public:
     for (int32_t i = 0; i < cols; i++) {
       std::cout << "=";
     }
-    std::cout << std::endl;
-    
+    std::cout << std::endl; 
   }
   
 private:
-  static const int32_t LCD_COLS_MAX_SIZE = 50U;
-  static const int32_t LCD_ROWS_MAX_SIZE = 10U;
+  static const int32_t LCD_COLS_MAX_SIZE = 50;
+  static const int32_t LCD_ROWS_MAX_SIZE = 10;
   
   char pLcdMatrix[LCD_ROWS_MAX_SIZE][LCD_COLS_MAX_SIZE];
   
@@ -133,8 +154,6 @@ private:
   
   int32_t cursor_col;
   int32_t cursor_row;
-  
-  
 };
 
 #endif // LYQUIDCRYSTAL_H_
