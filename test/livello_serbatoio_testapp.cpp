@@ -6,7 +6,7 @@
 #include "livello_serbatoio_test.h"
 
 
-CPPUNIT_TEST_SUITE_REGISTRATION( livelloSerbatoio_tests::LivelloSebatoioTests );
+CPPUNIT_TEST_SUITE_REGISTRATION( livelloSerbatoio_tests::LivelloSerbatoioTests );
 
 int main( void ) {
 

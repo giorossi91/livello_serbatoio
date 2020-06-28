@@ -57,11 +57,11 @@ void pinMode ( int32_t pin, int32_t mode ) {
   arduino_pins[pin].mode = mode;
 }
 
-int32_t pulseIn ( int32_t pin, int32_t mode, int32_t timeout ) {
+uint32_t pulseIn ( int32_t pin, int32_t mode, int32_t timeout ) {
   ( void ) mode;
   ( void ) timeout;
 
-  int32_t v = arduino_pins[pin].pulse_time;
+  uint32_t v = arduino_pins[pin].pulse_time;
 
   std::cout << HARNESS_PREFIX"INPUT[" << std::setw(4) << pin << "] t = " << v << " us" << std::endl;
   

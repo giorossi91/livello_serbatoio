@@ -27,7 +27,7 @@
 
 /* Define */
 
-#define VERSION "v0.2"
+#define VERSION "v0.3"
 
 #define CONF_DEBUG   1
 #define CONF_RELEASE 0
@@ -38,8 +38,10 @@
 #define roundfvalue(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
 /* Configurazioni */
-#define DEBUG  CONF_RELEASE
-#define SENSOR SENSOR_HCSR04
+#ifndef UNIT_TEST
+# define DEBUG  CONF_RELEASE
+# define SENSOR SENSOR_HCSR04
+#endif
 
 /* Classi */
 
@@ -401,11 +403,17 @@ const uint32_t TIME_PER_STAT        = 5000;      //ms
 
 
 #if SENSOR == SENSOR_JSNSR04T
-const double SENSOR_CALIBRATION = 1.7;  //cm
+const double SENSOR_CALIBRATION = 1.7;   //cm
+const double SENSOR_MIN_RANGE   = 20.0;  //cm
+const double SENSOR_MAX_RANGE   = 600.0; //cm
 #elif SENSOR == SENSOR_HCSR04
-const double SENSOR_CALIBRATION = 0.0;  //cm
+const double SENSOR_CALIBRATION = 0.0;   //cm
+const double SENSOR_MIN_RANGE   = 2.0;   //cm
+const double SENSOR_MAX_RANGE   = 400.0; //cm
 #else
 const double SENSOR_CALIBRATION = 0.0;  //cm
+const double SENSOR_MIN_RANGE   = 0.0;  //cm
+const double SENSOR_MAX_RANGE   = 0.0;  //cm
 #endif
 
 const byte UP_ARROW_CHAR = 0;
@@ -484,8 +492,17 @@ StatisticheConsumo stats;
  * 
  */
 inline double compute_liters(double read_distance) {
+  if ( read_distance < 0.0 ) {
+    read_distance = 0.0;
+  }
+
+  if ( read_distance > TANK_HEIGHT_CM ) {
+    read_distance = TANK_HEIGHT_CM;
+  }
+  
   read_distance -= SENSOR_DISTANCE;
-  return TANK_NUMBER * ((TANK_RADIUS_CM * TANK_RADIUS_CM * PI * (WATER_MAX_HEIGHT_CM - read_distance)) / CM3_PER_LITER);
+  double volume = TANK_NUMBER * ((TANK_RADIUS_CM * TANK_RADIUS_CM * PI * (WATER_MAX_HEIGHT_CM - read_distance)) / CM3_PER_LITER);
+  return (volume >= 0.0) ? volume : 0.0;
 }
 
 /**
@@ -497,6 +514,14 @@ inline double compute_liters(double read_distance) {
  * @return La percentuale di riempimento nel range [0, 100].
  */
 inline double compute_percentage(double read_liters) {
+  if ( read_liters < 0.0 ) {
+    read_liters = 0.0;
+  }
+
+  if ( read_liters > maximum_capacity ) {
+    read_liters = maximum_capacity;
+  }
+  
   return (read_liters / maximum_capacity) * 100.0;
 }
 
@@ -550,6 +575,12 @@ inline double measure_level(void) {
   //compensate the constant error introduced by new sensor
   double dist_compensated = distance_read + SENSOR_CALIBRATION;
   //
+
+  //check ranges
+  if ( ( dist_compensated < SENSOR_MIN_RANGE ) || ( dist_compensated > SENSOR_MAX_RANGE ) ) {
+    return -1;
+  }
+  //
   
 #if DEBUG
   Serial.print("dist: ");
@@ -583,10 +614,13 @@ inline double measure_level(void) {
  * @param percentage La percentuale di riempimento del serbatoio (in [0, 100]).
  */
 inline void control_led(double percentage) {
-  if (percentage <= EMPTY_LEVEL_THRESHOLD) {
+  if ( percentage < 0.0 ) {
+    led_status = false;
+    led_on     = false;
+  } else if (percentage <= EMPTY_LEVEL_THRESHOLD) {
     led_status = true;
     led_on     = !led_on;
-  } else if (percentage < LOW_LEVEL_THRESHOLD) {
+  } else if (percentage <= LOW_LEVEL_THRESHOLD) {
     led_status = true;
     led_on     = true;
   } else {

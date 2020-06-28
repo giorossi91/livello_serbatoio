@@ -9,10 +9,18 @@
 
 namespace livelloSerbatoio_tests {
 
-class LivelloSebatoioTests  : public CppUnit::TestFixture {
-  CPPUNIT_TEST_SUITE(LivelloSebatoioTests);
+class LivelloSerbatoioTests  : public CppUnit::TestFixture {
+  CPPUNIT_TEST_SUITE(LivelloSerbatoioTests);
   // === Unit tests ===
-  CPPUNIT_TEST(testPinSetup);
+  CPPUNIT_TEST(test_PinSetup);
+  CPPUNIT_TEST(test_compute_liters);
+  CPPUNIT_TEST(test_compute_percentage);
+  CPPUNIT_TEST(test_turn_on_lcd_light);
+  CPPUNIT_TEST(test_turn_off_lcd_light);
+  CPPUNIT_TEST(test_measure_level);
+  CPPUNIT_TEST(test_control_led);
+  CPPUNIT_TEST(test_sanitize_data);
+
   CPPUNIT_TEST(testSetup);
   // TODO da fare
   // ==================
@@ -25,7 +33,17 @@ public:
 protected:
   // === Unit tests ===
   void testSetup    ( void );
-  void testPinSetup ( void );
+
+  void test_compute_liters     ( void );
+  void test_compute_percentage ( void );
+  void test_PinSetup           ( void );
+  void test_turn_on_lcd_light  ( void );
+  void test_turn_off_lcd_light ( void );
+  void test_measure_level      ( void );
+  void test_control_led        ( void );
+  void test_sanitize_data      ( void );
+
+
   
   // ==================
 
@@ -39,6 +57,9 @@ private:
   
   void timesim_thread ( void );
   
+  void start_time ( void );
+  void stop_time  ( void );
+
   void loopNTimes ( uint32_t n );
 };
 

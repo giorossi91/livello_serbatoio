@@ -27,12 +27,12 @@ const int32_t INPUT  = 0;
 const int32_t OUTPUT = 1;
 
 struct Pin_t {
-  int32_t id;
-  int32_t mode;
-  isr_t   pIsr;
-  int32_t in_val;
-  int32_t out_val;
-  int32_t pulse_time;
+  int32_t  id;
+  int32_t  mode;
+  isr_t    pIsr;
+  int32_t  in_val;
+  int32_t  out_val;
+  uint32_t pulse_time;
 };
 
 #define A0 14
