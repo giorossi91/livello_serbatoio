@@ -1,24 +1,37 @@
-CC=g++
-CFLAGS=-Wall -Wextra -O0 -g2
-LIB=-lcppunit -lpthread -lgcov
-INC=-I. -I..
-BUILDDIR=build
+SHELL=/bin/sh
+.SUFFIXES:
+.SUFFIXES: .cpp .o
 
-all: env
+CXXFLAGS:=-Wall -Wextra -O0 -g2 -ftest-coverage -fprofile-arcs
+LDFLAGS=-lcppunit -lpthread -lgcov
+EXE:=livello_serbatoio_testapp
+OBJS:=livello_serbatoio_testapp.o livello_serbatoio_test.o
+
+all:
+	$(MAKE) pre-build
+	$(MAKE) $(EXE)
+
+pre-build:
 	cp -f ../livello_serbatoio.ino livello_serbatoio_uut.hpp
-	$(CC) -c $(CFLAGS) -ftest-coverage -fprofile-arcs $(INC) -o $(BUILDDIR)/livello_serbatoio_test.o livello_serbatoio_test.cpp
-	$(CC) -c $(CFLAGS) $(INC) -o $(BUILDDIR)/livello_serbatoio_testapp.o livello_serbatoio_testapp.cpp
-	$(CC)    $(CFLAGS)        -o livello_serbatoio_testapp $(BUILDDIR)/livello_serbatoio_testapp.o $(BUILDDIR)/livello_serbatoio_test.o $(LIB)
 
-check: all
-	./livello_serbatoio_testapp
-	cd $(BUILDDIR)
-	gcovr -r .. --html --html-details -o coverage/coverage_report.html
-	cd ..
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -I. -I.. -MD -MP $< -c -o $@
 
-env:
-	mkdir -p $(BUILDDIR)
+$(EXE): $(OBJS)
+	$(CXX) $^ -o $@ $(LDFLAGS)
+
+check: $(EXE)
+	$(RM) -f *.gcda
+	$(RM) -f coverage/*
+	./$(EXE)
+	gcovr -r . --html --html-details -o coverage/coverage_report.html
+
 
 clean:
-	rm -rf $(BUILDDIR)
-	rm -f livello_serbatoio_testapp
+	rm -f $(OBJS) $(EXE) *.d *.gcda *.gcno
+
+
+.PHONY: all pre-build check clean 
+
+-include $(OBJS:.o=.d)
+

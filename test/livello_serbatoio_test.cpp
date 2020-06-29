@@ -355,6 +355,74 @@ void LivelloSerbatoioTests::test_sanitize_data ( void ) {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(max_val, uut::sanitize_data(data, min_val, max_val, min_thr, max_thr), 0.1);
 }
 
+void LivelloSerbatoioTests::test_update_lcd ( void ) {
+	std::string text = "";
+	uut::lcd.clear();
+	
+	
+	// Update off
+	uut::must_update_lcd = false;
+	uut::update_lcd(0.0, 0.0);
+	
+	text = uut::lcd.harness_getLcdText();
+	CPPUNIT_ASSERT_EQUAL(std::string("                \n                "), text);
+	
+	
+	// Update on
+	uut::must_update_lcd = true;
+	uut::update_lcd(0.0, 0.0);
+	
+	text = uut::lcd.harness_getLcdText();
+	CPPUNIT_ASSERT_EQUAL(std::string("    0 L     0 % \n     Vuoto      "), text);
+	
+	uut::must_update_lcd = true;
+	uut::update_lcd(15.0, 150.0);
+	
+	text = uut::lcd.harness_getLcdText();
+	CPPUNIT_ASSERT_EQUAL(std::string("  150 L    15 % \n ##  Riserva    "), text);
+	
+	uut::must_update_lcd = true;
+	uut::update_lcd(14.0, 140.0);
+	
+	text = uut::lcd.harness_getLcdText();
+	CPPUNIT_ASSERT_EQUAL(std::string("  140 L    14 % \n #   Riserva    "), text);
+	
+	uut::must_update_lcd = true;
+	uut::update_lcd(9.0, 90.0);
+	
+	text = uut::lcd.harness_getLcdText();
+	CPPUNIT_ASSERT_EQUAL(std::string("   90 L     9 % \n #   Riserva    "), text);
+	
+	uut::must_update_lcd = true;
+	uut::update_lcd(100.0, 1000.0);
+	
+	text = uut::lcd.harness_getLcdText();
+	CPPUNIT_ASSERT_EQUAL(std::string(" 1000 L   100 % \n ############## "), text);
+	
+	// check ranges
+	text = uut::lcd.harness_getLcdText();
+
+	uut::must_update_lcd = true;
+	uut::update_lcd(-0.1, 0.0);
+	CPPUNIT_ASSERT_EQUAL( false, uut::must_update_lcd         );
+	CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
+	
+	uut::must_update_lcd = true;
+	uut::update_lcd(100.1, 0.0);
+	CPPUNIT_ASSERT_EQUAL( false, uut::must_update_lcd         );
+	CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
+	
+	uut::must_update_lcd = true;
+	uut::update_lcd(0.0, -0.1);
+	CPPUNIT_ASSERT_EQUAL( false, uut::must_update_lcd         );
+	CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
+	
+	uut::must_update_lcd = true;
+	uut::update_lcd(0.0, 10000.0);
+	CPPUNIT_ASSERT_EQUAL( false, uut::must_update_lcd         );
+	CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
+}
+
 
 void LivelloSerbatoioTests::testSetup ( void ) {
 

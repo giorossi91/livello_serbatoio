@@ -20,6 +20,8 @@ class LivelloSerbatoioTests  : public CppUnit::TestFixture {
   CPPUNIT_TEST(test_measure_level);
   CPPUNIT_TEST(test_control_led);
   CPPUNIT_TEST(test_sanitize_data);
+  CPPUNIT_TEST(test_update_lcd);
+
 
   CPPUNIT_TEST(testSetup);
   // TODO da fare
@@ -42,7 +44,7 @@ protected:
   void test_measure_level      ( void );
   void test_control_led        ( void );
   void test_sanitize_data      ( void );
-
+  void test_update_lcd         ( void );
 
   
   // ==================

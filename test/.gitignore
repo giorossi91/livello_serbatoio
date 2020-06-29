@@ -1,3 +1,6 @@
-/Debug/
-/.settings/
+*.gcda
+*.gcno
+*.d
+*.o
+livello_serbatoio_test
 livello_serbatoio_uut.hpp

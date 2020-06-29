@@ -501,8 +501,7 @@ inline double compute_liters(double read_distance) {
   }
   
   read_distance -= SENSOR_DISTANCE;
-  double volume = TANK_NUMBER * ((TANK_RADIUS_CM * TANK_RADIUS_CM * PI * (WATER_MAX_HEIGHT_CM - read_distance)) / CM3_PER_LITER);
-  return (volume >= 0.0) ? volume : 0.0;
+  return TANK_NUMBER * ((TANK_RADIUS_CM * TANK_RADIUS_CM * PI * (WATER_MAX_HEIGHT_CM - read_distance)) / CM3_PER_LITER);
 }
 
 /**
@@ -695,6 +694,10 @@ inline double sanitize_data(double data, double min_val, double max_val, double 
  * @param liters I litri di acqua rimanenti.
  */
 inline void update_lcd(double percentage, double liters) {
+  if( ( percentage < 0.0 ) || ( percentage > 100.0 ) || ( liters < 0.0 ) || ( liters > 9999.9 ) ) {
+    must_update_lcd = false;
+  }
+  
   if(must_update_lcd == true) {
     must_update_lcd = false;
     
@@ -715,9 +718,7 @@ inline void update_lcd(double percentage, double liters) {
     if (l >= 1000) {
       index--;
     }
-    if (l >= 10000) {
-      index--;
-    }
+
     lcd.setCursor(index, 0);
     lcd.print(l);
   
@@ -725,12 +726,14 @@ inline void update_lcd(double percentage, double liters) {
     
     int16_t p = (int16_t) percentage;
     index = 12;
-    if (p < 10) {
-    } else if (p < 100) {
-      index--;
-    } else if (p < 1000) {
-      index--;
+    if(p >= 10) {
+      index --;
     }
+
+    if(p >= 100) {
+      index --;
+    }
+    
     lcd.setCursor(index, 0);
     lcd.print(p);
   
