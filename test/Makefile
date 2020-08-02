@@ -28,7 +28,7 @@ check: $(EXE)
 
 
 clean:
-	rm -f $(OBJS) $(EXE) *.d *.gcda *.gcno
+	$(RM) -f $(OBJS) $(EXE) *.d *.gcda *.gcno
 
 
 .PHONY: all pre-build check clean 

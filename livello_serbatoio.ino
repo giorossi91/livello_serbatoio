@@ -43,6 +43,9 @@
 # define SENSOR SENSOR_HCSR04
 #endif
 
+const int16_t FILTER_SEED = 0;
+const int16_t FILTER_SIZE = 5;
+
 /* Classi */
 
 /**
@@ -56,24 +59,20 @@ public:
    * @brief Costruttore.
    * @details Crea un'istanza di MedianFilter.
    * 
-   * @param size La dimensione del buffer.
    * @param seed Il valore iniziale del buffer.
    * 
    * @return L'istanza di MedianFilter inizializzata.
    */
-  MedianFilter(const byte size, const int16_t seed) {
-    medFilterWin    = max(size, 3);                           // number of samples in sliding median filter window - usually odd #
-    medDataPointer  = size >> 1;                              // mid point of window
-    data            = (int16_t *) calloc(size, sizeof(int));  // array for data
-    sizeMap         = (byte *)    calloc(size, sizeof(byte)); // array for locations of data in sorted list
-    locationMap     = (byte *)    calloc(size, sizeof(byte)); // array for locations of history data in map list
+  MedianFilter(const int16_t seed) {
+    medFilterWin    = FILTER_SIZE;                            // number of samples in sliding median filter window - usually odd #
+    medDataPointer  = FILTER_SIZE >> 1;                       // mid point of window
     oldestDataPoint = medDataPointer;                         // oldest data point location in data array
 
     // initialize the arrays
     for (byte i = 0; i < medFilterWin; i++) {
-      sizeMap[i]     = i;    // start map with straight run
+      sizeMap    [i] = i;    // start map with straight run
       locationMap[i] = i;    // start map with straight run
-      data[i]        = seed; // populate with seed value
+      data       [i] = seed; // populate with seed value
     }
   } 
 
@@ -115,7 +114,7 @@ public:
     }
     
     // SORT RIGHT (-) (n)======> (+)
-    if (!dataMoved && locationMap[oldestDataPoint] < rightEdge) {   // don't check right if at right border, or the data has already moved
+    if ( ( dataMoved == false ) && ( locationMap[oldestDataPoint] < rightEdge ) ) {   // don't check right if at right border, or the data has already moved
       for (byte i = locationMap[oldestDataPoint]; i < rightEdge; i++) {    //index through left adjacent data
         uint16_t n = i + 1;  // neighbour location
     
@@ -150,12 +149,12 @@ public:
   }
 
 private:
-  byte    medFilterWin;      /// Numero di campioni nella finestra a scorrimento del filtro mediano - di solito dispari.
-  byte    medDataPointer;    /// Punto centrale della finestra del filtro.
-  int16_t *data;             /// Puntatore all'array dei dati ordinato per età nel buffer circolare.
-  byte    *sizeMap;          /// Puntatore all'array per la posizione dei dati ordinati per dimensione.
-  byte    *locationMap;      /// Puntatore all'array per la posizione dei dati nella mappa storica.
-  byte    oldestDataPoint;   /// Posizione del dato più vecchio nel buffer circolare.
+  byte    medFilterWin;                /// Numero di campioni nella finestra a scorrimento del filtro mediano - di solito dispari.
+  byte    medDataPointer;              /// Punto centrale della finestra del filtro.
+  int16_t data        [FILTER_SIZE];   /// Puntatore all'array dei dati ordinato per età nel buffer circolare.
+  byte    sizeMap     [FILTER_SIZE];   /// Puntatore all'array per la posizione dei dati ordinati per dimensione.
+  byte    locationMap [FILTER_SIZE];   /// Puntatore all'array per la posizione dei dati nella mappa storica.
+  byte    oldestDataPoint;             /// Posizione del dato più vecchio nel buffer circolare.
 };
 
 
@@ -429,9 +428,6 @@ const int16_t DB7 = 8;
 byte LCD_UP_ARROW[] = { 4, 14, 21, 4, 4, 0, 0, 0 };
 byte LCD_PROGRESS[] = { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
 
-const int16_t FILTER_SEED = 0;
-const int16_t FILTER_SIZE = 5;
-
 const uint32_t SENSOR_RESPONSE_TIMEOUT_US = 500000UL; //500 ms
 const uint32_t SENSOR_NO_OBSTACLE_US      = 38000UL;  //38 ms
 
@@ -461,7 +457,7 @@ uint32_t          btn_press_timestamp    = 0U;
 //Formato (RS, E, DB4, DB5, DB6, DB7)
 LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
 
-MedianFilter filter(FILTER_SIZE, FILTER_SEED);
+MedianFilter filter(FILTER_SEED);
 
 StatisticheConsumo stats;
 
