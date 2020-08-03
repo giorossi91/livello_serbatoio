@@ -35,7 +35,7 @@
 #define SENSOR_HCSR04 0
 #define SENSOR_JSNSR04T 1
 
-#define roundfvalue(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
+#define roundfvalue(x)      ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
 /* Configurazioni */
 #ifndef UNIT_TEST
@@ -184,53 +184,28 @@ public:
    * @attention Va invocata in loop() ad ogni ciclo. 
    */
   void updateTime(void) {
-    uint32_t now = millis();
-    uint32_t millis_diff = now - last_millis;
+    uint32_t now         = millis();
+    uint32_t millis_diff = 0U;
+
+    millis_diff = (uint32_t)(now - last_millis);
 
     last_millis = now;
 
     millis_passed += millis_diff;
-    if(millis_passed >= 1000) {
-      seconds_passed ++;
-      millis_passed = 0;
-    }
-    
-    if(seconds_passed >= 60) {
-      minutes_passed ++;
-      seconds_passed = 0;
 
+    if(millis_passed >= ONE_SECOND_MS) {
       updateBuffer();
+
+      uint32_t n_sec = (uint32_t)(millis_passed / ONE_SECOND_MS);
+
+      seconds_passed += n_sec;
+      millis_passed   = millis_passed - (n_sec * ONE_SECOND_MS); 
     }
 
-    if(minutes_passed >= 60) {
-      hours_passed++;
-      minutes_passed = 0;
-
+    if(seconds_passed >= ONE_HOUR_S) {
       updateIndex();
-    }
-  }
 
-  /**
-   * @brief Esegue il reset dei dati temporali.
-   * @details
-   */
-  void resetTime(void) {
-    last_millis     = 0U;
-    millis_passed   = 0U;
-    seconds_passed  = 0U;
-    minutes_passed  = 0U;
-    hours_passed    = 0U;
-  }
-
-  /**
-   * @brief Esegue il reset dei consumi.
-   * @details
-   */
-  void resetConsumption(void) {
-    last_liters = 0;
-    consumption = 0;
-    for(uint16_t i = 0; i < STAT_SIZE; i++) {
-      consumption_samples[i] = 0U;
+      seconds_passed = seconds_passed - ONE_HOUR_S;
     }
   }
 
@@ -265,16 +240,6 @@ public:
    */
   uint32_t getConsumption1h(void) {
     return sumSamples(1);
-  }
-
-  /**
-   * @brief Fornisce i consumi totali nelle ultime 2 ore.
-   * @details Somma i consumi memorizzati.
-   * 
-   * @return Il consumo in litri.
-   */
-  uint32_t getConsumption2h(void) {
-    return sumSamples(2);
   }
 
   /**
@@ -363,7 +328,10 @@ private:
   }
 
   static const uint16_t STAT_SIZE         = 24*3;      /// La dimensione dei campioni (3gg).
-  static const uint32_t LITERS_THRESHOLD  = 15U;       /// Soglia di consumo minima per costituire un campione.
+  static const uint32_t LITERS_THRESHOLD  = 15U;       /// Soglia di consumo minima per costituire un campione.ii
+
+  static const uint32_t ONE_SECOND_MS     = 1000U;
+  static const uint32_t ONE_HOUR_S        = (60U * 60U);
   
   uint32_t index                          = 0U;        /// L'indice corrente nel buffer.
   uint32_t consumption_samples[STAT_SIZE] = { 0 };     /// Il buffer con i campioni. 
@@ -373,8 +341,6 @@ private:
   volatile uint32_t last_millis           = 0U;        /// Ultimo timestamp rilevato.
   volatile uint32_t millis_passed         = 0U;        /// Millisecondi passati dall'ultima invocazione di updateTime().
   volatile uint32_t seconds_passed        = 0U;        /// Secondi passati dall'ultima invocazione di updateTime().
-  volatile uint32_t minutes_passed        = 0U;        /// Minuti passati dall'ultima invocazione di updateTime().
-  volatile uint32_t hours_passed          = 0U;        /// Ore passate dall'accensione.
 };
 
 /* Costanti */

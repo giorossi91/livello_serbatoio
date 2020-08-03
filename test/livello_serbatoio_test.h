@@ -28,11 +28,8 @@ class LivelloSerbatoioTests  : public CppUnit::TestFixture {
   
   CPPUNIT_TEST(test_StatisticheConsumo_init             );
   CPPUNIT_TEST(test_StatisticheConsumo_updateTime       );
-  CPPUNIT_TEST(test_StatisticheConsumo_resetTime        );
-  CPPUNIT_TEST(test_StatisticheConsumo_resetConsumption );
   CPPUNIT_TEST(test_StatisticheConsumo_updateConsumption);
   CPPUNIT_TEST(test_StatisticheConsumo_getConsumption1h );
-  CPPUNIT_TEST(test_StatisticheConsumo_getConsumption2h );
   CPPUNIT_TEST(test_StatisticheConsumo_getConsumption12h);
   CPPUNIT_TEST(test_StatisticheConsumo_getConsumption1d );
   CPPUNIT_TEST(test_StatisticheConsumo_getConsumption3d );
@@ -69,11 +66,8 @@ protected:
   
   void test_StatisticheConsumo_init              ( void );
   void test_StatisticheConsumo_updateTime        ( void );
-  void test_StatisticheConsumo_resetTime         ( void );
-  void test_StatisticheConsumo_resetConsumption  ( void );
   void test_StatisticheConsumo_updateConsumption ( void );
   void test_StatisticheConsumo_getConsumption1h  ( void );
-  void test_StatisticheConsumo_getConsumption2h  ( void );
   void test_StatisticheConsumo_getConsumption12h ( void );
   void test_StatisticheConsumo_getConsumption1d  ( void );
   void test_StatisticheConsumo_getConsumption3d  ( void );

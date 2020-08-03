@@ -17,6 +17,7 @@
 #define SENSOR SENSOR_HCSR04 //<-- sensor actually used
 
 #define private public
+#define volatile 
 
 namespace uut {
 #include "livello_serbatoio_uut.hpp"
@@ -442,116 +443,219 @@ void LivelloSerbatoioTests::testSetup ( void ) {
 // Harness utilities
 
 void LivelloSerbatoioTests::timesim_thread ( void ) {
-  while ( time_on == true ) {
-    usleep(TIME_STEP_MS);
-    
-    timePassedFromBootMs += TIME_STEP_MS;
-  }
+	while ( time_on == true ) {
+		usleep(TIME_STEP_MS);
+
+		timePassedFromBootMs += TIME_STEP_MS;
+	}
 }
 
 void LivelloSerbatoioTests::setUp ( void ) {
-  std::cout << std::endl << HARNESS_PREFIX << "Set-Up" << std::endl;
-  
-  cycle_num = 0U;
+	std::cout << std::endl << HARNESS_PREFIX << "Set-Up" << std::endl;
+
+	cycle_num = 0U;
 }
 
 void LivelloSerbatoioTests::start_time ( void ) {
-  timePassedFromBootMs = 0U;
-  time_on              = true;
-  time_thread = std::thread(&LivelloSerbatoioTests::timesim_thread, this);
+	timePassedFromBootMs = 0U;
+	time_on              = true;
+	time_thread = std::thread(&LivelloSerbatoioTests::timesim_thread, this);
 }
 
 void LivelloSerbatoioTests::stop_time ( void ) {
-  time_on = false;
-  time_thread.join();
-  timePassedFromBootMs = 0U;
+	time_on = false;
+	time_thread.join();
+	timePassedFromBootMs = 0U;
 }
 
 void LivelloSerbatoioTests::tearDown ( void ) {
-  std::cout << std::endl << HARNESS_PREFIX << "Tear-Down" << std::endl;
+	std::cout << std::endl << HARNESS_PREFIX << "Tear-Down" << std::endl;
 }
 
 void LivelloSerbatoioTests::loopNTimes ( uint32_t n ) {
-  for (uint32_t i = 0U; i < n; i++) {
-    cycle_num ++;
-    
-    std::cout << "====== CYCLE " << cycle_num << " ======" << std::endl;
-    
-    uut::loop();
-  }
+	for (uint32_t i = 0U; i < n; i++) {
+		cycle_num ++;
+
+		std::cout << "====== CYCLE " << cycle_num << " ======" << std::endl;
+
+		uut::loop();
+	}
 }
 
 
 void LivelloSerbatoioTests::test_MedianFilter_init ( void ) {
-  int16_t init_value = rand() % 1000U; // any;
-  
-  uut::MedianFilter mf1(init_value);
-  
-  CPPUNIT_ASSERT_EQUAL(static_cast<byte>(uut::FILTER_SIZE    ), mf1.medFilterWin  );
-  CPPUNIT_ASSERT_EQUAL(static_cast<byte>(uut::FILTER_SIZE / 2), mf1.medDataPointer);
-  for(byte i = 0U; i < uut::FILTER_SIZE; i++) {
-    CPPUNIT_ASSERT_EQUAL(init_value, mf1.data[i]);
-  }
+	int16_t init_value = rand() % 1000U; // any;
+
+	uut::MedianFilter mf1(init_value);
+
+	CPPUNIT_ASSERT_EQUAL(static_cast<byte>(uut::FILTER_SIZE    ), mf1.medFilterWin  );
+	CPPUNIT_ASSERT_EQUAL(static_cast<byte>(uut::FILTER_SIZE / 2), mf1.medDataPointer);
+	for(byte i = 0U; i < uut::FILTER_SIZE; i++) {
+		CPPUNIT_ASSERT_EQUAL(init_value, mf1.data[i]);
+	}
 }
 
 void LivelloSerbatoioTests::test_MedianFilter_in ( void ) {
-  uut::MedianFilter mf1(0);                                         //  0  0  0  0  0
+	uut::MedianFilter mf1(0);                                         //  0  0  0  0  0
 
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  0 ), mf1.in( 1));    //  0  0  0  0  1
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  0 ), mf1.in( 1));    //  0  0  0  1  1
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  1 ), mf1.in( 1));    //  0  0  1  1  1
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  1 ), mf1.in( 2));    //  0  1  1  1  2
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  1 ), mf1.in( 2));    //  1  1  1  2  2
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  2 ), mf1.in( 2));    //  1  1  2  2  2
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  2 ), mf1.in(10));    //  1  2  2  2 10
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  2 ), mf1.in( 3));    //  2  2  2 10  3
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in( 3));    //  2  2 10  3  3
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in( 0));    //  2 10  3  3  0
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in( 0));    // 10  3  3  0  0
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in(11));    //  3  3  0  0 11
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in(10));    //  3  0  0 11 10
-  CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> ( 10 ), mf1.in(11));    //  0  0 11 10 11
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  0 ), mf1.in( 1));    //  0  0  0  0  1
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  0 ), mf1.in( 1));    //  0  0  0  1  1
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  1 ), mf1.in( 1));    //  0  0  1  1  1
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  1 ), mf1.in( 2));    //  0  1  1  1  2
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  1 ), mf1.in( 2));    //  1  1  1  2  2
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  2 ), mf1.in( 2));    //  1  1  2  2  2
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  2 ), mf1.in(10));    //  1  2  2  2 10
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  2 ), mf1.in( 3));    //  2  2  2 10  3
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in( 3));    //  2  2 10  3  3
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in( 0));    //  2 10  3  3  0
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in( 0));    // 10  3  3  0  0
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in(11));    //  3  3  0  0 11
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  3 ), mf1.in(10));    //  3  0  0 11 10
+	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> ( 10 ), mf1.in(11));    //  0  0 11 10 11
 }
 
 void LivelloSerbatoioTests::test_MedianFilter_out ( void ) {
-  uut::MedianFilter mf1(0);
+	uut::MedianFilter mf1(0);
 
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 1));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 1));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 1));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 2));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 2));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 2));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in(10));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 3));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 3));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 0));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 0));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in(11));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in(10));
-  CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in(11));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 1));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 1));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 1));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 2));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 2));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 2));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in(10));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 3));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 3));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 0));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 0));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in(11));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in(10));
+	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in(11));
 }
 
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_init ( void ) {
+	timePassedFromBootMs = 100U;
+	
+	uut::StatisticheConsumo sc1;
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis);
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_updateTime ( void ) {
-}
+	timePassedFromBootMs = 0U;
+	
+	uut::StatisticheConsumo sc1;
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_resetTime( void ) {
-}
+	timePassedFromBootMs = 0U;
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.seconds_passed);
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_resetConsumption ( void ) {
+	timePassedFromBootMs = 1U;
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    1 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.seconds_passed);
+
+	timePassedFromBootMs = 999U;
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                  999 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.seconds_passed);
+
+	timePassedFromBootMs = 1000U;
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    1 ), sc1.seconds_passed);
+
+	timePassedFromBootMs = 1001U;
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    1 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    1 ), sc1.seconds_passed);
+	
+	timePassedFromBootMs = 3600000U - 1U;
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                  999 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                 3599 ), sc1.seconds_passed);
+	
+	timePassedFromBootMs = 3600000U;
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.seconds_passed);
+	
+	timePassedFromBootMs = 3600000U + 1U;
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    1 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.seconds_passed);
+	
+	
+	// overflow management
+	sc1.last_millis      = UINT32_MAX;
+	timePassedFromBootMs = 0U;
+	
+	sc1.millis_passed  = 0U;
+	sc1.seconds_passed = 0U;
+	
+	sc1.updateTime();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis   );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    1 ), sc1.millis_passed );
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.seconds_passed);
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_updateConsumption ( void ) {
+	uut::StatisticheConsumo sc1;
+	
+	// filling
+	sc1.updateConsumption(0U);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.last_liters);
+
+	sc1.updateConsumption(1U);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.last_liters);
+	
+	sc1.updateConsumption(uut::StatisticheConsumo::LITERS_THRESHOLD - 1U);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.last_liters);
+	
+	sc1.updateConsumption(uut::StatisticheConsumo::LITERS_THRESHOLD);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.last_liters);
+	
+	sc1.updateConsumption(uut::StatisticheConsumo::LITERS_THRESHOLD + 1U);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)                                             , sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(uut::StatisticheConsumo::LITERS_THRESHOLD + 1U), sc1.last_liters);
+	
+	sc1.updateConsumption(1000U);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)    , sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U), sc1.last_liters);
+	
+	// consuming
+	sc1.updateConsumption(1000U - 1U);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)    , sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U), sc1.last_liters);
+	
+	sc1.updateConsumption(1000U - uut::StatisticheConsumo::LITERS_THRESHOLD + 1U);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)    , sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U), sc1.last_liters);
+	
+	sc1.updateConsumption(1000U - uut::StatisticheConsumo::LITERS_THRESHOLD);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)    , sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U), sc1.last_liters);
+	
+	sc1.updateConsumption(1000U - uut::StatisticheConsumo::LITERS_THRESHOLD - 1U);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(uut::StatisticheConsumo::LITERS_THRESHOLD + 1U)        , sc1.consumption);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U - uut::StatisticheConsumo::LITERS_THRESHOLD - 1U), sc1.last_liters);
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1h ( void ) {
-}
-
-void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption2h ( void ) {
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption12h ( void ) {
