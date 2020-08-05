@@ -281,7 +281,6 @@ void LivelloSerbatoioTests::test_control_led ( void ) {
 	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
 	CPPUNIT_ASSERT_EQUAL(true, uut::led_status);
 
-
 	//
 	arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
 	uut::led_on = false;
@@ -429,9 +428,8 @@ void LivelloSerbatoioTests::test_update_lcd ( void ) {
 }
 
 
-void LivelloSerbatoioTests::testSetup ( void ) {
-
-//  uut::setup();
+void LivelloSerbatoioTests::test_loop ( void ) {
+//	uut::setup();
 //
 //  arduino_pins[uut::ECHO_DPIN].pulse_time = 10;
 //
@@ -656,23 +654,111 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateConsumption ( void ) {
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1h ( void ) {
+	uut::StatisticheConsumo sc1;
+	
+	sc1.index = 0U;
+	
+	for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+		sc1.consumption_samples[i] = 1U;
+	}
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1U ) , sc1.getConsumption1h());
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption12h ( void ) {
+	uut::StatisticheConsumo sc1;
+	
+	sc1.index = 0U;
+	
+	for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+		sc1.consumption_samples[i] = 1U;
+	}
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 12U ) , sc1.getConsumption12h());
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1d ( void ) {
+	uut::StatisticheConsumo sc1;
+	
+	sc1.index = 0U;
+	
+	for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+		sc1.consumption_samples[i] = 1U;
+	}
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 24U ) , sc1.getConsumption1d());
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption3d ( void ) {
+	uut::StatisticheConsumo sc1;
+	
+	sc1.index = 0U;
+	
+	for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+		sc1.consumption_samples[i] = 1U;
+	}
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 24U * 3U ) , sc1.getConsumption3d());
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_sumSamples ( void ) {
+	uut::StatisticheConsumo sc1;
+	
+	sc1.index = 3U;
+	
+	sc1.consumption_samples[0] = 1U;
+	sc1.consumption_samples[1] = 10U;
+	sc1.consumption_samples[2] = 100U;
+	sc1.consumption_samples[3] = 1000U;	
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 0U    ) , sc1.sumSamples(0));
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1000U ) , sc1.sumSamples(1));
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1100U ) , sc1.sumSamples(2));
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1110U ) , sc1.sumSamples(3));
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1111U ) , sc1.sumSamples(4));
+
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1111U ) , sc1.sumSamples(uut::StatisticheConsumo::STAT_SIZE - 1U));
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 9999U ) , sc1.sumSamples(uut::StatisticheConsumo::STAT_SIZE));
+	
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_updateBuffer ( void ) {
+	uut::StatisticheConsumo sc1;
+	
+	sc1.index = 1U;
+	
+	sc1.consumption = 1U;
+	sc1.updateBuffer();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1U ) , sc1.consumption_samples[sc1.index]);
+	
+	sc1.consumption = 1U;
+	sc1.updateBuffer();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 2U ) , sc1.consumption_samples[sc1.index]);
+	
+	sc1.consumption = 1U;
+	sc1.updateBuffer();
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 3U ) , sc1.consumption_samples[sc1.index]);
+
 }
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_updateIndex ( void ) {
+	uut::StatisticheConsumo sc1;
+	
+	for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+		sc1.consumption_samples[i] = 1U;
+	}
+	
+	sc1.index = 0U;
+	sc1.updateIndex();
+	
+	for(uint32_t i = 1U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+		CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( i )  , sc1.index);
+		CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 0U ) , sc1.consumption_samples[sc1.index]);
+		
+		sc1.updateIndex();
+	}
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 0 ) , sc1.index);
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 0U ) , sc1.consumption_samples[sc1.index]);
 }
 

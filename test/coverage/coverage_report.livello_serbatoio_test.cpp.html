@@ -269,18 +269,18 @@
             <td class="headerValue">livello_serbatoio_test.cpp</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">412</td>
-            <td class="headerTableEntry">429</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">96.0 %</td>
+            <td class="headerTableEntry">467</td>
+            <td class="headerTableEntry">484</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">96.5 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2020-08-03 16:58:59</td>
+            <td class="headerValue">2020-08-04 15:49:25</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">744</td>
-            <td class="headerTableEntry">1492</td>
-            <td class="headerTableEntry" style="background-color:LightPink">49.9 %</td>
+            <td class="headerTableEntry">832</td>
+            <td class="headerTableEntry">1656</td>
+            <td class="headerTableEntry" style="background-color:LightPink">50.2 %</td>
           </tr>
         </table>
       </td>
@@ -4909,7 +4909,7 @@
     <td align="right" class="lineno"><pre>659</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>}</pre></td>
+    <td align="left" class="src coveredLine"><pre>	uut::StatisticheConsumo sc1;</pre></td>
     </tr>
 
     <tr>
@@ -4923,35 +4923,35 @@
     <td align="right" class="lineno"><pre>661</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption12h ( void ) {</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.index = 0U;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>662</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>}</pre></td>
-    </tr>
-
-    <tr>
-    <td align="right" class="lineno"><pre>663</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount "><pre></pre></td>
     <td align="left" class="src "><pre></pre></td>
     </tr>
 
     <tr>
+    <td align="right" class="lineno"><pre>663</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 73 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>74</pre></td>
+    <td align="left" class="src coveredLine"><pre>	for(uint32_t i = 0U; i &lt; uut::StatisticheConsumo::STAT_SIZE; i++) {</pre></td>
+    </tr>
+
+    <tr>
     <td align="right" class="lineno"><pre>664</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1d ( void ) {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>73</pre></td>
+    <td align="left" class="src coveredLine"><pre>		sc1.consumption_samples[i] = 1U;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>665</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>}</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>	}</pre></td>
     </tr>
 
     <tr>
@@ -4963,9 +4963,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>667</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 15 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption3d ( void ) {</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 1U ) , sc1.getConsumption1h());</pre></td>
     </tr>
 
     <tr>
@@ -4986,14 +4986,14 @@
     <td align="right" class="lineno"><pre>670</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_sumSamples ( void ) {</pre></td>
+    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption12h ( void ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>671</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>}</pre></td>
+    <td align="left" class="src coveredLine"><pre>	uut::StatisticheConsumo sc1;</pre></td>
     </tr>
 
     <tr>
@@ -5007,39 +5007,655 @@
     <td align="right" class="lineno"><pre>673</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_updateBuffer ( void ) {</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.index = 0U;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>674</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>}</pre></td>
-    </tr>
-
-    <tr>
-    <td align="right" class="lineno"><pre>675</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount "><pre></pre></td>
     <td align="left" class="src "><pre></pre></td>
     </tr>
 
     <tr>
+    <td align="right" class="lineno"><pre>675</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 73 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>74</pre></td>
+    <td align="left" class="src coveredLine"><pre>	for(uint32_t i = 0U; i &lt; uut::StatisticheConsumo::STAT_SIZE; i++) {</pre></td>
+    </tr>
+
+    <tr>
     <td align="right" class="lineno"><pre>676</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_updateIndex ( void ) {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>73</pre></td>
+    <td align="left" class="src coveredLine"><pre>		sc1.consumption_samples[i] = 1U;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>677</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>	}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>678</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>679</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 15 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 12U ) , sc1.getConsumption12h());</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>680</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
     <tr>
-    <td align="right" class="lineno"><pre>678</pre></td>
+    <td align="right" class="lineno"><pre>681</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>682</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1d ( void ) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>683</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	uut::StatisticheConsumo sc1;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>684</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>685</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.index = 0U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>686</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>687</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 73 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>74</pre></td>
+    <td align="left" class="src coveredLine"><pre>	for(uint32_t i = 0U; i &lt; uut::StatisticheConsumo::STAT_SIZE; i++) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>688</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>73</pre></td>
+    <td align="left" class="src coveredLine"><pre>		sc1.consumption_samples[i] = 1U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>689</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>	}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>690</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>691</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 15 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 24U ) , sc1.getConsumption1d());</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>692</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>693</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>694</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption3d ( void ) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>695</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	uut::StatisticheConsumo sc1;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>696</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>697</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.index = 0U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>698</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>699</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 73 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>74</pre></td>
+    <td align="left" class="src coveredLine"><pre>	for(uint32_t i = 0U; i &lt; uut::StatisticheConsumo::STAT_SIZE; i++) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>700</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>73</pre></td>
+    <td align="left" class="src coveredLine"><pre>		sc1.consumption_samples[i] = 1U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>701</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>	}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>702</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>703</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 15 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 24U * 3U ) , sc1.getConsumption3d());</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>704</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>705</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>706</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_sumSamples ( void ) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>707</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	uut::StatisticheConsumo sc1;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>708</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>709</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.index = 3U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>710</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>711</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.consumption_samples[0] = 1U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>712</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.consumption_samples[1] = 10U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>713</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.consumption_samples[2] = 100U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>714</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.consumption_samples[3] = 1000U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>715</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>716</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 0U    ) , sc1.sumSamples(0));</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>717</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 1000U ) , sc1.sumSamples(1));</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>718</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 1100U ) , sc1.sumSamples(2));</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>719</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 1110U ) , sc1.sumSamples(3));</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>720</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 1111U ) , sc1.sumSamples(4));</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>721</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>722</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 1111U ) , sc1.sumSamples(uut::StatisticheConsumo::STAT_SIZE - 1U));</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>723</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 9999U ) , sc1.sumSamples(uut::StatisticheConsumo::STAT_SIZE));</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>724</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>725</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>726</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>727</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_updateBuffer ( void ) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>728</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	uut::StatisticheConsumo sc1;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>729</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>730</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.index = 1U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>731</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>732</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.consumption = 1U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>733</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.updateBuffer();</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>734</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 1U ) , sc1.consumption_samples[sc1.index]);</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>735</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>736</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.consumption = 1U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>737</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.updateBuffer();</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>738</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 2U ) , sc1.consumption_samples[sc1.index]);</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>739</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>740</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.consumption = 1U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>741</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.updateBuffer();</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>742</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 3U ) , sc1.consumption_samples[sc1.index]);</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>743</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>744</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>745</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>746</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>void LivelloSerbatoioTests::test_StatisticheConsumo_updateIndex ( void ) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>747</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	uut::StatisticheConsumo sc1;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>748</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>749</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 73 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>74</pre></td>
+    <td align="left" class="src coveredLine"><pre>	for(uint32_t i = 0U; i &lt; uut::StatisticheConsumo::STAT_SIZE; i++) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>750</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>73</pre></td>
+    <td align="left" class="src coveredLine"><pre>		sc1.consumption_samples[i] = 1U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>751</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>	}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>752</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>753</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.index = 0U;</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>754</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	sc1.updateIndex();</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>755</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>756</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 72 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>73</pre></td>
+    <td align="left" class="src coveredLine"><pre>	for(uint32_t i = 1U; i &lt; uut::StatisticheConsumo::STAT_SIZE; i++) {</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>757</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 72 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 72 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 72 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 72 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>72</pre></td>
+    <td align="left" class="src coveredLine"><pre>		CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( i )  , sc1.index);</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>758</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 72 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 72 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 72 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 72 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>72</pre></td>
+    <td align="left" class="src coveredLine"><pre>		CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 0U ) , sc1.consumption_samples[sc1.index]);</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>759</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>760</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>72</pre></td>
+    <td align="left" class="src coveredLine"><pre>		sc1.updateIndex();</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>761</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>	}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>762</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre></pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>763</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 0 ) , sc1.index);</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>764</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>	CPPUNIT_ASSERT_EQUAL(static_cast&lt;uint32_t>( 0U ) , sc1.consumption_samples[sc1.index]);</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>765</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
+    </tr>
+
+    <tr>
+    <td align="right" class="lineno"><pre>766</pre></td>
     <td align="right" class="linebranch"></td>
     <td align="right" class="linecount "><pre></pre></td>
     <td align="left" class="src "><pre></pre></td>

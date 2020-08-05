@@ -239,7 +239,7 @@ public:
    * @return Il consumo in litri.
    */
   uint32_t getConsumption1h(void) {
-    return sumSamples(1);
+    return sumSamples(1U);
   }
 
   /**
@@ -249,7 +249,7 @@ public:
    * @return Il consumo in litri.
    */
   uint32_t getConsumption12h(void) {
-    return sumSamples(12);
+    return sumSamples(12U);
   }
 
   /**
@@ -259,7 +259,7 @@ public:
    * @return Il consumo in litri.
    */
   uint32_t getConsumption1d(void) {
-    return sumSamples(24);
+    return sumSamples(24U);
   }
 
 
@@ -270,7 +270,7 @@ public:
    * @return Il consumo in litri.
    */
   uint32_t getConsumption3d(void) {
-    return sumSamples((24 * 3) - 1);
+    return sumSamples(24U * 3U);
   }
   
 private:
@@ -290,7 +290,7 @@ private:
     
     uint32_t sum = 0U;
 
-    int16_t i = index;//= (index >= 0) ? (index) : (STAT_SIZE - 1);
+    int16_t i = index;
     uint32_t time_index = back_time;
     while(time_index != 0) {
 
@@ -327,8 +327,8 @@ private:
     consumption_samples[index] = 0U; //reset della statistica vecchia
   }
 
-  static const uint16_t STAT_SIZE         = 24*3;      /// La dimensione dei campioni (3gg).
-  static const uint32_t LITERS_THRESHOLD  = 15U;       /// Soglia di consumo minima per costituire un campione.ii
+  static const uint16_t STAT_SIZE         = (24U * 3U) + 1U; /// La dimensione dei campioni (3gg).
+  static const uint32_t LITERS_THRESHOLD  = 15U;             /// Soglia di consumo minima per costituire un campione.ii
 
   static const uint32_t ONE_SECOND_MS     = 1000U;
   static const uint32_t ONE_HOUR_S        = (60U * 60U);
@@ -932,6 +932,7 @@ void loop(void) {
   if ((millis() - timestamp_measurement) > measure_interval) {
     distance = measure_level();
     if(abs((-1.0) - distance) < 0.1) {
+      delay(SLEEP_TIME);
       return; //ERRORE! Ferma il loop!
     }
     filter.in(roundfvalue(distance));
