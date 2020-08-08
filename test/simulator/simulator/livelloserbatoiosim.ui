@@ -64,6 +64,41 @@ border-radius:20px;
        </spacer>
       </item>
       <item>
+       <widget class="QComboBox" name="timescale_combobox">
+        <property name="toolTip">
+         <string>Time scale</string>
+        </property>
+        <property name="currentIndex">
+         <number>2</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>0.01</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>0.1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>10</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>100</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="show_button">
         <property name="maximumSize">
          <size>
@@ -168,7 +203,7 @@ p, li { white-space: pre-wrap; }
        <enum>QSlider::TicksBothSides</enum>
       </property>
       <property name="tickInterval">
-       <number>100</number>
+       <number>10</number>
       </property>
      </widget>
     </item>
@@ -183,8 +218,38 @@ p, li { white-space: pre-wrap; }
      <height>24</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuControls">
+    <property name="title">
+     <string>Controls</string>
+    </property>
+    <addaction name="actionPause"/>
+    <addaction name="actionResume"/>
+   </widget>
+   <widget class="QMenu" name="menuD_IO">
+    <property name="title">
+     <string>D/IO</string>
+    </property>
+    <addaction name="actionShow_Digital_I_O"/>
+   </widget>
+   <addaction name="menuControls"/>
+   <addaction name="menuD_IO"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionPause">
+   <property name="text">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionResume">
+   <property name="text">
+    <string>Resume</string>
+   </property>
+  </action>
+  <action name="actionShow_Digital_I_O">
+   <property name="text">
+    <string>Show Digital I/O</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

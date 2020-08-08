@@ -25,57 +25,79 @@ namespace uut {
 }
 // <--
 
-const int LivelloSerbatoioSim::SCHEDULER_PERIOD_MS = 500;
-const int LivelloSerbatoioSim::DISTANCE_LSB        = 58;
+const int LivelloSerbatoioSim::DISTANCE_LSB = 58;
 
 LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::LivelloSerbatoioSim)
-{
+    ui(new Ui::LivelloSerbatoioSim) {
     ui->setupUi(this);
+
+    showEventsPanel = new ShowEvents(this);
+
+    showEventsPanel->grabGesture(Qt::PanGesture);
+    showEventsPanel->grabGesture(Qt::PinchGesture);
+    showEventsPanel->show();
 
     qRegisterMetaType<std::string>();
     qRegisterMetaType<int32_t>("int32_t");
 
-
     ui->serial_textbrowser->setText("");
     ui->lcd_textedit->setText("");
+
+    ui->distance_vslider->setMinimum(0);
+    ui->distance_vslider->setMaximum(static_cast<uint32_t>(uut::TANK_HEIGHT_CM + 2));
+
+    ui->distance_spinbox->setMinimum(0);
+    ui->distance_spinbox->setMaximum(static_cast<uint32_t>(uut::TANK_HEIGHT_CM + 2));
 
     connect(&uut::lcd, SIGNAL(printTextOnLcd(std::string)) , this, SLOT(updateLcdScreen(std::string))     , Qt::QueuedConnection);
     connect(&Serial  , SIGNAL(printSerialText(std::string)), this, SLOT(updateSerialMonitor(std::string)) , Qt::QueuedConnection);
     connect(&arduino , SIGNAL(pinWritten(int32_t, int32_t)), this, SLOT(updatePinStatus(int32_t, int32_t)), Qt::QueuedConnection);
 
+    QString status =  "Simulation of " VERSION " in "
+#if DEBUG == CONF_DEBUG
+        "DEBUG mode";
+#else
+        "RELEASE mode";
+#endif
+
+    ui->statusBar->showMessage(status);
+
+    simOn.store(true);
+    ui->actionPause ->setEnabled(true );
+    ui->actionResume->setEnabled(false);
 
     executor = QThread::create([=](void) {
-        ArduinoBoard::arduino_pins[uut::ECHO_DPIN].pulse_time = ui->distance_spinbox->value() * DISTANCE_LSB;
+        arduino.setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(ui->distance_spinbox->value() * DISTANCE_LSB));
+
         uut::setup();
 
         while(1) {
-            uut::loop();
+            if ( simOn.load() == true ) {
+                uut::loop();
+            }
         }
     });
 
     executor->start();
 }
 
-LivelloSerbatoioSim::~LivelloSerbatoioSim()
-{
+LivelloSerbatoioSim::~LivelloSerbatoioSim ( void ) {
     delete ui;
+
+    delete showEventsPanel;
 }
 
-void LivelloSerbatoioSim::updateSerialMonitor(std::string text)
-{
+void LivelloSerbatoioSim::updateSerialMonitor ( std::string text ) {
     ui->serial_textbrowser->setPlainText(ui->serial_textbrowser->toPlainText() + QString::fromStdString(text));
     ui->serial_textbrowser->verticalScrollBar()->setValue(ui->serial_textbrowser->verticalScrollBar()->maximum());
 }
 
-void LivelloSerbatoioSim::updateLcdScreen(std::string text)
-{
+void LivelloSerbatoioSim::updateLcdScreen ( std::string text ) {
     ui->lcd_textedit->setText(QString::fromStdString(text));
 }
 
-void LivelloSerbatoioSim::updatePinStatus(int32_t pin, int32_t value)
-{
+void LivelloSerbatoioSim::updatePinStatus ( int32_t pin, int32_t value ) {
     // update ui
     if(pin == uut::LCD_LIGHT_DPIN && value == HIGH) {
         ui->lcd_textedit->setStyleSheet("border: 1px solid rgb(0,255,0);");
@@ -90,28 +112,62 @@ void LivelloSerbatoioSim::updatePinStatus(int32_t pin, int32_t value)
     }
 }
 
-
-void LivelloSerbatoioSim::on_distance_vslider_sliderMoved(int position)
-{
-    ui->distance_spinbox->setValue(position);
-    ArduinoBoard::arduino_pins[uut::ECHO_DPIN].pulse_time = position * DISTANCE_LSB;
+void LivelloSerbatoioSim::on_distance_vslider_valueChanged ( int value ) {
+    ui->distance_spinbox->setValue(value);
+    arduino.setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(value * DISTANCE_LSB));
 }
 
-void LivelloSerbatoioSim::on_distance_spinbox_valueChanged(double position)
-{
+
+void LivelloSerbatoioSim::on_distance_spinbox_valueChanged ( double position ) {
     ui->distance_vslider->setValue(static_cast<int>(position));
-    ArduinoBoard::arduino_pins[uut::ECHO_DPIN].pulse_time = position * DISTANCE_LSB;
+    arduino.setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(position * DISTANCE_LSB));
 }
 
-void LivelloSerbatoioSim::on_show_button_pressed()
-{
-    ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
+void LivelloSerbatoioSim::on_show_button_pressed ( void ) {
+    arduino.setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
     if(ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].pIsr != nullptr) {
         ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].pIsr();
     }
 }
 
-void LivelloSerbatoioSim::on_show_button_released()
+void LivelloSerbatoioSim::on_show_button_released ( void ) {
+    arduino.setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+}
+
+void LivelloSerbatoioSim::on_timescale_combobox_currentIndexChanged ( int index ) {
+    switch ( index ) {
+    case 0:
+        arduino.setTimeScale(0.01);
+        break;
+    case 1:
+        arduino.setTimeScale(0.1);
+        break;
+    case 2:
+        arduino.setTimeScale(1.0);
+        break;
+    case 3:
+        arduino.setTimeScale(10.0);
+        break;
+    case 4:
+        arduino.setTimeScale(100.0);
+        break;
+    }
+}
+
+void LivelloSerbatoioSim::on_actionPause_triggered ( void ) {
+    simOn.store(false);
+    ui->actionPause ->setEnabled(false);
+    ui->actionResume->setEnabled(true);
+}
+
+void LivelloSerbatoioSim::on_actionResume_triggered ( void ) {
+    simOn.store(true);
+
+    ui->actionPause ->setEnabled(true );
+    ui->actionResume->setEnabled(false);
+}
+
+void LivelloSerbatoioSim::on_actionShow_Digital_I_O_triggered ( void )
 {
-    ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].out_val = LOW;
+    showEventsPanel->show();
 }

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,8 +28,11 @@ SOURCES += \
         Serial.cpp \
         arduino_stubs.cpp \
         arduinoboard.cpp \
+        chart.cpp \
+        chartview.cpp \
         main.cpp \
-        livelloserbatoiosim.cpp
+        livelloserbatoiosim.cpp \
+        showevents.cpp
 
 HEADERS += \
         LiquidCrystal.h \
@@ -37,11 +40,15 @@ HEADERS += \
         arduino_stubs.h \
         arduino_types.h \
         arduinoboard.h \
+        chart.h \
+        chartview.h \
         livello_serbatoio_uut.hpp \
-        livelloserbatoiosim.h
+        livelloserbatoiosim.h \
+        showevents.h
 
 FORMS += \
-        livelloserbatoiosim.ui
+        livelloserbatoiosim.ui \
+        showevents.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
