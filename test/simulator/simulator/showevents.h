@@ -9,6 +9,8 @@
 #include <QtCharts/QLineSeries>
 #include <QDateTimeAxis>
 #include <QValueAxis>
+#include <QTimer>
+#include <QMutex>
 
 #include <map>
 
@@ -24,22 +26,47 @@ public:
     explicit ShowEvents(QWidget *parent = nullptr);
     ~ShowEvents();
 
+    void registerDigitalIO(int32_t id, QString seriesName);
+
+    template<typename Functor>
+    void addDigitalMonitor(int32_t id, int32_t periodMs, Functor && monitorFunction) {
+        QTimer *t = new QTimer();
+        t->setInterval(periodMs);
+        t->setSingleShot(false);
+        t->callOnTimeout([=]( void ) {
+           addNewPoint(id, monitorFunction());
+        });
+        t->start();
+
+        monitors << t;
+    }
+
+    void pauseMonitors ( void );
+    void resumeMonitors( void );
+
 private:
 
-    void addSeries(int32_t pinId, QString seriesName);
+    void addSeries(int32_t id, QString seriesName);
+    void handleMarkerClicked ( void );
 
+    QMutex addDataMutex;
 
     Ui::ShowEvents *ui;
 
-    std::map<int32_t, QLineSeries *> pinSeries;
+    std::map<int32_t, QLineSeries *> seriesMap;
+    std::map<int32_t, int32_t>       idMap;
+    std::atomic<int32_t>             uid;
 
-    Chart         *dataChart;
-    ChartView     *dataView;
-    QDateTimeAxis *x_axis;
+    Chart          *dataChart;
+    ChartView      *dataView;
+    QDateTimeAxis  *x_axis;
+    qreal          current_y_max;
+    QList<QTimer*> monitors;
+
+    static const int time_offset_sec;
 
 public slots:
-    void addNewPoint(int32_t pinId, int32_t val);
-    void addNewSleep(int32_t usecSlept);
+    void addNewPoint(int32_t id, int32_t val);
 };
 
 #endif // SHOWEVENTS_H

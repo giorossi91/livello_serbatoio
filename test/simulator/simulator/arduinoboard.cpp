@@ -3,6 +3,8 @@
 
 ArduinoBoard arduino;
 
+const int32_t ArduinoBoard::SLEEP_EVENT = 99;
+
 Pin_t ArduinoBoard::arduino_pins[] = {
     { D0  , INPUT , nullptr, 0, 0, 0 },
     { D1  , INPUT , nullptr, 0, 0, 0 },
@@ -46,7 +48,7 @@ int32_t ArduinoBoard::millis ( void ) {
     }
 
     pinLock.lock();
-    ms *= (1.0/timeScale);
+    ms *= (1.0 / timeScale);
     pinLock.unlock();
 
     return ms;
@@ -59,10 +61,14 @@ void ArduinoBoard::delay ( int32_t ms ) {
     pinLock.unlock();
 
 #ifdef QT_CORE_LIB
-    emit sleepEvent(ms * 1000);
+    emit boardEvent(SLEEP_EVENT, HIGH);
 #endif
 
     usleep(sleepTime);
+
+#ifdef QT_CORE_LIB
+    emit boardEvent(SLEEP_EVENT, LOW);
+#endif
 }
 
 void ArduinoBoard::digitalWrite ( int32_t pin, int32_t v ) {
@@ -73,8 +79,7 @@ void ArduinoBoard::digitalWrite ( int32_t pin, int32_t v ) {
     pinLock.unlock();
 
 #ifdef QT_CORE_LIB
-    emit pinWritten(pin, v);
-    emit pinEvent(pin, v);
+    emit boardEvent(pin, v);
 #endif
 
 }
@@ -87,7 +92,7 @@ int32_t ArduinoBoard::digitalRead ( int32_t pin ) {
     std::cout << HARNESS_PREFIX"DIG-I[" << std::setw(4) << pin << "] v = " << v << std::endl;
 
 #ifdef QT_CORE_LIB
-    emit pinEvent(pin, v);
+    emit boardEvent(pin, v);
 #endif
 
     return v;
@@ -148,10 +153,15 @@ void ArduinoBoard::delayMicroseconds ( int32_t usec ) {
     pinLock.unlock();
 
 #ifdef QT_CORE_LIB
-    emit sleepEvent(usec);
+    emit boardEvent(SLEEP_EVENT, HIGH);
 #endif
 
     usleep(static_cast<useconds_t>(sleepTime));
+
+#ifdef QT_CORE_LIB
+    emit boardEvent(SLEEP_EVENT, LOW);
+#endif
+
 }
 
 void ArduinoBoard::setTimeScale ( double scale ) {

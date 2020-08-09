@@ -47,17 +47,16 @@ public:
 
     static Pin_t arduino_pins[];
 
+    static const int32_t SLEEP_EVENT;
+
+    std::mutex pinLock;
+
 #ifdef QT_CORE_LIB
 signals:
-    void pinWritten ( int32_t pin, int32_t val );
-
-    void sleepEvent ( int32_t usec );
-    void pinEvent   ( int32_t pinId, int32_t val );
-
+    void boardEvent ( int32_t id, int32_t val );
 #endif
 
 private:
-    std::mutex pinLock;
 
     double timeScale;
 };

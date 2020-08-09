@@ -6,6 +6,8 @@
 #include <cmath>
 
 #include <QScrollBar>
+#include <QMutex>
+#include <QWaitCondition>
 
 // dependencies
 #include "arduino_types.h"
@@ -34,6 +36,17 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
 
     showEventsPanel = new ShowEvents(this);
 
+    showEventsPanel->registerDigitalIO(uut::TRIG_DPIN           , "TRIG"     );
+    showEventsPanel->registerDigitalIO(uut::LED_CAPACITY_DPIN   , "LED"      );
+    showEventsPanel->registerDigitalIO(uut::LCD_BUTTON_DPIN     , "BUTTON"   );
+    showEventsPanel->registerDigitalIO(uut::LCD_LIGHT_DPIN      , "LCD_LIGHT");
+    showEventsPanel->registerDigitalIO(ArduinoBoard::SLEEP_EVENT, "Sleep"    );
+
+    monitorSignal(uut::TRIG_DPIN         , 500);
+    monitorSignal(uut::LED_CAPACITY_DPIN , 500);
+    monitorSignal(uut::LCD_BUTTON_DPIN   , 500);
+    monitorSignal(uut::LCD_LIGHT_DPIN    , 500);
+
     showEventsPanel->grabGesture(Qt::PanGesture);
     showEventsPanel->grabGesture(Qt::PinchGesture);
     showEventsPanel->show();
@@ -52,7 +65,7 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
 
     connect(&uut::lcd, SIGNAL(printTextOnLcd(std::string)) , this, SLOT(updateLcdScreen(std::string))     , Qt::QueuedConnection);
     connect(&Serial  , SIGNAL(printSerialText(std::string)), this, SLOT(updateSerialMonitor(std::string)) , Qt::QueuedConnection);
-    connect(&arduino , SIGNAL(pinWritten(int32_t, int32_t)), this, SLOT(updatePinStatus(int32_t, int32_t)), Qt::QueuedConnection);
+    connect(&arduino , SIGNAL(boardEvent(int32_t, int32_t)), this, SLOT(updatePinStatus(int32_t, int32_t)), Qt::QueuedConnection);
 
     QString status =  "Simulation of " VERSION " in "
 #if DEBUG == CONF_DEBUG
@@ -63,7 +76,7 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
 
     ui->statusBar->showMessage(status);
 
-    simOn.store(true);
+    simOn = true;
     ui->actionPause ->setEnabled(true );
     ui->actionResume->setEnabled(false);
 
@@ -73,9 +86,13 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
         uut::setup();
 
         while(1) {
-            if ( simOn.load() == true ) {
-                uut::loop();
+            simOnMutex.lock();
+            while(simOn == false) {
+                simOnCondition.wait(&simOnMutex);
             }
+            simOnMutex.unlock();
+
+            uut::loop();
         }
     });
 
@@ -86,6 +103,20 @@ LivelloSerbatoioSim::~LivelloSerbatoioSim ( void ) {
     delete ui;
 
     delete showEventsPanel;
+}
+
+void LivelloSerbatoioSim::monitorSignal(int32_t id, int32_t periodMs) {
+    showEventsPanel->addDigitalMonitor(id, periodMs, [=]( void ) {
+        int32_t v = 0;
+        arduino.pinLock.lock();
+        if(ArduinoBoard::arduino_pins[id].mode == OUTPUT) {
+            v = ArduinoBoard::arduino_pins[id].in_val;
+        } else {
+            v = ArduinoBoard::arduino_pins[id].out_val;
+        }
+        arduino.pinLock.unlock();
+        return v;
+    });
 }
 
 void LivelloSerbatoioSim::updateSerialMonitor ( std::string text ) {
@@ -155,13 +186,23 @@ void LivelloSerbatoioSim::on_timescale_combobox_currentIndexChanged ( int index 
 }
 
 void LivelloSerbatoioSim::on_actionPause_triggered ( void ) {
-    simOn.store(false);
+    simOnMutex.lock();
+    simOn = false;
+    simOnMutex.unlock();
+
+    showEventsPanel->pauseMonitors();
+
     ui->actionPause ->setEnabled(false);
     ui->actionResume->setEnabled(true);
 }
 
 void LivelloSerbatoioSim::on_actionResume_triggered ( void ) {
-    simOn.store(true);
+    simOnMutex.lock();
+    simOn = true;
+    simOnMutex.unlock();
+    simOnCondition.notify_all();
+
+    showEventsPanel->resumeMonitors();
 
     ui->actionPause ->setEnabled(true );
     ui->actionResume->setEnabled(false);

@@ -29,11 +29,15 @@ private:
 
     QThread *executor;
 
-    std::atomic<bool> simOn;
+    bool           simOn;
+    QMutex         simOnMutex;
+    QWaitCondition simOnCondition;
 
     static const int DISTANCE_LSB;
 
     ShowEvents *showEventsPanel;
+
+    void monitorSignal(int32_t id, int32_t periodMs);
 
 private slots:
     void updateSerialMonitor(std::string text);

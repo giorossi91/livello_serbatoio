@@ -8,13 +8,17 @@
 
 QT_CHARTS_USE_NAMESPACE
 
-const int SLEEP_TIME_ID = 14;
+const int ShowEvents::time_offset_sec = 30;
 
 ShowEvents::ShowEvents(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ShowEvents)
 {
     ui->setupUi(this);
+
+    uid = 0;
+
+    current_y_max = 2;
 
     dataChart = new Chart();
 
@@ -25,48 +29,50 @@ ShowEvents::ShowEvents(QWidget *parent) :
     dataViewLayout->addWidget(dataView);
 
     x_axis = new QDateTimeAxis();
-    x_axis->setMin(QDateTime::currentDateTime().addSecs(-30 * 1));
+    x_axis->setMin(QDateTime::currentDateTime().addSecs(-time_offset_sec * 1));
     x_axis->setMax(QDateTime::currentDateTime().addSecs(0));
     x_axis->setFormat("HH:mm:ss.zzz");
 
     dataChart->addAxis(x_axis, Qt::AlignBottom);
+    dataChart->setTitle("Events");
 
-    addSeries(0 , "D0");
-    addSeries(1 , "D1");
-    addSeries(2 , "D2");
-    addSeries(3 , "D3");
-    addSeries(4 , "D4");
-    addSeries(5 , "D5");
-    addSeries(6 , "D6");
-    addSeries(7 , "D7");
-    addSeries(8 , "D8");
-    addSeries(9 , "D9");
-    addSeries(10, "D10");
-    addSeries(11, "D11");
-    addSeries(12, "D12");
-    addSeries(13, "D13");
-
-    addSeries(SLEEP_TIME_ID, "Sleep");
-
-    dataChart->setTitle("D/IO");
-
-    connect(&arduino, SIGNAL(pinEvent(int32_t, int32_t)), this, SLOT(addNewPoint(int32_t, int32_t)));
-    connect(&arduino, SIGNAL(sleepEvent(int32_t))       , this, SLOT(addNewSleep(int32_t))         );
+    connect(&arduino, SIGNAL(boardEvent(int32_t, int32_t)), this, SLOT(addNewPoint(int32_t, int32_t)));
 }
 
-ShowEvents::~ShowEvents()
-{
+ShowEvents::~ShowEvents ( void ) {
+    for (auto t : monitors) {
+        t->stop();
+        delete t;
+    }
+
     delete ui;
 }
 
-void ShowEvents::addSeries(int32_t pinId, QString seriesName)
+void ShowEvents::registerDigitalIO ( int32_t id, QString seriesName ) {
+    addSeries(id, seriesName);
+}
+
+void ShowEvents::pauseMonitors ( void )
 {
+    for (auto t : monitors) {
+        t->stop();
+    }
+}
+
+void ShowEvents::resumeMonitors ( void )
+{
+    for (auto t : monitors) {
+        t->start();
+    }
+}
+
+void ShowEvents::addSeries ( int32_t id, QString seriesName ) {
     QLineSeries *series = new QLineSeries();
     series->setName(seriesName);
 
     QValueAxis *y_axis = new QValueAxis();
     y_axis->setMin(0);
-    y_axis->setMax(20);
+    y_axis->setMax(current_y_max);
     y_axis->setTickCount(1);
     y_axis->hide();
 
@@ -75,43 +81,100 @@ void ShowEvents::addSeries(int32_t pinId, QString seriesName)
     series->attachAxis(x_axis);
     series->attachAxis(y_axis);
 
-    pinSeries[pinId] = series;
-}
+    seriesMap[id] = series;
+    idMap    [id] = uid.load() << 1;
+    uid++;
 
-static inline int32_t offset(int32_t val, int32_t off) {
-    return val + off + 1;
-}
-
-void ShowEvents::addNewPoint(int32_t pinId, int32_t val) {
-    QDateTime bjtime = QDateTime::currentDateTime();
-
-    QLineSeries *pinSerie = pinSeries[pinId];
-
-    if(offset(val, pinId) == offset(HIGH, pinId)) {
-        if(pinSerie->count() > 0 && std::fabs(pinSerie->at(pinSerie->count() - 1).y() - offset(val, pinId)) > 0.1) {
-            pinSerie->append(bjtime.toMSecsSinceEpoch(), static_cast<qreal>(offset(LOW, pinId)));
-        }
-        pinSerie->append(bjtime.toMSecsSinceEpoch(), static_cast<qreal>(offset(HIGH, pinId)));
-    } else {
-        if(pinSerie->count() > 0 && std::fabs(pinSerie->at(pinSerie->count() - 1).y() - offset(val, pinId)) > 0.1) {
-            pinSerie->append(bjtime.toMSecsSinceEpoch(), static_cast<qreal>(offset(HIGH, pinId)));
-        }
-        pinSerie->append(bjtime.toMSecsSinceEpoch(), static_cast<qreal>(offset(LOW, pinId)));
+    current_y_max = idMap[id] + 1;
+    for(auto axes : dataChart->axes(Qt::Vertical)) {
+        axes->setMax(current_y_max);
     }
 
-    x_axis->setMin(QDateTime::currentDateTime().addSecs(-30 * 1));
-    x_axis->setMax(QDateTime::currentDateTime().addSecs(0));
+    // Connect all markers to handler
+    const auto markers = dataChart->legend()->markers();
+    for (QLegendMarker *marker : markers) {
+        // Disconnect possible existing connection to avoid multiple connections
+        QObject::disconnect(marker, &QLegendMarker::clicked, this, &ShowEvents::handleMarkerClicked);
+        QObject::connect(marker, &QLegendMarker::clicked, this, &ShowEvents::handleMarkerClicked);
+    }
 }
 
-void ShowEvents::addNewSleep(int32_t usecSlept)
-{
-    QDateTime bjtime = QDateTime::currentDateTime();
+static inline int32_t offset ( int32_t val, int32_t off ) {
+    return (val + off);
+}
 
-    pinSeries[SLEEP_TIME_ID]->append(bjtime.toMSecsSinceEpoch(), static_cast<qreal>(offset(0, SLEEP_TIME_ID)));
-    pinSeries[SLEEP_TIME_ID]->append(bjtime.toMSecsSinceEpoch(), static_cast<qreal>(offset(1, SLEEP_TIME_ID)));
-    pinSeries[SLEEP_TIME_ID]->append(bjtime.toMSecsSinceEpoch() + (usecSlept / 1000), static_cast<qreal>(offset(1, SLEEP_TIME_ID)));
-    pinSeries[SLEEP_TIME_ID]->append(bjtime.toMSecsSinceEpoch() + (usecSlept / 1000), static_cast<qreal>(offset(0, SLEEP_TIME_ID)));
+void ShowEvents::addNewPoint ( int32_t id, int32_t val ) {
+    addDataMutex.lock();
+    if( ( seriesMap.count(id) > 0 ) && ( idMap.count(id) > 0 ) ) {
+        QDateTime now    = QDateTime::currentDateTime();
+        qint64    timeMs = now.toMSecsSinceEpoch();
 
-    x_axis->setMin(QDateTime::currentDateTime().addSecs(-30 * 1));
-    x_axis->setMax(QDateTime::currentDateTime().addSecs(0));
+        QLineSeries *series = seriesMap[id];
+        int32_t     offval  = idMap[id];
+
+        if(offset(val, offval) == offset(HIGH, offval)) {
+            if(series->count() > 0 && std::fabs(series->at(series->count() - 1).y() - offset(val, offval)) > 0.1) {
+                series->append(timeMs, static_cast<qreal>(offset(LOW, offval)));
+            }
+            series->append(timeMs, static_cast<qreal>(offset(HIGH, offval)));
+        } else {
+            if(series->count() > 0 && std::fabs(series->at(series->count() - 1).y() - offset(val, offval)) > 0.1) {
+                series->append(timeMs, static_cast<qreal>(offset(HIGH, offval)));
+            }
+            series->append(timeMs, static_cast<qreal>(offset(LOW, offval)));
+        }
+
+        x_axis->setMin(now.addSecs(-time_offset_sec * 1));
+        x_axis->setMax(now.addSecs(0));
+    }
+
+    addDataMutex.unlock();
+}
+
+void ShowEvents::handleMarkerClicked ( void ) {
+    QLegendMarker* marker = qobject_cast<QLegendMarker*> (sender());
+
+    switch (marker->type()) {
+        case QLegendMarker::LegendMarkerTypeXY:
+        {
+            // Toggle visibility of series
+            marker->series()->setVisible(!marker->series()->isVisible());
+
+            // Turn legend marker back to visible, since hiding series also hides the marker
+            // and we don't want it to happen now.
+            marker->setVisible(true);
+
+            // Dim the marker, if series is not visible
+            qreal alpha = 1.0;
+
+            if (!marker->series()->isVisible()) {
+                alpha = 0.5;
+            }
+
+            QColor color;
+            QBrush brush = marker->labelBrush();
+            color = brush.color();
+            color.setAlphaF(alpha);
+            brush.setColor(color);
+            marker->setLabelBrush(brush);
+
+            brush = marker->brush();
+            color = brush.color();
+            color.setAlphaF(alpha);
+            brush.setColor(color);
+            marker->setBrush(brush);
+
+            QPen pen = marker->pen();
+            color = pen.color();
+            color.setAlphaF(alpha);
+            pen.setColor(color);
+            marker->setPen(pen);
+
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
 }
