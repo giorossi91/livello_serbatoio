@@ -19,7 +19,7 @@
 // --> UUT
 #define UNIT_TEST
 
-#define DEBUG  CONF_RELEASE  //<-- release configuration
+#define DEBUG  CONF_DEBUG  //<-- release configuration
 #define SENSOR SENSOR_HCSR04 //<-- sensor actually used
 
 namespace uut {

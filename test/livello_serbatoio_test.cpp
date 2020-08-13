@@ -429,13 +429,70 @@ void LivelloSerbatoioTests::test_update_lcd ( void ) {
 
 
 void LivelloSerbatoioTests::test_loop ( void ) {
-//	uut::setup();
-//
-//  arduino_pins[uut::ECHO_DPIN].pulse_time = 10;
-//
-//  loopNTimes ( 10 );
-//
-//  CPPUNIT_ASSERT_DOUBLES_EQUAL(100.0, uut::percentage, 0.1);
+	start_time();
+
+	uut::setup();
+	
+	arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE + 20U ) * 58; //84%
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint16_t>(1000), uut::measure_interval);
+	
+	loopNTimes ( 3 );
+	
+	stop_time();
+	
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint16_t>(10000), uut::measure_interval);
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(84.0, uut::percentage, 1.0);
+	
+	arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE + 50U ) * 58; //61%
+	
+	timePassedFromBootMs += uut::measure_interval;
+	
+	loopNTimes( 1 );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(84.0, uut::percentage, 1.0);
+	
+	timePassedFromBootMs += uut::measure_interval;
+	
+	loopNTimes( 1 );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(84.0, uut::percentage, 1.0);
+	
+	timePassedFromBootMs += uut::measure_interval - 1;
+	
+	loopNTimes( 1 );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(84.0, uut::percentage, 1.0);
+	
+	timePassedFromBootMs += 1;
+	
+	loopNTimes( 1 );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(61.0, uut::percentage, 1.0);
+	
+	arduino_pins[uut::ECHO_DPIN].pulse_time = ( 401 ) * 58; // Error
+	
+	timePassedFromBootMs += uut::measure_interval;
+	
+	loopNTimes( 1 );
+	
+	std::string text = uut::lcd.harness_getLcdText();
+	CPPUNIT_ASSERT_EQUAL(std::string("                \n     Errore     "), text);
+	
+	arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE + 50U ) * 58; //61%
+	
+	timePassedFromBootMs += uut::measure_interval;
+	
+	loopNTimes( 1 );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(61.0, uut::percentage, 1.0);
+	
+	text = uut::lcd.harness_getLcdText();
+	CPPUNIT_ASSERT(std::string("                \n     Errore     ") != text);
+	
+	
+
 }
 
 // Harness utilities
@@ -484,7 +541,8 @@ void LivelloSerbatoioTests::loopNTimes ( uint32_t n ) {
 void LivelloSerbatoioTests::test_MedianFilter_init ( void ) {
 	int16_t init_value = rand() % 1000U; // any;
 
-	uut::MedianFilter mf1(init_value);
+	uut::MedianFilter mf1;
+	mf1.begin(init_value);
 
 	CPPUNIT_ASSERT_EQUAL(static_cast<byte>(uut::FILTER_SIZE    ), mf1.medFilterWin  );
 	CPPUNIT_ASSERT_EQUAL(static_cast<byte>(uut::FILTER_SIZE / 2), mf1.medDataPointer);
@@ -494,7 +552,8 @@ void LivelloSerbatoioTests::test_MedianFilter_init ( void ) {
 }
 
 void LivelloSerbatoioTests::test_MedianFilter_in ( void ) {
-	uut::MedianFilter mf1(0);                                         //  0  0  0  0  0
+	uut::MedianFilter mf1;                                            //  0  0  0  0  0
+	mf1.begin(0);
 
 	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  0 ), mf1.in( 1));    //  0  0  0  0  1
 	CPPUNIT_ASSERT_EQUAL(static_cast<int16_t> (  0 ), mf1.in( 1));    //  0  0  0  1  1
@@ -513,7 +572,8 @@ void LivelloSerbatoioTests::test_MedianFilter_in ( void ) {
 }
 
 void LivelloSerbatoioTests::test_MedianFilter_out ( void ) {
-	uut::MedianFilter mf1(0);
+	uut::MedianFilter mf1;
+	mf1.begin(0);
 
 	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 1));
 	CPPUNIT_ASSERT_EQUAL(mf1.out(), mf1.in( 1));
@@ -536,6 +596,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_init ( void ) {
 	timePassedFromBootMs = 100U;
 	
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis);
 }
@@ -544,6 +605,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateTime ( void ) {
 	timePassedFromBootMs = 0U;
 	
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 
 	timePassedFromBootMs = 0U;
 	sc1.updateTime();
@@ -609,6 +671,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateTime ( void ) {
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_updateConsumption ( void ) {
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	// filling
 	sc1.updateConsumption(0U);
@@ -655,6 +718,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateConsumption ( void ) {
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1h ( void ) {
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	sc1.index = 0U;
 	
@@ -667,6 +731,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1h ( void ) {
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption12h ( void ) {
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	sc1.index = 0U;
 	
@@ -679,6 +744,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption12h ( void ) {
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1d ( void ) {
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	sc1.index = 0U;
 	
@@ -691,6 +757,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1d ( void ) {
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption3d ( void ) {
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	sc1.index = 0U;
 	
@@ -703,6 +770,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption3d ( void ) {
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_sumSamples ( void ) {
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	sc1.index = 3U;
 	
@@ -724,6 +792,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_sumSamples ( void ) {
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_updateBuffer ( void ) {
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	sc1.index = 1U;
 	
@@ -743,6 +812,7 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateBuffer ( void ) {
 
 void LivelloSerbatoioTests::test_StatisticheConsumo_updateIndex ( void ) {
 	uut::StatisticheConsumo sc1;
+	sc1.begin();
 	
 	for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
 		sc1.consumption_samples[i] = 1U;

@@ -59,11 +59,18 @@ public:
    * @brief Costruttore.
    * @details Crea un'istanza di MedianFilter.
    * 
+   * @return L'istanza di MedianFilter da inizializzare con begin.
+   */
+  MedianFilter ( void ) {
+  }
+
+  /**
+   * @brief Inizializza l'istanza corrente di MedianFilter.
+   * 
    * @param seed Il valore iniziale del buffer.
    * 
-   * @return L'istanza di MedianFilter inizializzata.
    */
-  MedianFilter(const int16_t seed) {
+  void begin ( const int16_t seed ) {
     medFilterWin    = FILTER_SIZE;                            // number of samples in sliding median filter window - usually odd #
     medDataPointer  = FILTER_SIZE >> 1;                       // mid point of window
     oldestDataPoint = medDataPointer;                         // oldest data point location in data array
@@ -74,7 +81,7 @@ public:
       locationMap[i] = i;    // start map with straight run
       data       [i] = seed; // populate with seed value
     }
-  } 
+  }
 
   /**
    * @brief Inserisce un valore nel filtro.
@@ -170,10 +177,26 @@ public:
    * @brief Costruttore.
    * @details Crea un'istanza di StatisticheConsumo.
    * 
-   * @return L'istanza di StatisticheConsumo inizializzata.
+   * @return L'istanza di StatisticheConsumo da inizializzare con la funzione begin.
    */
   StatisticheConsumo(void) {
+  }
+
+  /**
+   * @brief Inizializza l'istanza corrente di StatisticheConsumo. 
+   */
+  void begin ( void ) {
     last_millis = millis();
+
+    for ( uint16_t i = 0U; i < STAT_SIZE; i++ ) {
+      consumption_samples[i] = 0U;
+    }
+    
+    index           = 0U;
+    last_liters     = 0U;
+    consumption     = 0U;
+    millis_passed   = 0U;
+    seconds_passed  = 0U;
   }
 
   /**
@@ -333,14 +356,14 @@ private:
   static const uint32_t ONE_SECOND_MS     = 1000U;
   static const uint32_t ONE_HOUR_S        = (60U * 60U);
   
-  uint32_t index                          = 0U;        /// L'indice corrente nel buffer.
-  uint32_t consumption_samples[STAT_SIZE] = { 0 };     /// Il buffer con i campioni. 
-  volatile uint32_t last_liters           = 0U;        /// L'ultima quantità nota di litri nel serbatoio.
-  volatile uint32_t consumption           = 0U;        /// Il consumo nell'ultima ora.
+  uint32_t index                          ;        /// L'indice corrente nel buffer.
+  uint32_t consumption_samples[STAT_SIZE] ;        /// Il buffer con i campioni. 
+  volatile uint32_t last_liters           ;        /// L'ultima quantità nota di litri nel serbatoio.
+  volatile uint32_t consumption           ;        /// Il consumo nell'ultima ora.
 
-  volatile uint32_t last_millis           = 0U;        /// Ultimo timestamp rilevato.
-  volatile uint32_t millis_passed         = 0U;        /// Millisecondi passati dall'ultima invocazione di updateTime().
-  volatile uint32_t seconds_passed        = 0U;        /// Secondi passati dall'ultima invocazione di updateTime().
+  volatile uint32_t last_millis           ;        /// Ultimo timestamp rilevato.
+  volatile uint32_t millis_passed         ;        /// Millisecondi passati dall'ultima invocazione di updateTime().
+  volatile uint32_t seconds_passed        ;        /// Secondi passati dall'ultima invocazione di updateTime().
 };
 
 /* Costanti */
@@ -399,35 +422,62 @@ const uint32_t SENSOR_NO_OBSTACLE_US      = 38000UL;  //38 ms
 
 
 /* Variabili */
-bool led_on          = false;
-bool led_status      = false;
-bool must_update_lcd = false;
+bool led_on          ;
+bool led_status      ;
+bool must_update_lcd ;
+bool was_error       ;
 
 
-uint16_t measure_interval       = 1000;  //ms
-double   tank_capacity          = 0.0;   //L
-uint16_t number_measures_done   = 0;   
-bool     first_measure_done     = false;
-double   maximum_capacity       = 0.0;   //L
+uint16_t measure_interval       ;
+double   tank_capacity          ;
+uint16_t number_measures_done   ;   
+bool     first_measure_done     ;
+double   maximum_capacity       ;
 
-volatile uint32_t timestamp_lcd_on       = 0U;    //ms
-volatile uint32_t timestamp_measurement  = 0U;    //ms
-volatile uint32_t timestamp_last_filling = 0U;    //ms
-volatile double   distance               = 0.0;   //cm
-volatile double   previous_liters        = 0.0;   //L
-double            percentage             = 100.0; //%
-volatile byte     btn_status             = LOW;
-volatile byte     last_btn_status        = LOW;
-uint32_t          btn_press_timestamp    = 0U;
+volatile uint32_t timestamp_lcd_on       ;
+volatile uint32_t timestamp_measurement  ;
+volatile uint32_t timestamp_last_filling ;
+volatile double   distance               ;
+volatile double   previous_liters        ;
+double            percentage             ;
+volatile byte     btn_status             ;
+volatile byte     last_btn_status        ;
+uint32_t          btn_press_timestamp    ;
 
 //Formato (RS, E, DB4, DB5, DB6, DB7)
 LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
 
-MedianFilter filter(FILTER_SEED);
+MedianFilter filter;
 
 StatisticheConsumo stats;
 
 /* Main SW */
+
+/**
+ * @brief Initializes the variables.
+ */
+inline void initialize ( void ) {
+  led_on          = false;
+  led_status      = false;
+  must_update_lcd = false;
+  was_error       = false;
+  
+  measure_interval       = 1000;  //ms
+  tank_capacity          = 0.0;   //L
+  number_measures_done   = 0;   
+  first_measure_done     = false;
+  maximum_capacity       = 0.0;   //L
+  
+  timestamp_lcd_on       = 0U;    //ms
+  timestamp_measurement  = 0U;    //ms
+  timestamp_last_filling = 0U;    //ms
+  distance               = 0.0;   //cm
+  previous_liters        = 0.0;   //L
+  percentage             = 100.0; //%
+  btn_status             = LOW;
+  last_btn_status        = LOW;
+  btn_press_timestamp    = 0U;
+}
 
 /**
  * @brief Calcola la quantità di acqua rimasta nel serbatoio.
@@ -512,6 +562,17 @@ inline void turn_off_lcd_light(void) {
 }
 
 /**
+ * @brief Prints an error message to LCD.
+ */
+inline void print_error(void) {
+  lcd.clear();
+  lcd.setCursor(5, 1);
+  lcd.print("Errore");
+
+  was_error = true;
+}
+
+/**
  * @brief Esegue una misurazione di livello dell'acqua.
  * @details Attiva il sensore ad ultrasuoni ed applica eventuali compensazioni necessarie.
  * 
@@ -525,9 +586,6 @@ inline double measure_level(void) {
   
   uint32_t time = pulseIn(ECHO_DPIN, HIGH, SENSOR_RESPONSE_TIMEOUT_US);
   if ((time == 0U) || (time >= SENSOR_NO_OBSTACLE_US)) {
-    lcd.clear();
-    lcd.setCursor(5, 1);
-    lcd.print("Errore");
     return -1.0; //Errore
   }
   
@@ -539,7 +597,7 @@ inline double measure_level(void) {
 
   //check ranges
   if ( ( dist_compensated < SENSOR_MIN_RANGE ) || ( dist_compensated > SENSOR_MAX_RANGE ) ) {
-    return -1;
+    return -1.0;
   }
   //
   
@@ -849,6 +907,12 @@ inline void show_stats(void) {
 
 
 void setup(void) {
+
+  initialize();
+
+  filter.begin(FILTER_SEED);
+  stats.begin();
+  
   //16 characters e 2 lines
   lcd.begin(16, 2);
   
@@ -912,7 +976,7 @@ void loop(void) {
     last_btn_status     = HIGH;
     btn_press_timestamp = millis();
   } else if(btn_status == HIGH && last_btn_status == HIGH) {
-    if((millis() - btn_press_timestamp) > BTN_LONGPRESS_TIME) {
+    if((millis() - btn_press_timestamp) >= BTN_LONGPRESS_TIME) {
       last_btn_status     = LOW;
       btn_press_timestamp = 0;
       
@@ -924,18 +988,19 @@ void loop(void) {
   }
   
   //lcd on timer
-  if ((millis() - timestamp_lcd_on) > LCD_ON_TIMER) {
+  if ((millis() - timestamp_lcd_on) >= LCD_ON_TIMER) {
     turn_off_lcd_light();
   }
 
   //measument timer
-  if ((millis() - timestamp_measurement) > measure_interval) {
+  if ((millis() - timestamp_measurement) >= measure_interval) {
     distance = measure_level();
     if(abs((-1.0) - distance) < 0.1) {
+      print_error();
       delay(SLEEP_TIME);
       return; //ERRORE! Ferma il loop!
     }
-    filter.in(roundfvalue(distance));
+    ( void ) filter.in(roundfvalue(distance));
   }
 
   distance = filter.out();
@@ -945,8 +1010,9 @@ void loop(void) {
     double liters = compute_liters(distance);
     liters = sanitize_data(liters, 0.0, maximum_capacity, 0.5, maximum_capacity);
 
-    if(previous_liters != liters) {
+    if( ( previous_liters != liters ) || ( was_error == true ) ) {
       must_update_lcd = true;
+      was_error       = false;
     }
     previous_liters = liters;
     
