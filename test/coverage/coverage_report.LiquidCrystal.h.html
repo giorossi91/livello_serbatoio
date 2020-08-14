@@ -269,13 +269,13 @@
             <td class="headerValue">LiquidCrystal.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">68</td>
-            <td class="headerTableEntry">77</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">88.3 %</td>
+            <td class="headerTableEntry">71</td>
+            <td class="headerTableEntry">78</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">91.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2020-08-13 16:48:34</td>
+            <td class="headerValue">2020-08-14 15:55:55</td>
             <td></td>
             <td class="headerName">Branches:</td>
             <td class="headerTableEntry">37</td>
@@ -505,14 +505,14 @@
     <tr>
     <td align="right" class="lineno"><pre>30</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>  void begin ( int32_t col, int32_t row ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>31</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 4 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 4 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>    if( ( ( col >= 0 ) &amp;&amp; ( col &lt;= LCD_COLS_MAX_SIZE ) ) &amp;&amp; ( ( row >= 0 ) &amp;&amp; ( row &lt;= LCD_ROWS_MAX_SIZE ) ) ) {</pre></td>
     </tr>
 
@@ -526,14 +526,14 @@
     <tr>
     <td align="right" class="lineno"><pre>33</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>      cols = col;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>34</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>      rows = row;</pre></td>
     </tr>
 
@@ -546,22 +546,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>36</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>9</pre></td>
     <td align="left" class="src coveredLine"><pre>      for (int32_t i = 0; i &lt; rows; i++) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>37</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 64 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>68</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 96 times">&check;</span><span class="takenBranch" title="Branch 1 taken 6 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>102</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (int32_t j = 0; j &lt; cols; j++) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>38</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>64</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>96</pre></td>
     <td align="left" class="src coveredLine"><pre>          pLcdMatrix[i][j] = ' ';</pre></td>
     </tr>
 
@@ -589,14 +589,14 @@
     <tr>
     <td align="right" class="lineno"><pre>42</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>      cursor_col = 0;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>43</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>      cursor_row = 0;</pre></td>
     </tr>
 
@@ -624,7 +624,7 @@
     <tr>
     <td align="right" class="lineno"><pre>47</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 
@@ -638,7 +638,7 @@
     <tr>
     <td align="right" class="lineno"><pre>49</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>  void createChar ( byte b, byte data[] ) {</pre></td>
     </tr>
 
@@ -659,7 +659,7 @@
     <tr>
     <td align="right" class="lineno"><pre>52</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 
@@ -673,28 +673,28 @@
     <tr>
     <td align="right" class="lineno"><pre>54</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>18</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>29</pre></td>
     <td align="left" class="src coveredLine"><pre>  void clear ( void ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>55</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 36 times">&check;</span><span class="takenBranch" title="Branch 1 taken 18 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>54</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 58 times">&check;</span><span class="takenBranch" title="Branch 1 taken 29 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>87</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (int32_t i = 0; i &lt; rows; i++) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>56</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 576 times">&check;</span><span class="takenBranch" title="Branch 1 taken 36 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>612</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 928 times">&check;</span><span class="takenBranch" title="Branch 1 taken 58 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>986</pre></td>
     <td align="left" class="src coveredLine"><pre>      for (int32_t j = 0; j &lt; cols; j++) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>57</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>576</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>928</pre></td>
     <td align="left" class="src coveredLine"><pre>        pLcdMatrix[i][j] = ' ';</pre></td>
     </tr>
 
@@ -722,21 +722,21 @@
     <tr>
     <td align="right" class="lineno"><pre>61</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>18</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>29</pre></td>
     <td align="left" class="src coveredLine"><pre>    cursor_col = 0;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>62</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>18</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>29</pre></td>
     <td align="left" class="src coveredLine"><pre>    cursor_row = 0;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>63</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>18</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>29</pre></td>
     <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 
@@ -750,14 +750,14 @@
     <tr>
     <td align="right" class="lineno"><pre>65</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>51</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>76</pre></td>
     <td align="left" class="src coveredLine"><pre>  void setCursor ( int32_t col, int32_t row ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>66</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 51 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 51 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 4 taken 51 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 51 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>51</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 76 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 76 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 4 taken 76 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 76 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>76</pre></td>
     <td align="left" class="src coveredLine"><pre>    if ( ( ( col &lt; 0 ) || ( col >= cols ) ) || ( ( row &lt; 0 ) || ( row >= rows ) ) ) {</pre></td>
     </tr>
 
@@ -820,21 +820,21 @@
     <tr>
     <td align="right" class="lineno"><pre>75</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>51</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>76</pre></td>
     <td align="left" class="src coveredLine"><pre>    cursor_col = col;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>76</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>51</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>76</pre></td>
     <td align="left" class="src coveredLine"><pre>    cursor_row = row;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>77</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>51</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>76</pre></td>
     <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 
@@ -848,22 +848,22 @@
     <tr>
     <td align="right" class="lineno"><pre>79</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>  void print ( String &amp;str, bool pout = true ) {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="left" class="src coveredLine"><pre>  void print ( String &amp;str, bool pout = true ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>80</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>    print(str.c_str(), pout);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="left" class="src coveredLine"><pre>    print(str.c_str(), pout);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>81</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>  }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 
     <tr>
@@ -876,28 +876,28 @@
     <tr>
     <td align="right" class="lineno"><pre>83</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>  void print ( const char *pStr, bool pout = true ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>84</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 152 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 239 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>    if ( pStr != nullptr ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>85</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>      uint32_t i = 0U;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>86</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 248 times">&check;</span><span class="takenBranch" title="Branch 1 taken 152 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>400</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 440 times">&check;</span><span class="takenBranch" title="Branch 1 taken 239 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>679</pre></td>
     <td align="left" class="src coveredLine"><pre>      while ( pStr[i] != '\0' ) {</pre></td>
     </tr>
 
@@ -910,8 +910,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>88</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 248 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>248</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 440 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>440</pre></td>
     <td align="left" class="src coveredLine"><pre>        if( cursor_col >= cols ) {</pre></td>
     </tr>
 
@@ -939,7 +939,7 @@
     <tr>
     <td align="right" class="lineno"><pre>92</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>248</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>440</pre></td>
     <td align="left" class="src coveredLine"><pre>        pLcdMatrix[cursor_row][cursor_col] = pStr[i];</pre></td>
     </tr>
 
@@ -953,14 +953,14 @@
     <tr>
     <td align="right" class="lineno"><pre>94</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>248</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>440</pre></td>
     <td align="left" class="src coveredLine"><pre>        cursor_col++;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>95</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>248</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>440</pre></td>
     <td align="left" class="src coveredLine"><pre>        i++;</pre></td>
     </tr>
 
@@ -980,15 +980,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>98</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 152 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 239 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>      if( pout == true ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>99</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>        printLcd();</pre></td>
     </tr>
 
@@ -1016,7 +1016,7 @@
     <tr>
     <td align="right" class="lineno"><pre>103</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 
@@ -1030,21 +1030,21 @@
     <tr>
     <td align="right" class="lineno"><pre>105</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>16</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>24</pre></td>
     <td align="left" class="src coveredLine"><pre>  void print ( int32_t d, bool pout = true ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>106</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 3 taken 16 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>16</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 3 taken 24 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>24</pre></td>
     <td align="left" class="src coveredLine"><pre>    print ( std::to_string ( d ).c_str(), pout );</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>107</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>16</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>24</pre></td>
     <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 
@@ -1058,21 +1058,21 @@
     <tr>
     <td align="right" class="lineno"><pre>109</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>109</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>169</pre></td>
     <td align="left" class="src coveredLine"><pre>  void write ( byte c ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>110</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 109 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>109</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 169 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>169</pre></td>
     <td align="left" class="src coveredLine"><pre>    if ( c == 1 ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>111</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>109</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>169</pre></td>
     <td align="left" class="src coveredLine"><pre>      print("#", true);</pre></td>
     </tr>
 
@@ -1100,7 +1100,7 @@
     <tr>
     <td align="right" class="lineno"><pre>115</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>109</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>169</pre></td>
     <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 
@@ -1114,35 +1114,35 @@
     <tr>
     <td align="right" class="lineno"><pre>117</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>165</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>252</pre></td>
     <td align="left" class="src coveredLine"><pre>  std::string harness_getLcdText ( void ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>118</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 165 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>165</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 252 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>252</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::string lcdText = "";</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>119</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 330 times">&check;</span><span class="takenBranch" title="Branch 1 taken 165 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>495</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 504 times">&check;</span><span class="takenBranch" title="Branch 1 taken 252 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>756</pre></td>
     <td align="left" class="src coveredLine"><pre>    for(int32_t i = 0; i &lt; rows; i++) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>120</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5280 times">&check;</span><span class="takenBranch" title="Branch 1 taken 330 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>5610</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 8064 times">&check;</span><span class="takenBranch" title="Branch 1 taken 504 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>8568</pre></td>
     <td align="left" class="src coveredLine"><pre>      for(int32_t j = 0; j &lt; cols; j++) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>121</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5280 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>5280</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8064 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>8064</pre></td>
     <td align="left" class="src coveredLine"><pre>        lcdText.push_back( pLcdMatrix[i][j] );</pre></td>
     </tr>
 
@@ -1162,15 +1162,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>124</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 165 times">&check;</span><span class="takenBranch" title="Branch 1 taken 165 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>330</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 252 times">&check;</span><span class="takenBranch" title="Branch 1 taken 252 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>504</pre></td>
     <td align="left" class="src coveredLine"><pre>      if ( i != ( rows - 1 ) ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>125</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 165 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>165</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 252 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>252</pre></td>
     <td align="left" class="src coveredLine"><pre>        lcdText.push_back( '\n' );</pre></td>
     </tr>
 
@@ -1198,7 +1198,7 @@
     <tr>
     <td align="right" class="lineno"><pre>129</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>165</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>252</pre></td>
     <td align="left" class="src coveredLine"><pre>    return lcdText;</pre></td>
     </tr>
 
@@ -1219,28 +1219,28 @@
     <tr>
     <td align="right" class="lineno"><pre>132</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>  void printLcd ( void ) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>133</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::cout &lt;&lt; std::endl;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>134</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2432 times">&check;</span><span class="takenBranch" title="Branch 1 taken 152 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2584</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3824 times">&check;</span><span class="takenBranch" title="Branch 1 taken 239 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>4063</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (int32_t i = 0; i &lt; cols; i++) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>135</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2432</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3824</pre></td>
     <td align="left" class="src coveredLine"><pre>      std::cout &lt;&lt; "=";</pre></td>
     </tr>
 
@@ -1254,35 +1254,35 @@
     <tr>
     <td align="right" class="lineno"><pre>137</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::cout &lt;&lt; std::endl;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>138</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 152 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 239 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::cout &lt;&lt; harness_getLcdText();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>139</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::cout &lt;&lt; std::endl;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>140</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2432 times">&check;</span><span class="takenBranch" title="Branch 1 taken 152 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2584</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3824 times">&check;</span><span class="takenBranch" title="Branch 1 taken 239 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>4063</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (int32_t i = 0; i &lt; cols; i++) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>141</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2432</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3824</pre></td>
     <td align="left" class="src coveredLine"><pre>      std::cout &lt;&lt; "=";</pre></td>
     </tr>
 
@@ -1296,14 +1296,14 @@
     <tr>
     <td align="right" class="lineno"><pre>143</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::cout &lt;&lt; std::endl;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>144</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>152</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>239</pre></td>
     <td align="left" class="src coveredLine"><pre>  }</pre></td>
     </tr>
 

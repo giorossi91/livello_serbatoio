@@ -454,7 +454,7 @@ StatisticheConsumo stats;
 /* Main SW */
 
 /**
- * @brief Initializes the variables.
+ * @brief Inizializza le variabili.
  */
 inline void initialize ( void ) {
   led_on          = false;

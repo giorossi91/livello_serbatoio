@@ -38,6 +38,7 @@ class LivelloSerbatoioTests  : public CppUnit::TestFixture {
   CPPUNIT_TEST(test_StatisticheConsumo_updateIndex      );
 
   CPPUNIT_TEST(test_loop);
+  CPPUNIT_TEST(test_loop_btn);
   // ==================
   CPPUNIT_TEST_SUITE_END();
   
@@ -47,7 +48,8 @@ public:
 
 protected:
   // === Unit tests ===
-  void test_loop ( void );
+  void test_loop               ( void );
+  void test_loop_btn           ( void );
 
   void test_compute_liters     ( void );
   void test_compute_percentage ( void );

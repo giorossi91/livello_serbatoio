@@ -427,6 +427,89 @@ void LivelloSerbatoioTests::test_update_lcd ( void ) {
 	CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
 }
 
+void LivelloSerbatoioTests::test_loop_btn ( void ) {
+	start_time();
+
+	uut::setup();
+	
+	arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE ) * 58;
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	uint32_t current_time = millis();
+	
+	stop_time(); // timePassedFromBootMs is reset to 0
+	
+	timePassedFromBootMs += current_time;
+	
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+
+	timePassedFromBootMs += 30000;
+
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	// simulate button press - single shot
+	
+	uut::turn_on_lcd_light();
+	arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
+	
+	loopNTimes ( 1 );
+	
+	arduino_pins[uut::LCD_BUTTON_DPIN].out_val = LOW;
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	timePassedFromBootMs += 29999;
+
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	timePassedFromBootMs += 1;
+
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	// simulate button press - long press
+	uut::turn_on_lcd_light();
+	arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
+	
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	timePassedFromBootMs += uut::BTN_LONGPRESS_TIME - 1;
+
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	timePassedFromBootMs += 1;
+
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	// simulate button press - long press
+	uut::turn_on_lcd_light();
+	arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
+	
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+	
+	arduino_pins[uut::LCD_BUTTON_DPIN].out_val = LOW;
+	timePassedFromBootMs += uut::BTN_LONGPRESS_TIME;
+
+	loopNTimes ( 1 );
+	
+	CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+}
 
 void LivelloSerbatoioTests::test_loop ( void ) {
 	start_time();
@@ -439,7 +522,11 @@ void LivelloSerbatoioTests::test_loop ( void ) {
 	
 	loopNTimes ( 3 );
 	
+	uint32_t current_time = millis();
+	
 	stop_time();
+	
+	timePassedFromBootMs += current_time;
 	
 	CPPUNIT_ASSERT_EQUAL(static_cast<uint16_t>(10000), uut::measure_interval);
 	
@@ -499,7 +586,7 @@ void LivelloSerbatoioTests::test_loop ( void ) {
 
 void LivelloSerbatoioTests::timesim_thread ( void ) {
 	while ( time_on == true ) {
-		usleep(TIME_STEP_MS);
+		usleep(TIME_STEP_MS * 1000);
 
 		timePassedFromBootMs += TIME_STEP_MS;
 	}
