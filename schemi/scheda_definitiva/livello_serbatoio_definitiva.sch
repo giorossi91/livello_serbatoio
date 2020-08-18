@@ -63,7 +63,7 @@ U 1 1 5F0D6DF0
 P 10500 1350
 F 0 "J2" H 10500 1050 50  0000 C CNN
 F 1 "CONN_US" H 10750 1300 50  0000 C CNN
-F 2 "Connector_PinHeader_1.00mm:PinHeader_1x04_P1.00mm_Vertical" H 10500 1350 50  0001 C CNN
+F 2 "Connector_Molex:Molex_Micro-Latch_53254-0470_1x04_P2.00mm_Horizontal" H 10500 1350 50  0001 C CNN
 F 3 "~" H 10500 1350 50  0001 C CNN
 	1    10500 1350
 	1    0    0    1   
@@ -1047,7 +1047,7 @@ U 1 1 5F0B738E
 P 10600 4150
 F 0 "J3" H 10492 3125 50  0000 C CNN
 F 1 "CONN_LCD" H 10492 3216 50  0000 C CNN
-F 2 "Connector_PinHeader_1.00mm:PinHeader_1x16_P1.00mm_Vertical" H 10600 4150 50  0001 C CNN
+F 2 "Connector_PinHeader_1.27mm:PinHeader_1x16_P1.27mm_Vertical" H 10600 4150 50  0001 C CNN
 F 3 "~" H 10600 4150 50  0001 C CNN
 	1    10600 4150
 	1    0    0    1   

@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/giovanni/Dropbox/ArduinoWorkspace/livello_serbatoio/schemi/scheda_definitiva/livello_serbatoio_definitiva.sch)
-    (date "lun 17 ago 2020, 17:52:30")
+    (date "mar 18 ago 2020, 15:53:21")
     (tool "Eeschema 5.1.6")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -45,7 +45,7 @@
       (tstamp 5F0BA65A))
     (comp (ref J2)
       (value CONN_US)
-      (footprint Connector_PinHeader_1.00mm:PinHeader_1x04_P1.00mm_Vertical)
+      (footprint Connector_Molex:Molex_Micro-Latch_53254-0470_1x04_P2.00mm_Horizontal)
       (datasheet ~)
       (libsource (lib Connector) (part Conn_01x04_Female) (description "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"))
       (sheetpath (names /) (tstamps /))
@@ -220,7 +220,7 @@
       (tstamp 5F131632))
     (comp (ref J3)
       (value CONN_LCD)
-      (footprint Connector_PinHeader_1.00mm:PinHeader_1x16_P1.00mm_Vertical)
+      (footprint Connector_PinHeader_1.27mm:PinHeader_1x16_P1.27mm_Vertical)
       (datasheet ~)
       (libsource (lib Connector) (part Conn_01x16_Female) (description "Generic connector, single row, 01x16, script generated (kicad-library-utils/schlib/autogen/connector/)"))
       (sheetpath (names /) (tstamps /))
