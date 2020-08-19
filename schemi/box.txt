@@ -1,0 +1,3 @@
+Dimensioni box attuale
+
+15 * 9 * 4.5 cm

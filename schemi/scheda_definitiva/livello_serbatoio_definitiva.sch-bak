@@ -118,10 +118,6 @@ Wire Wire Line
 	9550 1250 9350 1250
 Text GLabel 6800 2450 2    50   Output ~ 0
 D11
-Wire Wire Line
-	6650 2450 6800 2450
-Wire Wire Line
-	6650 2550 6800 2550
 Text GLabel 6800 2550 2    50   Input ~ 0
 D12
 Text GLabel 6800 4150 2    50   Output ~ 0
@@ -155,7 +151,7 @@ Wire Wire Line
 Text GLabel 6800 2650 2    50   Output ~ 0
 D13
 Wire Wire Line
-	6650 2650 6800 2650
+	6650 2650 6750 2650
 $Comp
 L power:GND #PWR06
 U 1 1 5F185C92
@@ -839,25 +835,10 @@ Wire Notes Line
 	8500 6300 8500 2600
 Wire Notes Line
 	10850 2600 10850 6300
-Text GLabel 9500 4400 2    50   Output ~ 0
+Text GLabel 9100 4400 2    50   Output ~ 0
 BLA
-$Comp
-L Device:R R10
-U 1 1 5F131632
-P 9150 4400
-F 0 "R10" V 9050 4400 50  0000 C CNN
-F 1 "390" V 9150 4400 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 9080 4400 50  0001 C CNN
-F 3 "~" H 9150 4400 50  0001 C CNN
-	1    9150 4400
-	0    1    1    0   
-$EndComp
-Text GLabel 8800 4400 0    50   Input ~ 0
+Text GLabel 8850 4400 0    50   Input ~ 0
 D9
-Wire Wire Line
-	8800 4400 9000 4400
-Wire Wire Line
-	9300 4400 9500 4400
 $Comp
 L power:VCC #PWR018
 U 1 1 5F57014C
@@ -1047,7 +1028,7 @@ U 1 1 5F0B738E
 P 10600 4150
 F 0 "J3" H 10492 3125 50  0000 C CNN
 F 1 "CONN_LCD" H 10492 3216 50  0000 C CNN
-F 2 "Connector_PinHeader_1.27mm:PinHeader_1x16_P1.27mm_Horizontal" H 10600 4150 50  0001 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical" H 10600 4150 50  0001 C CNN
 F 3 "~" H 10600 4150 50  0001 C CNN
 	1    10600 4150
 	1    0    0    1   
@@ -1144,4 +1125,181 @@ Wire Wire Line
 Connection ~ 7850 1850
 Wire Wire Line
 	8100 1600 8100 1850
+Wire Wire Line
+	8850 4400 9100 4400
+Wire Notes Line
+	5400 5350 8050 5350
+Wire Notes Line
+	8050 5350 8050 6450
+Wire Notes Line
+	8050 6450 5400 6450
+Wire Notes Line
+	5400 6450 5400 5350
+Text Notes 6350 5450 0    50   ~ 0
+ICSP - Bootloader
+$Comp
+L Connector:Conn_01x06_Male J5
+U 1 1 5F49926C
+P 7150 5900
+F 0 "J5" H 7122 5782 50  0000 R CNN
+F 1 "Conn_01x06_Male" H 7550 6200 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Horizontal" H 7150 5900 50  0001 C CNN
+F 3 "~" H 7150 5900 50  0001 C CNN
+	1    7150 5900
+	-1   0    0    1   
+$EndComp
+Text GLabel 6550 6100 0    50   Input ~ 0
+ICSP_MISO
+Text GLabel 6550 5800 0    50   Input ~ 0
+ICSP_MOSI
+$Comp
+L power:VCC #PWR017
+U 1 1 5F4B97E7
+P 6550 6000
+F 0 "#PWR017" H 6550 5850 50  0001 C CNN
+F 1 "VCC" V 6565 6127 50  0000 L CNN
+F 2 "" H 6550 6000 50  0001 C CNN
+F 3 "" H 6550 6000 50  0001 C CNN
+	1    6550 6000
+	0    -1   -1   0   
+$EndComp
+Text GLabel 6550 5900 0    50   Input ~ 0
+ICSP_SCK
+Text GLabel 6550 5700 0    50   Input ~ 0
+ICSP_RST
+$Comp
+L power:GND #PWR07
+U 1 1 5F4BAD5C
+P 6550 5600
+F 0 "#PWR07" H 6550 5350 50  0001 C CNN
+F 1 "GND" V 6555 5472 50  0000 R CNN
+F 2 "" H 6550 5600 50  0001 C CNN
+F 3 "" H 6550 5600 50  0001 C CNN
+	1    6550 5600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6550 5600 6950 5600
+Wire Wire Line
+	6550 5700 6950 5700
+Wire Wire Line
+	6550 5800 6950 5800
+Wire Wire Line
+	6550 5900 6950 5900
+Wire Wire Line
+	6550 6000 6950 6000
+Wire Wire Line
+	6550 6100 6950 6100
+Text GLabel 7100 2350 2    50   Output ~ 0
+ICSP_MISO
+Text GLabel 7100 2250 2    50   Output ~ 0
+ICSP_MOSI
+Text GLabel 7100 2450 2    50   Output ~ 0
+ICSP_SCK
+Wire Wire Line
+	7000 2450 7000 2700
+Wire Wire Line
+	7000 2700 6750 2700
+Wire Wire Line
+	6750 2700 6750 2650
+Wire Wire Line
+	7000 2450 7100 2450
+Connection ~ 6750 2650
+Wire Wire Line
+	6750 2650 6800 2650
+Wire Wire Line
+	6650 2450 6700 2450
+Wire Wire Line
+	6650 2550 6750 2550
+Wire Wire Line
+	7100 2350 6750 2350
+Wire Wire Line
+	6750 2350 6750 2550
+Connection ~ 6750 2550
+Wire Wire Line
+	6750 2550 6800 2550
+Wire Wire Line
+	7100 2250 7050 2250
+Wire Wire Line
+	7050 2250 7050 2300
+Wire Wire Line
+	7050 2300 6700 2300
+Wire Wire Line
+	6700 2300 6700 2450
+Connection ~ 6700 2450
+Wire Wire Line
+	6700 2450 6800 2450
+Text GLabel 3600 5950 3    50   Output ~ 0
+ICSP_RST
+Wire Wire Line
+	3600 5700 3600 5950
+$Comp
+L Mechanical:MountingHole_Pad H1
+U 1 1 5F5C5141
+P 2500 1000
+F 0 "H1" H 2600 1049 50  0000 L CNN
+F 1 "HOLE1" H 2400 1200 50  0000 L CNN
+F 2 "" H 2500 1000 50  0001 C CNN
+F 3 "~" H 2500 1000 50  0001 C CNN
+	1    2500 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H2
+U 1 1 5F5C614B
+P 2850 1000
+F 0 "H2" H 2950 1049 50  0000 L CNN
+F 1 "HOLE2" H 2800 1200 50  0000 L CNN
+F 2 "" H 2850 1000 50  0001 C CNN
+F 3 "~" H 2850 1000 50  0001 C CNN
+	1    2850 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H3
+U 1 1 5F5C6841
+P 3200 1000
+F 0 "H3" H 3300 1049 50  0000 L CNN
+F 1 "HOLE3" H 3100 1200 50  0000 L CNN
+F 2 "" H 3200 1000 50  0001 C CNN
+F 3 "~" H 3200 1000 50  0001 C CNN
+	1    3200 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H4
+U 1 1 5F5C77FA
+P 3550 1000
+F 0 "H4" H 3650 1049 50  0000 L CNN
+F 1 "HOLE4" H 3450 1200 50  0000 L CNN
+F 2 "" H 3550 1000 50  0001 C CNN
+F 3 "~" H 3550 1000 50  0001 C CNN
+	1    3550 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR022
+U 1 1 5F5C8BD6
+P 3050 1300
+F 0 "#PWR022" H 3050 1050 50  0001 C CNN
+F 1 "GND" H 3055 1127 50  0000 C CNN
+F 2 "" H 3050 1300 50  0001 C CNN
+F 3 "" H 3050 1300 50  0001 C CNN
+	1    3050 1300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2500 1100 2850 1100
+Wire Wire Line
+	2850 1100 3200 1100
+Connection ~ 2850 1100
+Wire Wire Line
+	3200 1100 3550 1100
+Connection ~ 3200 1100
+Wire Wire Line
+	3200 1100 3200 1150
+Wire Wire Line
+	3200 1150 3050 1150
+Wire Wire Line
+	3050 1150 3050 1300
 $EndSCHEMATC
