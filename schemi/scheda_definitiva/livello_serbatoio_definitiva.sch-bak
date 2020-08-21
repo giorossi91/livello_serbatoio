@@ -14,17 +14,6 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L MCU_Microchip_ATmega:ATmega328P-PU U2
-U 1 1 5F0B08F0
-P 6050 3350
-F 0 "U2" H 5650 4800 50  0000 R CNN
-F 1 "ATmega328P-PU" H 6250 3600 50  0000 R CNN
-F 2 "Package_DIP:DIP-28_W7.62mm" H 6050 3350 50  0001 C CIN
-F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega328_P%20AVR%20MCU%20with%20picoPower%20Technology%20Data%20Sheet%2040001984A.pdf" H 6050 3350 50  0001 C CNN
-	1    6050 3350
-	1    0    0    -1  
-$EndComp
-$Comp
 L Interface_USB:FT232RL U1
 U 1 1 5F0B8F73
 P 3050 3350
@@ -254,25 +243,14 @@ Wire Wire Line
 	7500 2600 7500 2650
 Connection ~ 7500 2650
 $Comp
-L Device:C C5
-U 1 1 5F1D4DDB
-P 6550 1350
-F 0 "C5" V 6298 1350 50  0000 C CNN
-F 1 "100nF" V 6389 1350 50  0000 C CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 6588 1200 50  0001 C CNN
-F 3 "~" H 6550 1350 50  0001 C CNN
-	1    6550 1350
-	0    1    1    0   
-$EndComp
-$Comp
 L power:GND #PWR08
 U 1 1 5F1D54A8
-P 6900 1650
-F 0 "#PWR08" H 6900 1400 50  0001 C CNN
-F 1 "GND" V 6905 1522 50  0000 R CNN
-F 2 "" H 6900 1650 50  0001 C CNN
-F 3 "" H 6900 1650 50  0001 C CNN
-	1    6900 1650
+P 6700 1700
+F 0 "#PWR08" H 6700 1450 50  0001 C CNN
+F 1 "GND" V 6705 1572 50  0000 R CNN
+F 2 "" H 6700 1700 50  0001 C CNN
+F 3 "" H 6700 1700 50  0001 C CNN
+	1    6700 1700
 	0    -1   -1   0   
 $EndComp
 Text GLabel 6800 3650 2    50   Input ~ 0
@@ -405,42 +383,14 @@ Wire Wire Line
 $Comp
 L Device:C C6
 U 1 1 5F0BF95B
-P 6550 1750
-F 0 "C6" V 6298 1750 50  0000 C CNN
-F 1 "100nF" V 6389 1750 50  0000 C CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 6588 1600 50  0001 C CNN
-F 3 "~" H 6550 1750 50  0001 C CNN
-	1    6550 1750
-	0    1    1    0   
+P 6450 1700
+F 0 "C6" V 6700 1700 50  0000 C CNN
+F 1 "100nF" V 6600 1700 50  0000 C CNN
+F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 6488 1550 50  0001 C CNN
+F 3 "~" H 6450 1700 50  0001 C CNN
+	1    6450 1700
+	0    -1   -1   0   
 $EndComp
-$Comp
-L Device:L L1
-U 1 1 5F0F5110
-P 6150 1600
-F 0 "L1" H 6203 1646 50  0000 L CNN
-F 1 "10uH" H 6203 1555 50  0000 L CNN
-F 2 "Inductor_THT:L_Axial_L6.6mm_D2.7mm_P10.16mm_Horizontal_Vishay_IM-2" H 6150 1600 50  0001 C CNN
-F 3 "~" H 6150 1600 50  0001 C CNN
-	1    6150 1600
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6400 1350 6050 1350
-Wire Wire Line
-	6150 1450 6150 950 
-Wire Wire Line
-	6050 1350 6050 950 
-Wire Wire Line
-	6150 1750 6400 1750
-Wire Wire Line
-	6700 1350 6900 1350
-Wire Wire Line
-	6900 1350 6900 1650
-Wire Wire Line
-	6900 1650 6900 1750
-Wire Wire Line
-	6900 1750 6700 1750
-Connection ~ 6900 1650
 $Comp
 L power:GND #PWR02
 U 1 1 5F11910C
@@ -657,9 +607,6 @@ Wire Wire Line
 NoConn ~ 3850 3850
 NoConn ~ 3850 3950
 NoConn ~ 3850 4050
-Wire Wire Line
-	6050 1350 6050 1850
-Connection ~ 6050 1350
 Text GLabel 6800 4050 2    50   Input ~ 0
 D2
 Wire Wire Line
@@ -668,9 +615,6 @@ Wire Wire Line
 	3150 2350 2950 2350
 Connection ~ 3150 2350
 Connection ~ 2950 2350
-Wire Wire Line
-	6150 1850 6150 1750
-Connection ~ 6150 1750
 Wire Wire Line
 	2150 2350 2950 2350
 $Comp
@@ -730,35 +674,16 @@ F 3 "" H 2150 2150 50  0001 C CNN
 $EndComp
 Connection ~ 2150 2150
 $Comp
-L power:PWR_FLAG #FLG01
-U 1 1 5F582FA7
-P 6250 1850
-F 0 "#FLG01" H 6250 1925 50  0001 C CNN
-F 1 "PWR_FLAG" V 6250 1978 50  0000 L CNN
-F 2 "" H 6250 1850 50  0001 C CNN
-F 3 "~" H 6250 1850 50  0001 C CNN
-	1    6250 1850
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	6150 950  6100 950 
-$Comp
 L power:VCC #PWR0101
 U 1 1 5F5AA697
-P 6100 950
-F 0 "#PWR0101" H 6100 800 50  0001 C CNN
-F 1 "VCC" H 6115 1123 50  0000 C CNN
-F 2 "" H 6100 950 50  0001 C CNN
-F 3 "" H 6100 950 50  0001 C CNN
-	1    6100 950 
+P 6100 1500
+F 0 "#PWR0101" H 6100 1350 50  0001 C CNN
+F 1 "VCC" H 6115 1673 50  0000 C CNN
+F 2 "" H 6100 1500 50  0001 C CNN
+F 3 "" H 6100 1500 50  0001 C CNN
+	1    6100 1500
 	1    0    0    -1  
 $EndComp
-Connection ~ 6100 950 
-Wire Wire Line
-	6100 950  6050 950 
-Wire Wire Line
-	6250 1850 6150 1850
-Connection ~ 6150 1850
 Text Notes 9800 900  0    50   ~ 0
 Ultrasonic sensor
 Text Notes 9700 2750 0    50   ~ 0
@@ -1150,7 +1075,7 @@ F 3 "~" H 7150 5900 50  0001 C CNN
 $EndComp
 Text GLabel 6550 6100 0    50   Input ~ 0
 ICSP_MISO
-Text GLabel 6550 5800 0    50   Input ~ 0
+Text GLabel 6550 5900 0    50   Input ~ 0
 ICSP_MOSI
 $Comp
 L power:VCC #PWR017
@@ -1163,7 +1088,7 @@ F 3 "" H 6550 6000 50  0001 C CNN
 	1    6550 6000
 	0    -1   -1   0   
 $EndComp
-Text GLabel 6550 5900 0    50   Input ~ 0
+Text GLabel 6550 5800 0    50   Input ~ 0
 ICSP_SCK
 Text GLabel 6550 5700 0    50   Input ~ 0
 ICSP_RST
@@ -1239,7 +1164,7 @@ U 1 1 5F5C5141
 P 2500 1000
 F 0 "H1" H 2600 1049 50  0000 L CNN
 F 1 "HOLE1" H 2400 1200 50  0000 L CNN
-F 2 "" H 2500 1000 50  0001 C CNN
+F 2 "MountingHole:MountingHole_3mm_Pad_Via" H 2500 1000 50  0001 C CNN
 F 3 "~" H 2500 1000 50  0001 C CNN
 	1    2500 1000
 	1    0    0    -1  
@@ -1250,7 +1175,7 @@ U 1 1 5F5C614B
 P 2850 1000
 F 0 "H2" H 2950 1049 50  0000 L CNN
 F 1 "HOLE2" H 2800 1200 50  0000 L CNN
-F 2 "" H 2850 1000 50  0001 C CNN
+F 2 "MountingHole:MountingHole_3mm_Pad_Via" H 2850 1000 50  0001 C CNN
 F 3 "~" H 2850 1000 50  0001 C CNN
 	1    2850 1000
 	1    0    0    -1  
@@ -1261,7 +1186,7 @@ U 1 1 5F5C6841
 P 3200 1000
 F 0 "H3" H 3300 1049 50  0000 L CNN
 F 1 "HOLE3" H 3100 1200 50  0000 L CNN
-F 2 "" H 3200 1000 50  0001 C CNN
+F 2 "MountingHole:MountingHole_3mm_Pad_Via" H 3200 1000 50  0001 C CNN
 F 3 "~" H 3200 1000 50  0001 C CNN
 	1    3200 1000
 	1    0    0    -1  
@@ -1272,7 +1197,7 @@ U 1 1 5F5C77FA
 P 3550 1000
 F 0 "H4" H 3650 1049 50  0000 L CNN
 F 1 "HOLE4" H 3450 1200 50  0000 L CNN
-F 2 "" H 3550 1000 50  0001 C CNN
+F 2 "MountingHole:MountingHole_3mm_Pad_Via" H 3550 1000 50  0001 C CNN
 F 3 "~" H 3550 1000 50  0001 C CNN
 	1    3550 1000
 	1    0    0    -1  
@@ -1302,4 +1227,31 @@ Wire Wire Line
 	3200 1150 3050 1150
 Wire Wire Line
 	3050 1150 3050 1300
+$Comp
+L MCU_Microchip_ATmega:ATmega328P-PU U2
+U 1 1 5F0B08F0
+P 6050 3350
+F 0 "U2" H 5650 4800 50  0000 R CNN
+F 1 "ATmega328P-PU" H 6250 3600 50  0000 R CNN
+F 2 "Package_DIP:DIP-28_W7.62mm" H 6050 3350 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega328_P%20AVR%20MCU%20with%20picoPower%20Technology%20Data%20Sheet%2040001984A.pdf" H 6050 3350 50  0001 C CNN
+	1    6050 3350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6100 1500 6100 1700
+Wire Wire Line
+	6100 1700 6050 1700
+Wire Wire Line
+	6050 1700 6050 1850
+Wire Wire Line
+	6100 1700 6150 1700
+Wire Wire Line
+	6150 1700 6150 1850
+Connection ~ 6100 1700
+Connection ~ 6150 1700
+Wire Wire Line
+	6150 1700 6300 1700
+Wire Wire Line
+	6700 1700 6600 1700
 $EndSCHEMATC
