@@ -89,9 +89,9 @@
       (subtractmaskfromsilk false)
       (outputformat 1)
       (mirror false)
-      (drillshape 1)
+      (drillshape 0)
       (scaleselection 1)
-      (outputdirectory ""))
+      (outputdirectory "gerber/"))
   )
 
   (net 0 "")
@@ -2714,7 +2714,7 @@
   (segment (start 105.5679 103.8279) (end 105.2 103.46) (width 0.254) (layer B.Cu) (net 54))
   (segment (start 105.5679 104.6373) (end 105.5679 103.8279) (width 0.254) (layer B.Cu) (net 54))
 
-  (zone (net 1) (net_name BLK) (layer B.Cu) (tstamp 0) (hatch edge 0.508)
+  (zone (net 1) (net_name BLK) (layer B.Cu) (tstamp 5F41182C) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))
