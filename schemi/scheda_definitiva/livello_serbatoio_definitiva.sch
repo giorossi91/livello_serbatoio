@@ -1254,4 +1254,8 @@ Wire Wire Line
 	6150 1700 6300 1700
 Wire Wire Line
 	6700 1700 6600 1700
+Text Label 1500 2950 0    50   ~ 0
+D+
+Text Label 1500 3050 0    50   ~ 0
+D-
 $EndSCHEMATC

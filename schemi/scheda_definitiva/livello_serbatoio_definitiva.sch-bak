@@ -1073,9 +1073,9 @@ F 3 "~" H 7150 5900 50  0001 C CNN
 	1    7150 5900
 	-1   0    0    1   
 $EndComp
-Text GLabel 6550 6100 0    50   Input ~ 0
-ICSP_MISO
 Text GLabel 6550 5900 0    50   Input ~ 0
+ICSP_MISO
+Text GLabel 6550 6100 0    50   Input ~ 0
 ICSP_MOSI
 $Comp
 L power:VCC #PWR017
