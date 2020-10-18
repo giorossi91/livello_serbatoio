@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name livello_serbatoio_definitiva-rescue)(type Legacy)(uri ${KIPRJMOD}/livello_serbatoio_definitiva-rescue.lib)(options "")(descr ""))
+)

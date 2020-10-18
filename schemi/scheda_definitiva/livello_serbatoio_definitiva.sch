@@ -36,17 +36,6 @@ F 3 "~" H 7500 2800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:USB_B J1
-U 1 1 5F0BA65A
-P 950 2950
-F 0 "J1" H 1007 3417 50  0000 C CNN
-F 1 "USB_B" H 1007 3326 50  0000 C CNN
-F 2 "Connector_USB:USB_B_OST_USB-B1HSxx_Horizontal" H 1100 2900 50  0001 C CNN
-F 3 " ~" H 1100 2900 50  0001 C CNN
-	1    950  2950
-	1    0    0    -1  
-$EndComp
-$Comp
 L Connector:Conn_01x04_Female J2
 U 1 1 5F0D6DF0
 P 10500 1350
@@ -167,7 +156,7 @@ U 1 1 5F1AF8C5
 P 7800 2600
 F 0 "C7" V 7750 2700 50  0000 C CNN
 F 1 "22pF" V 7639 2600 50  0000 C CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 7838 2450 50  0001 C CNN
+F 2 "Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm" H 7838 2450 50  0001 C CNN
 F 3 "~" H 7800 2600 50  0001 C CNN
 	1    7800 2600
 	0    1    1    0   
@@ -178,7 +167,7 @@ U 1 1 5F1B005F
 P 7800 3050
 F 0 "C8" V 7850 3150 50  0000 C CNN
 F 1 "22pF" V 7950 3050 50  0000 C CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 7838 2900 50  0001 C CNN
+F 2 "Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm" H 7838 2900 50  0001 C CNN
 F 3 "~" H 7800 3050 50  0001 C CNN
 	1    7800 3050
 	0    1    1    0   
@@ -299,7 +288,7 @@ U 1 1 5F23FB6A
 P 3000 5700
 F 0 "C4" V 2748 5700 50  0000 C CNN
 F 1 "100nF" V 2839 5700 50  0000 C CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 3038 5550 50  0001 C CNN
+F 2 "Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm" H 3038 5550 50  0001 C CNN
 F 3 "~" H 3000 5700 50  0001 C CNN
 	1    3000 5700
 	0    1    1    0   
@@ -362,7 +351,7 @@ U 1 1 5F287EEB
 P 5350 2000
 F 0 "C3" H 5300 1900 50  0000 C CNN
 F 1 "100nF" V 5500 2000 50  0000 C CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 5388 1850 50  0001 C CNN
+F 2 "Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm" H 5388 1850 50  0001 C CNN
 F 3 "~" H 5350 2000 50  0001 C CNN
 	1    5350 2000
 	-1   0    0    1   
@@ -386,7 +375,7 @@ U 1 1 5F0BF95B
 P 6450 1700
 F 0 "C6" V 6700 1700 50  0000 C CNN
 F 1 "100nF" V 6600 1700 50  0000 C CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 6488 1550 50  0001 C CNN
+F 2 "Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm" H 6488 1550 50  0001 C CNN
 F 3 "~" H 6450 1700 50  0001 C CNN
 	1    6450 1700
 	0    -1   -1   0   
@@ -417,11 +406,6 @@ Wire Wire Line
 Connection ~ 2850 4350
 Wire Wire Line
 	3050 4350 3050 4550
-Wire Wire Line
-	850  3350 850  3400
-Wire Wire Line
-	850  3400 950  3400
-Connection ~ 950  3400
 Connection ~ 2250 4350
 Wire Wire Line
 	950  4350 2250 4350
@@ -431,7 +415,7 @@ U 1 1 5F17191B
 P 1300 3500
 F 0 "C1" H 1415 3546 50  0000 L CNN
 F 1 "100nF" H 1415 3455 50  0000 L CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 1338 3350 50  0001 C CNN
+F 2 "Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm" H 1338 3350 50  0001 C CNN
 F 3 "~" H 1300 3500 50  0001 C CNN
 	1    1300 3500
 	1    0    0    -1  
@@ -446,21 +430,14 @@ Wire Wire Line
 $Comp
 L Device:C C2
 U 1 1 5F19380D
-P 1750 3500
-F 0 "C2" H 1865 3546 50  0000 L CNN
-F 1 "100nF" H 1865 3455 50  0000 L CNN
-F 2 "Capacitor_THT:C_Axial_L3.8mm_D2.6mm_P7.50mm_Horizontal" H 1788 3350 50  0001 C CNN
-F 3 "~" H 1750 3500 50  0001 C CNN
-	1    1750 3500
-	1    0    0    -1  
+P 2100 2650
+F 0 "C2" V 1950 2600 50  0000 L CNN
+F 1 "100nF" V 2250 2550 50  0000 L CNN
+F 2 "Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm" H 2138 2500 50  0001 C CNN
+F 3 "~" H 2100 2650 50  0001 C CNN
+	1    2100 2650
+	0    1    1    0   
 $EndComp
-Wire Wire Line
-	2250 2650 1750 2650
-Wire Wire Line
-	1750 2650 1750 3350
-Wire Wire Line
-	1750 3650 1300 3650
-Connection ~ 1300 3650
 Wire Wire Line
 	1300 2350 1350 2350
 Wire Wire Line
@@ -472,17 +449,6 @@ NoConn ~ 2250 3550
 NoConn ~ 2250 3750
 Wire Wire Line
 	2150 2150 2150 2350
-$Comp
-L Device:Fuse F1
-U 1 1 5F1C7FD2
-P 1500 2350
-F 0 "F1" V 1303 2350 50  0000 C CNN
-F 1 "500mA" V 1394 2350 50  0000 C CNN
-F 2 "Fuse:Fuse_Littelfuse-LVR100" V 1430 2350 50  0001 C CNN
-F 3 "~" H 1500 2350 50  0001 C CNN
-	1    1500 2350
-	0    1    1    0   
-$EndComp
 Wire Wire Line
 	1650 2350 2150 2350
 Text GLabel 3950 3050 2    50   Output ~ 0
@@ -542,16 +508,9 @@ Wire Wire Line
 	4350 3650 4300 3650
 Wire Wire Line
 	4350 3750 4300 3750
-Connection ~ 850  3400
-Wire Wire Line
-	850  3400 850  3450
 Connection ~ 1300 2750
 Wire Wire Line
 	1300 2750 1300 3350
-Wire Wire Line
-	950  3400 950  3350
-Wire Wire Line
-	950  3400 950  3650
 Wire Wire Line
 	1300 2350 1300 2750
 $Comp
@@ -697,15 +656,11 @@ Wire Notes Line
 Wire Notes Line
 	11000 800  11000 1800
 Wire Notes Line
-	750  1800 5000 1800
-Wire Notes Line
 	5000 1800 5000 6850
 Wire Notes Line
 	5000 6850 650  6850
 Wire Notes Line
 	650  6850 650  1800
-Wire Notes Line
-	650  1800 700  1800
 Text Notes 2550 1950 0    50   ~ 0
 USB Programmer
 Text GLabel 4350 2650 2    50   Output ~ 0
@@ -1062,59 +1017,36 @@ Wire Notes Line
 	5400 6450 5400 5350
 Text Notes 6350 5450 0    50   ~ 0
 ICSP - Bootloader
-$Comp
-L Connector:Conn_01x06_Male J5
-U 1 1 5F49926C
-P 7150 5900
-F 0 "J5" H 7122 5782 50  0000 R CNN
-F 1 "Conn_01x06_Male" H 7550 6200 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Horizontal" H 7150 5900 50  0001 C CNN
-F 3 "~" H 7150 5900 50  0001 C CNN
-	1    7150 5900
-	-1   0    0    1   
-$EndComp
-Text GLabel 6550 5900 0    50   Input ~ 0
+Text GLabel 6350 5850 0    50   Input ~ 0
 ICSP_MISO
-Text GLabel 6550 6100 0    50   Input ~ 0
+Text GLabel 7300 5950 2    50   Input ~ 0
 ICSP_MOSI
 $Comp
 L power:VCC #PWR017
 U 1 1 5F4B97E7
-P 6550 6000
-F 0 "#PWR017" H 6550 5850 50  0001 C CNN
-F 1 "VCC" V 6565 6127 50  0000 L CNN
-F 2 "" H 6550 6000 50  0001 C CNN
-F 3 "" H 6550 6000 50  0001 C CNN
-	1    6550 6000
-	0    -1   -1   0   
+P 7300 5850
+F 0 "#PWR017" H 7300 5700 50  0001 C CNN
+F 1 "VCC" V 7315 5977 50  0000 L CNN
+F 2 "" H 7300 5850 50  0001 C CNN
+F 3 "" H 7300 5850 50  0001 C CNN
+	1    7300 5850
+	1    0    0    -1  
 $EndComp
-Text GLabel 6550 5800 0    50   Input ~ 0
+Text GLabel 6350 5950 0    50   Input ~ 0
 ICSP_SCK
-Text GLabel 6550 5700 0    50   Input ~ 0
+Text GLabel 6350 6050 0    50   Input ~ 0
 ICSP_RST
 $Comp
 L power:GND #PWR07
 U 1 1 5F4BAD5C
-P 6550 5600
-F 0 "#PWR07" H 6550 5350 50  0001 C CNN
-F 1 "GND" V 6555 5472 50  0000 R CNN
-F 2 "" H 6550 5600 50  0001 C CNN
-F 3 "" H 6550 5600 50  0001 C CNN
-	1    6550 5600
-	0    1    1    0   
+P 7300 6050
+F 0 "#PWR07" H 7300 5800 50  0001 C CNN
+F 1 "GND" V 7305 5922 50  0000 R CNN
+F 2 "" H 7300 6050 50  0001 C CNN
+F 3 "" H 7300 6050 50  0001 C CNN
+	1    7300 6050
+	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	6550 5600 6950 5600
-Wire Wire Line
-	6550 5700 6950 5700
-Wire Wire Line
-	6550 5800 6950 5800
-Wire Wire Line
-	6550 5900 6950 5900
-Wire Wire Line
-	6550 6000 6950 6000
-Wire Wire Line
-	6550 6100 6950 6100
 Text GLabel 7100 2350 2    50   Output ~ 0
 ICSP_MISO
 Text GLabel 7100 2250 2    50   Output ~ 0
@@ -1205,28 +1137,22 @@ $EndComp
 $Comp
 L power:GND #PWR022
 U 1 1 5F5C8BD6
-P 3050 1300
-F 0 "#PWR022" H 3050 1050 50  0001 C CNN
-F 1 "GND" H 3055 1127 50  0000 C CNN
-F 2 "" H 3050 1300 50  0001 C CNN
-F 3 "" H 3050 1300 50  0001 C CNN
-	1    3050 1300
+P 3050 1150
+F 0 "#PWR022" H 3050 900 50  0001 C CNN
+F 1 "GND" H 3055 977 50  0000 C CNN
+F 2 "" H 3050 1150 50  0001 C CNN
+F 3 "" H 3050 1150 50  0001 C CNN
+	1    3050 1150
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	2500 1100 2850 1100
 Wire Wire Line
-	2850 1100 3200 1100
+	2850 1100 3050 1100
 Connection ~ 2850 1100
 Wire Wire Line
 	3200 1100 3550 1100
 Connection ~ 3200 1100
-Wire Wire Line
-	3200 1100 3200 1150
-Wire Wire Line
-	3200 1150 3050 1150
-Wire Wire Line
-	3050 1150 3050 1300
 $Comp
 L MCU_Microchip_ATmega:ATmega328P-PU U2
 U 1 1 5F0B08F0
@@ -1258,4 +1184,82 @@ Text Label 1500 2950 0    50   ~ 0
 D+
 Text Label 1500 3050 0    50   ~ 0
 D-
+Text Label 3650 2350 0    50   ~ 0
++5V
+Text Label 1700 4350 0    50   ~ 0
+GND
+Text Label 7300 2650 0    50   ~ 0
+X1
+Text Label 7300 2950 0    50   ~ 0
+X2
+Wire Wire Line
+	3050 1150 3050 1100
+Connection ~ 3050 1100
+Wire Wire Line
+	3050 1100 3200 1100
+$Comp
+L Device:Ferrite_Bead FB1
+U 1 1 5F8E145F
+P 1500 2350
+F 0 "FB1" V 1350 2350 50  0000 C CNN
+F 1 "MF-MSMF050-2" V 1650 2500 50  0000 C CNN
+F 2 "Inductor_SMD:L_1812_4532Metric_Pad1.30x3.40mm_HandSolder" V 1430 2350 50  0001 C CNN
+F 3 "~" H 1500 2350 50  0001 C CNN
+	1    1500 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR023
+U 1 1 5F8EF1F8
+P 1950 2650
+F 0 "#PWR023" H 1950 2400 50  0001 C CNN
+F 1 "GND" H 1955 2477 50  0000 C CNN
+F 2 "" H 1950 2650 50  0001 C CNN
+F 3 "" H 1950 2650 50  0001 C CNN
+	1    1950 2650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	950  3350 950  3650
+Wire Notes Line
+	650  1800 5000 1800
+$Comp
+L livello_serbatoio_definitiva-rescue:USB_B-Connector J1
+U 1 1 5F0BA65A
+P 950 2950
+F 0 "J1" H 1007 3417 50  0000 C CNN
+F 1 "USB_B" H 1007 3326 50  0000 C CNN
+F 2 "simboli_custom:USB_B_OST_USB-B1HSxx_Horizontal" H 1100 2900 50  0001 C CNN
+F 3 " ~" H 1100 2900 50  0001 C CNN
+	1    950  2950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	850  3350 950  3350
+Connection ~ 950  3350
+Text Label 10600 5650 0    50   ~ 0
+GND
+$Comp
+L Connector_Generic:Conn_02x03_Odd_Even J5
+U 1 1 5F8DF7DB
+P 6750 5950
+F 0 "J5" H 6800 6267 50  0000 C CNN
+F 1 "ICSP" H 6800 6176 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical" H 6750 5950 50  0001 C CNN
+F 3 "~" H 6750 5950 50  0001 C CNN
+	1    6750 5950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6350 5850 6550 5850
+Wire Wire Line
+	6350 5950 6550 5950
+Wire Wire Line
+	6350 6050 6550 6050
+Wire Wire Line
+	7050 5850 7300 5850
+Wire Wire Line
+	7050 5950 7300 5950
+Wire Wire Line
+	7050 6050 7300 6050
 $EndSCHEMATC
