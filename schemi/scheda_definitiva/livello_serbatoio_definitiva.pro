@@ -1,4 +1,4 @@
-update=sab 24 ott 2020, 11:40:05
+update=sab 24 ott 2020, 17:44:50
 version=1
 last_client=kicad
 [general]
@@ -76,7 +76,7 @@ OthersTextSizeH=1
 OthersTextSizeThickness=0.15
 OthersTextItalic=0
 OthersTextUpright=1
-SolderMaskClearance=0.05
+SolderMaskClearance=0
 SolderMaskMinWidth=0
 SolderPasteClearance=0
 SolderPasteRatio=-0
@@ -260,12 +260,12 @@ dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/1]
 Name=USB
-Clearance=0.0508
+Clearance=0.15
 TrackWidth=0.254
 ViaDiameter=0.8
 ViaDrill=0.4
 uViaDiameter=0.3
 uViaDrill=0.1
-dPairWidth=0.2032
-dPairGap=0.0508
+dPairWidth=0.3048
+dPairGap=0.1524
 dPairViaGap=0.25
