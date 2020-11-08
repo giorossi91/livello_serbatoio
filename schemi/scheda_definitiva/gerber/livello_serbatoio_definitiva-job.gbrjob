@@ -5,9 +5,9 @@
     {
       "Vendor":      "KiCad",
       "Application": "Pcbnew",
-      "Version":     "5.1.7"
+      "Version":     "5.1.8"
     },
-    "CreationDate":  "2020-10-25T11:14:51+01:00"
+    "CreationDate":  "2020-11-08T18:43:05+01:00"
   },
   "GeneralSpecs":
   {
@@ -29,12 +29,12 @@
   [
     {
       "Layers": "Outer",
-      "PadToPad":  0.150,
-      "PadToTrack":  0.150,
+      "PadToPad":  0.200,
+      "PadToTrack":  0.200,
       "TrackToTrack":  0.150,
       "MinLineWidth":  0.254,
-      "TrackToRegion":  0.508,
-      "RegionToRegion":  0.508
+      "TrackToRegion":  0.200,
+      "RegionToRegion":  0.200
     }
   ],
   "FilesAttributes":
