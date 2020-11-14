@@ -1,4 +1,4 @@
-(module TerminalBlock_RND_205-00047_1x04_P5.00mm_Horizontal (layer F.Cu) (tedit 5FA7FC32)
+(module TerminalBlock_RND_205-00047_1x04_P5.00mm_Horizontal (layer F.Cu) (tedit 5FAFC192)
   (descr "terminal block RND 205-00047, 4 pins, pitch 5mm, size 20x8.1mm^2, drill diamater 1.1mm, pad diameter 2.1mm, see http://cdn-reichelt.de/documents/datenblatt/C151/RND_205-00045_DB_EN.pdf, script-generated using https://github.com/pointhi/kicad-footprint-generator/scripts/TerminalBlock_RND")
   (tags "THT terminal block RND 205-00047 pitch 5mm size 20x8.1mm^2 drill 1.1mm pad 2.1mm")
   (fp_text reference REF** (at 7.5 -5.11) (layer F.SilkS)
@@ -104,9 +104,9 @@
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
   )
-  (model ${KIPRJMOD}/3d_component/CUI_DEVICES_TB001-500-04BE.step
+  (model ${KIPRJMOD}/3d_component/CUI_DEVICES_TB001-500-P04GR.step
     (offset (xyz -15 -5 0))
     (scale (xyz 1 1 1))
-    (rotate (xyz -90 0 -90))
+    (rotate (xyz 90 180 90))
   )
 )
