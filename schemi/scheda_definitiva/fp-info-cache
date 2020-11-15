@@ -1,4 +1,4 @@
-18987809692871454
+18989415240983454
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -82949,6 +82949,13 @@ LCD1602A
 0
 16
 16
+simboli_custom
+MF-MSMF_1812_4532Metric_Pad1.30x3.40mm_HandSolder
+Fuse SMD 1812 (4532 Metric), square (rectangular) end terminal, IPC_7351 nominal with elongated pad for handsoldering. (Body size source: https://www.nikhef.nl/pub/departments/mt/projects/detectorR_D/dtddice/ERJ2G.pdf), generated with kicad-footprint-generator
+fuse handsolder
+0
+2
+2
 simboli_custom
 TerminalBlock_RND_205-00047_1x04_P5.00mm_Horizontal
 terminal block RND 205-00047, 4 pins, pitch 5mm, size 20x8.1mm^2, drill diamater 1.1mm, pad diameter 2.1mm, see http://cdn-reichelt.de/documents/datenblatt/C151/RND_205-00045_DB_EN.pdf, script-generated using https://github.com/pointhi/kicad-footprint-generator/scripts/TerminalBlock_RND

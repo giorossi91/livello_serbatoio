@@ -1034,17 +1034,6 @@ F 3 "" H 1950 2650 50  0001 C CNN
 	1    1950 2650
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:Ferrite_Bead FB1
-U 1 1 5F8E145F
-P 1500 2350
-F 0 "FB1" V 1350 2350 50  0000 C CNN
-F 1 "MF-MSMF050-2" V 1650 2500 50  0000 C CNN
-F 2 "Inductor_SMD:L_1812_4532Metric_Pad1.30x3.40mm_HandSolder" V 1430 2350 50  0001 C CNN
-F 3 "~" H 1500 2350 50  0001 C CNN
-	1    1500 2350
-	0    1    1    0   
-$EndComp
 Text Label 1700 4350 0    50   ~ 0
 GND
 Text Label 3650 2350 0    50   ~ 0
@@ -1335,14 +1324,25 @@ Connection ~ 3050 2350
 Wire Wire Line
 	3050 2350 2950 2350
 $Comp
-L power:GND #PWR?
+L power:GND #PWR0104
 U 1 1 5FD135C3
 P 3050 2000
-F 0 "#PWR?" H 3050 1750 50  0001 C CNN
+F 0 "#PWR0104" H 3050 1750 50  0001 C CNN
 F 1 "GND" V 3055 1872 50  0000 R CNN
 F 2 "" H 3050 2000 50  0001 C CNN
 F 3 "" H 3050 2000 50  0001 C CNN
 	1    3050 2000
 	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:Polyfuse F1
+U 1 1 5FB200DA
+P 1500 2350
+F 0 "F1" V 1400 2350 50  0000 C CNN
+F 1 "MF-MSMF050-2" V 1600 2500 50  0000 C CNN
+F 2 "simboli_custom:MF-MSMF_1812_4532Metric_Pad1.30x3.40mm_HandSolder" H 1550 2150 50  0001 L CNN
+F 3 "~" H 1500 2350 50  0001 C CNN
+	1    1500 2350
+	0    1    1    0   
 $EndComp
 $EndSCHEMATC
