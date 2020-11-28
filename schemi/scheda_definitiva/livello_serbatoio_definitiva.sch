@@ -1341,65 +1341,54 @@ Text GLabel 8750 4550 0    50   Output ~ 0
 A2
 Text GLabel 8750 4250 0    50   Output ~ 0
 A3
-Text GLabel 7550 4550 0    50   Output ~ 0
-A4
 Text GLabel 7550 4650 0    50   Output ~ 0
+A4
+Text GLabel 7550 4750 0    50   Output ~ 0
 A5
 $Comp
-L Connector:Conn_01x03_Female J7
+L Connector:Conn_01x05_Female J7
 U 1 1 5FD28169
 P 7850 4550
 F 0 "J7" H 7878 4576 50  0000 L CNN
 F 1 "Exp_Analog" H 7878 4485 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical" H 7850 4550 50  0001 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical" H 7850 4550 50  0001 C CNN
 F 3 "~" H 7850 4550 50  0001 C CNN
 	1    7850 4550
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:Conn_01x02_Female J8
-U 1 1 5FD3EC73
-P 7850 5050
-F 0 "J8" H 7878 5026 50  0000 L CNN
-F 1 "Exp_Alim" H 7878 4935 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical" H 7850 5050 50  0001 C CNN
-F 3 "~" H 7850 5050 50  0001 C CNN
-	1    7850 5050
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR0105
 U 1 1 5FD3FBF6
-P 7550 5150
-F 0 "#PWR0105" H 7550 4900 50  0001 C CNN
-F 1 "GND" V 7555 5022 50  0000 R CNN
-F 2 "" H 7550 5150 50  0001 C CNN
-F 3 "" H 7550 5150 50  0001 C CNN
-	1    7550 5150
+P 7550 4450
+F 0 "#PWR0105" H 7550 4200 50  0001 C CNN
+F 1 "GND" V 7555 4322 50  0000 R CNN
+F 2 "" H 7550 4450 50  0001 C CNN
+F 3 "" H 7550 4450 50  0001 C CNN
+	1    7550 4450
 	0    1    1    0   
 $EndComp
 $Comp
 L power:VCC #PWR0106
 U 1 1 5FD4360A
-P 7550 5050
-F 0 "#PWR0106" H 7550 4900 50  0001 C CNN
-F 1 "VCC" V 7550 5250 50  0000 C CNN
-F 2 "" H 7550 5050 50  0001 C CNN
-F 3 "" H 7550 5050 50  0001 C CNN
-	1    7550 5050
+P 7550 4350
+F 0 "#PWR0106" H 7550 4200 50  0001 C CNN
+F 1 "VCC" V 7550 4550 50  0000 C CNN
+F 2 "" H 7550 4350 50  0001 C CNN
+F 3 "" H 7550 4350 50  0001 C CNN
+	1    7550 4350
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
-	7550 5050 7650 5050
-Wire Wire Line
-	7550 5150 7650 5150
+	7550 4350 7650 4350
 Wire Wire Line
 	7550 4450 7650 4450
 Wire Wire Line
 	7550 4550 7650 4550
 Wire Wire Line
 	7550 4650 7650 4650
-Text GLabel 7550 4450 0    50   Input ~ 0
+Wire Wire Line
+	7550 4750 7650 4750
+Text GLabel 7550 4550 0    50   Input ~ 0
 SPI_SS
 Text GLabel 8750 5150 0    50   Output ~ 0
 A0
