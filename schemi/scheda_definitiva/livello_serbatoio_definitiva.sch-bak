@@ -163,7 +163,7 @@ $Comp
 L Device:R R6
 U 1 1 5F204DE3
 P 4000 5550
-F 0 "R6" V 4100 5500 50  0000 L CNN
+F 0 "R6" H 4050 5550 50  0000 L CNN
 F 1 "10k" V 4000 5500 50  0000 L CNN
 F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 3930 5550 50  0001 C CNN
 F 3 "~" H 4000 5550 50  0001 C CNN
@@ -194,36 +194,14 @@ Connection ~ 4350 5700
 Text GLabel 3450 5700 0    50   Input ~ 0
 DTR
 $Comp
-L Device:C C4
-U 1 1 5F23FB6A
-P 3750 5700
-F 0 "C4" V 3498 5700 50  0000 C CNN
-F 1 "100nF" V 3589 5700 50  0000 C CNN
-F 2 "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 3788 5550 50  0001 C CNN
-F 3 "~" H 3750 5700 50  0001 C CNN
-	1    3750 5700
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R R5
-U 1 1 5F24028B
-P 3600 5900
-F 0 "R5" H 3700 5900 50  0000 L CNN
-F 1 "1k" V 3600 5850 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 3530 5900 50  0001 C CNN
-F 3 "~" H 3600 5900 50  0001 C CNN
-	1    3600 5900
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR04
 U 1 1 5F2407AF
-P 3600 6150
-F 0 "#PWR04" H 3600 5900 50  0001 C CNN
-F 1 "GND" H 3605 5977 50  0000 C CNN
-F 2 "" H 3600 6150 50  0001 C CNN
-F 3 "" H 3600 6150 50  0001 C CNN
-	1    3600 6150
+P 4000 6100
+F 0 "#PWR04" H 4000 5850 50  0001 C CNN
+F 1 "GND" H 4005 5927 50  0000 C CNN
+F 2 "" H 4000 6100 50  0001 C CNN
+F 3 "" H 4000 6100 50  0001 C CNN
+	1    4000 6100
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -231,31 +209,6 @@ Wire Wire Line
 Wire Wire Line
 	3900 5700 4000 5700
 Connection ~ 4000 5700
-Wire Wire Line
-	3600 5750 3600 5700
-Connection ~ 3600 5700
-Wire Wire Line
-	3600 6050 3600 6150
-$Comp
-L Switch:SW_Push SW1
-U 1 1 5F27E84B
-P 3600 5350
-F 0 "SW1" V 3600 5350 50  0000 R CNN
-F 1 "SW_RST" V 3600 5750 50  0000 R CNN
-F 2 "Button_Switch_THT:SW_PUSH_6mm_H5mm" H 3600 5550 50  0001 C CNN
-F 3 "~" H 3600 5550 50  0001 C CNN
-	1    3600 5350
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	3600 5550 3600 5700
-Wire Wire Line
-	3600 5150 3200 5150
-Wire Wire Line
-	3200 5150 3200 6050
-Wire Wire Line
-	3200 6050 3600 6050
-Connection ~ 3600 6050
 $Comp
 L Device:C C3
 U 1 1 5F287EEB
@@ -683,10 +636,8 @@ Text GLabel 7650 3600 2    50   Input ~ 0
 ICSP_MISO
 Text GLabel 7650 3500 2    50   Output ~ 0
 ICSP_MOSI
-Text GLabel 4350 5950 3    50   Output ~ 0
+Text GLabel 4350 5850 3    50   Output ~ 0
 ICSP_RST
-Wire Wire Line
-	4350 5700 4350 5950
 $Comp
 L Mechanical:MountingHole_Pad H1
 U 1 1 5F5C5141
@@ -1351,7 +1302,7 @@ U 1 1 5FD28169
 P 7850 4550
 F 0 "J7" H 7878 4576 50  0000 L CNN
 F 1 "Exp_Analog" H 7878 4485 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical" H 7850 4550 50  0001 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical" H 7850 4550 50  0001 C CNN
 F 3 "~" H 7850 4550 50  0001 C CNN
 	1    7850 4550
 	1    0    0    -1  
@@ -1436,4 +1387,28 @@ F 3 "~" H 8900 5150 50  0001 C CNN
 	1    8900 5150
 	1    0    0    -1  
 $EndComp
+$Comp
+L Switch:SW_Push SW1
+U 1 1 5F27E84B
+P 4000 5900
+F 0 "SW1" V 4000 5850 50  0000 R CNN
+F 1 "SW_RST" V 4000 6300 50  0000 R CNN
+F 2 "Button_Switch_THT:SW_PUSH_6mm_H5mm" H 4000 6100 50  0001 C CNN
+F 3 "~" H 4000 6100 50  0001 C CNN
+	1    4000 5900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:C C4
+U 1 1 5F23FB6A
+P 3750 5700
+F 0 "C4" V 3498 5700 50  0000 C CNN
+F 1 "100nF" V 3589 5700 50  0000 C CNN
+F 2 "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 3788 5550 50  0001 C CNN
+F 3 "~" H 3750 5700 50  0001 C CNN
+	1    3750 5700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4350 5850 4350 5700
 $EndSCHEMATC
