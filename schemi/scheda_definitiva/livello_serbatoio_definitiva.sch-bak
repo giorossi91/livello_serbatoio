@@ -1292,54 +1292,54 @@ Text GLabel 8750 4550 0    50   Output ~ 0
 A2
 Text GLabel 8750 4250 0    50   Output ~ 0
 A3
-Text GLabel 7550 4650 0    50   Output ~ 0
+Text GLabel 7550 4350 0    50   Output ~ 0
 A4
-Text GLabel 7550 4750 0    50   Output ~ 0
+Text GLabel 7550 4450 0    50   Output ~ 0
 A5
 $Comp
 L Connector:Conn_01x05_Female J7
 U 1 1 5FD28169
-P 7850 4550
-F 0 "J7" H 7878 4576 50  0000 L CNN
-F 1 "Exp_Analog" H 7878 4485 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical" H 7850 4550 50  0001 C CNN
-F 3 "~" H 7850 4550 50  0001 C CNN
-	1    7850 4550
+P 7850 4250
+F 0 "J7" H 7878 4276 50  0000 L CNN
+F 1 "Exp_Analog" H 7878 4185 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical" H 7850 4250 50  0001 C CNN
+F 3 "~" H 7850 4250 50  0001 C CNN
+	1    7850 4250
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR0105
 U 1 1 5FD3FBF6
-P 7550 4450
-F 0 "#PWR0105" H 7550 4200 50  0001 C CNN
-F 1 "GND" V 7555 4322 50  0000 R CNN
-F 2 "" H 7550 4450 50  0001 C CNN
-F 3 "" H 7550 4450 50  0001 C CNN
-	1    7550 4450
+P 7550 4150
+F 0 "#PWR0105" H 7550 3900 50  0001 C CNN
+F 1 "GND" V 7555 4022 50  0000 R CNN
+F 2 "" H 7550 4150 50  0001 C CNN
+F 3 "" H 7550 4150 50  0001 C CNN
+	1    7550 4150
 	0    1    1    0   
 $EndComp
 $Comp
 L power:VCC #PWR0106
 U 1 1 5FD4360A
-P 7550 4350
-F 0 "#PWR0106" H 7550 4200 50  0001 C CNN
-F 1 "VCC" V 7550 4550 50  0000 C CNN
-F 2 "" H 7550 4350 50  0001 C CNN
-F 3 "" H 7550 4350 50  0001 C CNN
-	1    7550 4350
+P 7550 4050
+F 0 "#PWR0106" H 7550 3900 50  0001 C CNN
+F 1 "VCC" V 7550 4250 50  0000 C CNN
+F 2 "" H 7550 4050 50  0001 C CNN
+F 3 "" H 7550 4050 50  0001 C CNN
+	1    7550 4050
 	0    -1   -1   0   
 $EndComp
+Wire Wire Line
+	7550 4050 7650 4050
+Wire Wire Line
+	7550 4150 7650 4150
+Wire Wire Line
+	7550 4250 7650 4250
 Wire Wire Line
 	7550 4350 7650 4350
 Wire Wire Line
 	7550 4450 7650 4450
-Wire Wire Line
-	7550 4550 7650 4550
-Wire Wire Line
-	7550 4650 7650 4650
-Wire Wire Line
-	7550 4750 7650 4750
-Text GLabel 7550 4550 0    50   Input ~ 0
+Text GLabel 7550 4250 0    50   Input ~ 0
 SPI_SS
 Text GLabel 8750 5150 0    50   Output ~ 0
 A0
@@ -1411,4 +1411,23 @@ F 3 "~" H 3750 5700 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	4350 5850 4350 5700
+$Comp
+L Connector:Conn_01x04_Female J6
+U 1 1 5FCB4005
+P 7750 4800
+F 0 "J6" H 7800 4800 50  0000 L CNN
+F 1 "Exp_Analog_2" H 7800 4700 50  0000 L CNN
+F 2 "" H 7750 4800 50  0001 C CNN
+F 3 "~" H 7750 4800 50  0001 C CNN
+	1    7750 4800
+	1    0    0    -1  
+$EndComp
+Text GLabel 7550 4700 0    50   Output ~ 0
+A3
+Text GLabel 7550 4800 0    50   Output ~ 0
+A2
+Text GLabel 7550 4900 0    50   Output ~ 0
+A1
+Text GLabel 7550 5000 0    50   Output ~ 0
+A0
 $EndSCHEMATC
