@@ -1,0 +1,10 @@
+LED 
+ Verde positivo
+ Giallo Negativo
+ 
+Pulsante
+ Blu + Nero (Normalmente aperto)
+
+ Rosso + Nero (Normalmente chiuso)
+
+ Nero (Comune)
