@@ -33,11 +33,11 @@ quota pcb
 + 10mm perno
 
 incastro a T
-      2mm
+      2mm (2,5)
       ++
-      ||------> 3mm
+      ||------> 3mm (2,7)
    +--  --+
-   |      | 5mm
+   |      | 5mm (5,6)
    |      |
    +------+
       4mm
