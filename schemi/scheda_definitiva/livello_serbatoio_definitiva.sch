@@ -5,10 +5,10 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Monitor Serbatoio"
-Date "2020-11-21"
-Rev "1"
+Date "2020-12-27"
+Rev "v1.0_Rev.A"
 Comp ""
-Comment1 ""
+Comment1 "Versione Espandibile"
 Comment2 ""
 Comment3 ""
 Comment4 ""
@@ -849,7 +849,7 @@ $Comp
 L Device:R R2
 U 1 1 5F436A47
 P 4100 2750
-F 0 "R2" V 4200 2900 50  0000 C CNN
+F 0 "R2" V 4050 2900 50  0000 C CNN
 F 1 "1k" V 4100 2750 50  0000 C CNN
 F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 4030 2750 50  0001 C CNN
 F 3 "~" H 4100 2750 50  0001 C CNN
@@ -860,7 +860,7 @@ $Comp
 L Device:R R1
 U 1 1 5F435E22
 P 4100 2650
-F 0 "R1" V 4000 2800 50  0000 C CNN
+F 0 "R1" V 4050 2800 50  0000 C CNN
 F 1 "1k" V 4100 2650 50  0000 C CNN
 F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 4030 2650 50  0001 C CNN
 F 3 "~" H 4100 2650 50  0001 C CNN
@@ -964,8 +964,6 @@ F 3 "~" H 4150 3750 50  0001 C CNN
 	1    4150 3750
 	1    0    0    -1  
 $EndComp
-NoConn ~ 3850 2850
-NoConn ~ 3850 2950
 NoConn ~ 3850 3150
 NoConn ~ 3850 3250
 NoConn ~ 3850 3350
@@ -1438,4 +1436,26 @@ Wire Notes Line
 	7250 600  11000 600 
 Text Notes 7800 700  0    50   ~ 0
 Button + LED
+$Comp
+L Connector:TestPoint TP1
+U 1 1 5FE956AB
+P 3850 2850
+F 0 "TP1" V 3800 2800 50  0000 L CNN
+F 1 "RTS_pad" V 3850 3050 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 4050 2850 50  0001 C CNN
+F 3 "~" H 4050 2850 50  0001 C CNN
+	1    3850 2850
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint TP2
+U 1 1 5FE99EB0
+P 3850 2950
+F 0 "TP2" V 3800 2900 50  0000 L CNN
+F 1 "CTS_pad" V 3850 3150 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 4050 2950 50  0001 C CNN
+F 3 "~" H 4050 2950 50  0001 C CNN
+	1    3850 2950
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC
