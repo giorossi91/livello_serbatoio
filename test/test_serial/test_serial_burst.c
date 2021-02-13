@@ -58,25 +58,68 @@ void set_mincount ( int fd, int mcount ) {
 }
 
 char getCharToSend ( void ) {
-  static unsigned char i = 0;
+  static unsigned char i = 16;
   
-  if (i == 255) {
-    i = 0;
+  if (i == 125) {
+    i = 16;
   }
   
   return (i++);
 }
 
+int testBlockW ( int fd, unsigned int nbytes ) {
+  int           status = 0;
+  unsigned int  i      = 0U;
+  unsigned char *bytesW = malloc ( nbytes );
+  
+  ( void ) memset ( bytesW, 0, nbytes );
+   
+  while ( i < nbytes ) {
+      bytesW [ i++ ] = getCharToSend(); 
+  }
+   
+  ssize_t wlen = write ( fd, bytesW, nbytes );
+  if ( wlen != nbytes ) {
+      fprintf ( stderr, "Error from write: %ld, %d\n", wlen, errno );
+      status = 1;
+  }
+   
+  tcdrain ( fd ); // delay for output
+  
+  free ( bytesW );
+   
+  return status;
+}
+
+int testBlockR ( int fd, unsigned int nbytes ) {
+  int           status = 0;
+  unsigned int  i      = 0U;
+  unsigned char *bytesR = malloc ( nbytes );
+  
+  ( void ) memset ( bytesR, 0, nbytes );
+  
+  ssize_t rlen = read ( fd, bytesR, nbytes );
+  
+  while ( i < rlen ) {
+    fprintf ( stdout, "0x%02x ", ( unsigned char ) bytesR [ i ] );
+  }
+  
+  free ( bytesR );
+   
+  return status;
+}
+
 
 int main ( int argc, char **argv ) {
   unsigned int       test_index   = 1U;
-  const unsigned int test_loops   = 10000U;
+  const unsigned int test_loops   = 2048U;
+  const unsigned int block_size   = 32U;
   unsigned int       errors_count = 0U;
   char               *portname    = NULL;
   int                fd           = 0;
   
-  if( argc != 2 ) {
-    fprintf(stderr, "Expected port name '/dev/ttyXXX'\n");
+  if( argc != 3 ) {
+    fprintf(stderr, "Expected port name '/dev/ttyXXX' r|w\n");
     return -1;
   }
   
@@ -91,48 +134,28 @@ int main ( int argc, char **argv ) {
   set_interface_attribs(fd, B115200);
   //set_mincount(fd, 0);  // set to pure timed read
   
-  // simple noncanonical input
-  char charToSend = 0;
-  char charRecv   = 0;
-  int  wlen       = 0;
-  int  rlen       = 0;
   
-  unsigned int row = 0;
+  printf("Test Started:\n");
   
-  printf("Test Started:\n%04d: ", row++);
-  
-  do {
-    charToSend = getCharToSend();
-    
-    wlen = write(fd, &charToSend, 1);
-    if (wlen != 1) {
-      fprintf(stderr, "Error from write: %d, %d\n", wlen, errno);
-    }
-    tcdrain(fd);    // delay for output
-    
-    rlen = read(fd, &charRecv, 1);
-    if (rlen != 1) {
-      fprintf(stderr, "Error from read: %d, %d\n", rlen, errno);
-    }
-    
-    if ( charRecv != charToSend ) {
-      errors_count ++;
-      printf("X");
+  while ( ( test_index++ ) <= test_loops ) {
+    if ( argv[2][0] == 'w' ) {
+      errors_count += testBlockW ( fd, block_size );
+    } else if ( argv[2][0] == 'r' ) {
+      errors_count += testBlockR ( fd, block_size );
     } else {
-      printf("0x%02x ", (unsigned char) charToSend);
+      fprintf ( stderr, "unknown test: %c\n", argv[2][0] );
+      errors_count = 1;
+      break;
     }
-    
-    if( ( test_index % 10 ) == 0 ) {
-      printf("\n%04d: ", row++);
-    } 
-  } while ((test_index++) <= test_loops);
+    printf("B%04d \n", test_index++);
+  };
   
   printf("\n");
   
   if ( errors_count != 0U ) {
     printf("Test FAILED\nThere was %d errors in Serial communication\n Check your setup\n", errors_count);
   } else {
-    printf("Test PASSED\n");
+    printf("Test PASSED\n Written: %d B\n", ( block_size * test_loops ) );
   }
   
   return 0;

@@ -1,4 +1,4 @@
-19044760677745941
+19086384949054454
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -82935,3 +82935,52 @@ varistor SIOV
 0
 2
 2
+simboli_custom
+Crystal_TH_AS16_5mm
+
+
+0
+2
+2
+simboli_custom
+LCD1602A
+
+
+0
+16
+16
+simboli_custom
+MF-MSMF_1812_4532Metric_Pad1.30x3.40mm_HandSolder
+Fuse SMD 1812 (4532 Metric), square (rectangular) end terminal, IPC_7351 nominal with elongated pad for handsoldering. (Body size source: https://www.nikhef.nl/pub/departments/mt/projects/detectorR_D/dtddice/ERJ2G.pdf), generated with kicad-footprint-generator
+fuse handsolder
+0
+2
+2
+simboli_custom
+TerminalBlock_RND_205-00047_1x04_P5.00mm_Horizontal
+terminal block RND 205-00047, 4 pins, pitch 5mm, size 20x8.1mm^2, drill diamater 1.1mm, pad diameter 2.1mm, see http://cdn-reichelt.de/documents/datenblatt/C151/RND_205-00045_DB_EN.pdf, script-generated using https://github.com/pointhi/kicad-footprint-generator/scripts/TerminalBlock_RND
+THT terminal block RND 205-00047 pitch 5mm size 20x8.1mm^2 drill 1.1mm pad 2.1mm
+0
+4
+4
+simboli_custom
+Trimmer_ACP_470
+
+
+0
+3
+3
+simboli_custom
+USB_B_OST_USB-B1HSxx_Horizontal
+USB B receptacle, Horizontal, through-hole, http://www.on-shore.com/wp-content/uploads/2015/09/usb-b1hsxx.pdf
+USB-B receptacle horizontal through-hole
+0
+6
+5
+simboli_custom
+logo
+
+
+0
+0
+0

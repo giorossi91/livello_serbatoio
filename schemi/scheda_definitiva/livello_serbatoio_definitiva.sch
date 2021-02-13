@@ -5,8 +5,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Monitor Serbatoio"
-Date "2020-12-27"
-Rev "v1.0_Rev.A"
+Date "2021-02-13"
+Rev "v1.0_Rev.B"
 Comp ""
 Comment1 "Versione Espandibile"
 Comment2 ""
@@ -871,7 +871,7 @@ Text GLabel 4350 2750 2    50   Input ~ 0
 RX
 Text GLabel 4350 2650 2    50   Output ~ 0
 TX
-Text Notes 2550 1950 0    50   ~ 0
+Text Notes 2300 1950 0    50   ~ 0
 USB Programmer
 Connection ~ 2150 2150
 $Comp
@@ -910,8 +910,6 @@ Wire Wire Line
 Connection ~ 4650 3650
 Wire Wire Line
 	4650 2350 4650 3650
-Wire Wire Line
-	3150 2350 4650 2350
 Wire Wire Line
 	4000 3750 3850 3750
 Wire Wire Line
@@ -1125,11 +1123,11 @@ L power:GND #PWR0104
 U 1 1 5FD135C3
 P 3050 2000
 F 0 "#PWR0104" H 3050 1750 50  0001 C CNN
-F 1 "GND" V 3055 1872 50  0000 R CNN
+F 1 "GND" H 2950 1900 50  0000 R CNN
 F 2 "" H 3050 2000 50  0001 C CNN
 F 3 "" H 3050 2000 50  0001 C CNN
 	1    3050 2000
-	0    -1   -1   0   
+	-1   0    0    1   
 $EndComp
 $Comp
 L Device:Polyfuse F1
@@ -1458,4 +1456,33 @@ F 3 "~" H 4050 2950 50  0001 C CNN
 	1    3850 2950
 	0    1    1    0   
 $EndComp
+$Comp
+L Device:CP C9
+U 1 1 60287C39
+P 4050 2150
+F 0 "C9" H 3932 2104 50  0000 R CNN
+F 1 "100uF" H 3932 2195 50  0000 R CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm" H 4088 2000 50  0001 C CNN
+F 3 "~" H 4050 2150 50  0001 C CNN
+	1    4050 2150
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR026
+U 1 1 6029B133
+P 4050 2000
+F 0 "#PWR026" H 4050 1750 50  0001 C CNN
+F 1 "GND" H 3950 1900 50  0000 R CNN
+F 2 "" H 4050 2000 50  0001 C CNN
+F 3 "" H 4050 2000 50  0001 C CNN
+	1    4050 2000
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3150 2350 4050 2350
+Wire Wire Line
+	4050 2300 4050 2350
+Connection ~ 4050 2350
+Wire Wire Line
+	4050 2350 4650 2350
 $EndSCHEMATC
