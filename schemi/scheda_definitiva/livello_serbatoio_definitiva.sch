@@ -969,10 +969,6 @@ Wire Wire Line
 NoConn ~ 2250 3750
 NoConn ~ 2250 3550
 Connection ~ 2150 2350
-Wire Wire Line
-	2150 3350 2150 2350
-Wire Wire Line
-	2250 3350 2150 3350
 $Comp
 L Device:C C2
 U 1 1 5F19380D
@@ -1492,4 +1488,7 @@ Wire Wire Line
 	1550 2350 1550 2750
 Wire Wire Line
 	1850 2350 2150 2350
+NoConn ~ 2250 3350
+Text Notes 1550 3400 0    50   ~ 0
+RESET can be \nleft unconnected
 $EndSCHEMATC
