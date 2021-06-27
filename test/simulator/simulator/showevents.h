@@ -24,7 +24,7 @@ class ShowEvents : public QMainWindow
 
 public:
     explicit ShowEvents(QWidget *parent = nullptr);
-    ~ShowEvents();
+    ~ShowEvents() override;
 
     void registerDigitalIO(int32_t id, QString seriesName);
 

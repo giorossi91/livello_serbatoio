@@ -65,7 +65,7 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
 
     connect(&uut::lcd, SIGNAL(printTextOnLcd(std::string)) , this, SLOT(updateLcdScreen(std::string))     , Qt::QueuedConnection);
     connect(&Serial  , SIGNAL(printSerialText(std::string)), this, SLOT(updateSerialMonitor(std::string)) , Qt::QueuedConnection);
-    connect(&arduino , SIGNAL(boardEvent(int32_t, int32_t)), this, SLOT(updatePinStatus(int32_t, int32_t)), Qt::QueuedConnection);
+    connect(&arduino , SIGNAL(boardEvent(int32_t,int32_t)) , this, SLOT(updatePinStatus(int32_t,int32_t)) , Qt::QueuedConnection);
 
     QString status =  "Simulation of " VERSION " in "
 #if DEBUG == CONF_DEBUG
@@ -156,13 +156,20 @@ void LivelloSerbatoioSim::on_distance_spinbox_valueChanged ( double position ) {
 
 void LivelloSerbatoioSim::on_show_button_pressed ( void ) {
     arduino.setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
-    if(ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].pIsr != nullptr) {
+    if( ( ( ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].isrMode == RISING ) ||
+          ( ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].isrMode == CHANGE ) ) &&
+          ( ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].pIsr != nullptr ) ) {
         ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].pIsr();
     }
 }
 
 void LivelloSerbatoioSim::on_show_button_released ( void ) {
     arduino.setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+    if( ( ( ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].isrMode == FALLING ) ||
+          ( ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].isrMode == CHANGE ) ) &&
+          ( ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].pIsr != nullptr ) ) {
+        ArduinoBoard::arduino_pins[uut::LCD_BUTTON_DPIN].pIsr();
+    }
 }
 
 void LivelloSerbatoioSim::on_timescale_combobox_currentIndexChanged ( int index ) {

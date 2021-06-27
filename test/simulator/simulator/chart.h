@@ -44,10 +44,10 @@ class Chart : public QChart
 {
 public:
     explicit Chart(QGraphicsItem *parent = nullptr, Qt::WindowFlags wFlags = {});
-    ~Chart();
+    virtual ~Chart() override;
 
 protected:
-    bool sceneEvent(QEvent *event);
+    bool sceneEvent(QEvent *event) override;
 
 private:
     bool gestureEvent(QGestureEvent *event);

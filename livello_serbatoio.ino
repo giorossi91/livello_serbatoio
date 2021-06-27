@@ -27,15 +27,15 @@
 
 /* Define */
 
-#define VERSION "v0.3"
+#define VERSION "v0.4"
 
 #define CONF_DEBUG   1
 #define CONF_RELEASE 0
 
-#define SENSOR_HCSR04 0
+#define SENSOR_HCSR04   0
 #define SENSOR_JSNSR04T 1
 
-#define roundfvalue(x)      ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
+#define roundfvalue(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
 /* Configurazioni */
 #ifndef UNIT_TEST
@@ -386,6 +386,7 @@ const double   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE; //cm
 const uint32_t LCD_ON_TIMER         = 30 * 1000; //ms
 const uint32_t MEASUREMENT_INTERVAL = 10 * 1000; //ms
 const uint32_t SLEEP_TIME           = 1000;      //ms
+const uint32_t BTN_SHORTPRESS_TIME  =  100;      //ms
 const uint32_t BTN_LONGPRESS_TIME   = 2000;      //ms
 const uint32_t TIME_PER_STAT        = 5000;      //ms
 
@@ -937,8 +938,6 @@ void setup(void) {
   lcd.print("Avvio...");
   lcd.setCursor(0,1);
   lcd.print(VERSION);
-
-  attachInterrupt(digitalPinToInterrupt(LCD_BUTTON_DPIN), turn_on_lcd_light, RISING);
    
   led_on     = false;
   led_status = false;
@@ -947,7 +946,7 @@ void setup(void) {
 
   timestamp_lcd_on       = millis();
   timestamp_measurement  = millis();
-  timestamp_last_filling = millis();
+  timestamp_last_filling  = millis();
 
 #if DEBUG
   Serial.begin(9600);
@@ -976,12 +975,15 @@ void loop(void) {
     last_btn_status     = HIGH;
     btn_press_timestamp = millis();
   } else if(btn_status == HIGH && last_btn_status == HIGH) {
-    if((millis() - btn_press_timestamp) >= BTN_LONGPRESS_TIME) {
+    uint32_t btn_press_time = (millis() - btn_press_timestamp);    
+    if(btn_press_time >= BTN_LONGPRESS_TIME) {
       last_btn_status     = LOW;
       btn_press_timestamp = 0;
       
       show_stats();      
-    }    
+    } else if ( btn_press_time >= BTN_SHORTPRESS_TIME ) {
+      turn_on_lcd_light();
+    }
   } else {
     last_btn_status     = LOW;
     btn_press_timestamp = 0;

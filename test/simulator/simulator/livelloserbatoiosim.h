@@ -22,7 +22,7 @@ class LivelloSerbatoioSim : public QMainWindow {
 
 public:
     explicit LivelloSerbatoioSim  ( QWidget *parent = nullptr );
-             ~LivelloSerbatoioSim ( void );
+             ~LivelloSerbatoioSim ( void ) override;
 
 private:
     Ui::LivelloSerbatoioSim *ui;

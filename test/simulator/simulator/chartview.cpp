@@ -90,6 +90,9 @@ void ChartView::keyPressEvent(QKeyEvent *event)
         chart()->zoomOut();
         break;
 //![1]
+    case Qt::Key_Escape:
+        chart()->zoomReset();
+        break;
     case Qt::Key_Left:
         chart()->scroll(-10, 0);
         break;

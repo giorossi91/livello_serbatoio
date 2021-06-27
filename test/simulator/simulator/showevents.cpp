@@ -36,11 +36,11 @@ ShowEvents::ShowEvents(QWidget *parent) :
     dataChart->addAxis(x_axis, Qt::AlignBottom);
     dataChart->setTitle("Events");
 
-    connect(&arduino, SIGNAL(boardEvent(int32_t, int32_t)), this, SLOT(addNewPoint(int32_t, int32_t)));
+    connect(&arduino, SIGNAL(boardEvent(int32_t,int32_t)), this, SLOT(addNewPoint(int32_t,int32_t)));
 }
 
 ShowEvents::~ShowEvents ( void ) {
-    for (auto t : monitors) {
+    for (auto t : qAsConst(monitors)) {
         t->stop();
         delete t;
     }
@@ -54,14 +54,14 @@ void ShowEvents::registerDigitalIO ( int32_t id, QString seriesName ) {
 
 void ShowEvents::pauseMonitors ( void )
 {
-    for (auto t : monitors) {
+    for (auto t : qAsConst(monitors)) {
         t->stop();
     }
 }
 
 void ShowEvents::resumeMonitors ( void )
 {
-    for (auto t : monitors) {
+    for (auto t : qAsConst(monitors)) {
         t->start();
     }
 }
@@ -114,14 +114,14 @@ void ShowEvents::addNewPoint ( int32_t id, int32_t val ) {
 
         if(offset(val, offval) == offset(HIGH, offval)) {
             if(series->count() > 0 && std::fabs(series->at(series->count() - 1).y() - offset(val, offval)) > 0.1) {
-                series->append(timeMs, static_cast<qreal>(offset(LOW, offval)));
+                series->append(static_cast<qreal>(timeMs), static_cast<qreal>(offset(LOW, offval)));
             }
-            series->append(timeMs, static_cast<qreal>(offset(HIGH, offval)));
+            series->append(static_cast<qreal>(timeMs), static_cast<qreal>(offset(HIGH, offval)));
         } else {
             if(series->count() > 0 && std::fabs(series->at(series->count() - 1).y() - offset(val, offval)) > 0.1) {
-                series->append(timeMs, static_cast<qreal>(offset(HIGH, offval)));
+                series->append(static_cast<qreal>(timeMs), static_cast<qreal>(offset(HIGH, offval)));
             }
-            series->append(timeMs, static_cast<qreal>(offset(LOW, offval)));
+            series->append(static_cast<qreal>(timeMs), static_cast<qreal>(offset(LOW, offval)));
         }
 
         x_axis->setMin(now.addSecs(-time_offset_sec * 1));

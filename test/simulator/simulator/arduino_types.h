@@ -21,7 +21,9 @@ const double  PI     = M_PI;
 
 const int32_t LOW    = 0;
 const int32_t HIGH   = 1;
-const int32_t RISING = 1;
+const int32_t RISING  = 1;
+const int32_t FALLING = 2;
+const int32_t CHANGE  = 3;
 
 const int32_t INPUT  = 0;
 const int32_t OUTPUT = 1;
@@ -30,6 +32,7 @@ struct Pin_t {
   int32_t  id;
   int32_t  mode;
   isr_t    pIsr;
+  int32_t  isrMode;
   int32_t  in_val;
   int32_t  out_val;
   uint32_t pulse_time;
