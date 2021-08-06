@@ -40,7 +40,7 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     showEventsPanel->registerDigitalIO(uut::LED_CAPACITY_DPIN   , "LED"      );
     showEventsPanel->registerDigitalIO(uut::LCD_BUTTON_DPIN     , "BUTTON"   );
     showEventsPanel->registerDigitalIO(uut::LCD_LIGHT_DPIN      , "LCD_LIGHT");
-    showEventsPanel->registerDigitalIO(ArduinoBoard::SLEEP_EVENT, "Sleep"    );
+    //showEventsPanel->registerDigitalIO(ArduinoBoard::SLEEP_EVENT, "Sleep"    );
 
     monitorSignal(uut::TRIG_DPIN         , 500);
     monitorSignal(uut::LED_CAPACITY_DPIN , 500);

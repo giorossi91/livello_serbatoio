@@ -27,7 +27,7 @@
 
 /* Define */
 
-#define VERSION "v0.4"
+#define VERSION "v0.5"
 
 #define CONF_DEBUG   1
 #define CONF_RELEASE 0
@@ -383,12 +383,15 @@ const double   EMPTY_LEVEL_THRESHOLD = 10.0;    //%
 const double   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE; //cm
 
 
-const uint32_t LCD_ON_TIMER         = 30 * 1000; //ms
-const uint32_t MEASUREMENT_INTERVAL = 10 * 1000; //ms
-const uint32_t SLEEP_TIME           = 1000;      //ms
-const uint32_t BTN_SHORTPRESS_TIME  =  100;      //ms
-const uint32_t BTN_LONGPRESS_TIME   = 2000;      //ms
-const uint32_t TIME_PER_STAT        = 5000;      //ms
+const int32_t  LCD_ON_TIMER          = 30 * 1000; //ms
+const int32_t  MEASUREMENT_INTERVAL  = 10 * 1000; //ms
+const int32_t  SLEEP_TIME            =  100;      //ms
+const int32_t  BTN_SHORTPRESS_TIME   =  200;      //ms
+const int32_t  LED_CONTROL_TIME      = 1000;      //ms
+const int32_t  BTN_LONGPRESS_TIME    = 2000;      //ms
+const int32_t  BTN_ENTER_DBG_TIME    = 5000;      //ms
+const int32_t  TIME_PER_STAT         = 5000;      //ms
+const int32_t  TIME_PER_VERSION      = 3000;      //ms
 
 
 #if SENSOR == SENSOR_JSNSR04T
@@ -428,22 +431,23 @@ bool led_status      ;
 bool must_update_lcd ;
 bool was_error       ;
 
-
 uint16_t measure_interval       ;
 double   tank_capacity          ;
 uint16_t number_measures_done   ;   
 bool     first_measure_done     ;
 double   maximum_capacity       ;
 
-volatile uint32_t timestamp_lcd_on       ;
-volatile uint32_t timestamp_measurement  ;
-volatile uint32_t timestamp_last_filling ;
+volatile bool     in_debug               ;
+volatile int32_t  timestamp_lcd_on       ;
+volatile int32_t  timestamp_measurement  ;
+volatile int32_t  timestamp_last_led_ctrl;
+volatile int32_t  timestamp_last_filling ;
 volatile double   distance               ;
 volatile double   previous_liters        ;
 double            percentage             ;
 volatile byte     btn_status             ;
 volatile byte     last_btn_status        ;
-uint32_t          btn_press_timestamp    ;
+volatile int32_t  btn_press_timestamp    ;
 
 //Formato (RS, E, DB4, DB5, DB6, DB7)
 LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
@@ -469,15 +473,15 @@ inline void initialize ( void ) {
   first_measure_done     = false;
   maximum_capacity       = 0.0;   //L
   
-  timestamp_lcd_on       = 0U;    //ms
-  timestamp_measurement  = 0U;    //ms
-  timestamp_last_filling = 0U;    //ms
+  timestamp_lcd_on       = 0;     //ms
+  timestamp_measurement  = 0;     //ms
+  timestamp_last_filling = 0;     //ms
   distance               = 0.0;   //cm
   previous_liters        = 0.0;   //L
   percentage             = 100.0; //%
   btn_status             = LOW;
   last_btn_status        = LOW;
-  btn_press_timestamp    = 0U;
+  btn_press_timestamp    = 0;
 }
 
 /**
@@ -573,6 +577,33 @@ inline void print_error(void) {
   was_error = true;
 }
 
+
+/**
+ * @brief Aggiorna l'LCD con i parametri attuali.
+ * @details Mostra informazioni di debug sull'LCD.
+ *  
+ * @param distance_to_print La distanza dall'acqua in cm.
+ * @param distance_comp La distanza dall'acqua in cm tarata in base a sensore.
+ */
+inline void update_lcd_debug(double distance_to_print, double distance_comp) {
+  if ( must_update_lcd == true ) {
+    must_update_lcd = false;
+  
+    lcd.clear();
+    
+    lcd.setCursor(0, 0);
+    lcd.print("d: ");
+    lcd.print((int32_t) distance_to_print);
+    
+    lcd.setCursor(0,1);
+    lcd.print("dc: ");
+    lcd.print((int32_t) distance_comp);
+
+    lcd.print(" L: ");
+    lcd.print((int32_t) compute_liters(distance_comp));
+  }
+}
+
 /**
  * @brief Esegue una misurazione di livello dell'acqua.
  * @details Attiva il sensore ad ultrasuoni ed applica eventuali compensazioni necessarie.
@@ -595,6 +626,11 @@ inline double measure_level(void) {
   //compensate the constant error introduced by new sensor
   double dist_compensated = distance_read + SENSOR_CALIBRATION;
   //
+
+  if ( ( in_debug == true ) && ( last_btn_status == LOW ) ) {
+    must_update_lcd = true;
+    update_lcd_debug(distance_read, dist_compensated);
+  }
 
   //check ranges
   if ( ( dist_compensated < SENSOR_MIN_RANGE ) || ( dist_compensated > SENSOR_MAX_RANGE ) ) {
@@ -620,7 +656,11 @@ inline double measure_level(void) {
 
   if(number_measures_done > (FILTER_SIZE / 2)) {
     first_measure_done = true;
-    measure_interval   = MEASUREMENT_INTERVAL;
+    if ( in_debug == true ) {
+      measure_interval = 1000; //ms
+    } else {
+      measure_interval = MEASUREMENT_INTERVAL; //ms
+    }
   }
 
   return dist_compensated;
@@ -678,9 +718,6 @@ inline double sanitize_data(double data, double min_val, double max_val, double 
   return sanitized_data;
 }
 
-
-
-#if !DEBUG
 
 /**
  * @brief Aggiorna l'LCD con i parametri attuali se necessario.
@@ -774,47 +811,6 @@ inline void update_lcd(double percentage, double liters) {
   }
 }
 
-#else
-
-/**
- * @brief Aggiorna l'LCD con i parametri attuali.
- * @details Mostra informazioni di debug sull'LCD.
- *  
- * @param distance_to_print La distanza dall'acqua in cm.
- * @param percentage La percentuale di riempimento del serbatoio.
- * @param liters I litri di acqua rimanenti.
- */
-inline void update_lcd_debug(double distance_to_print, double percentage, double liters) {
-  //It's a debug function, update always!
-  
-  lcd.clear();
-  
-  lcd.setCursor(0, 0);
-  lcd.print("d: ");
-  lcd.print((int) distance_to_print);
-  lcd.print("cm");
-  
-  lcd.setCursor(0, 1);
-  lcd.print("l: ");
-  lcd.print((int) liters);
-  lcd.print("L");
-  
-  lcd.setCursor(10, 1);
-  //lcd.write(UP_ARROW_CHAR);
-  lcd.print(" ");
-  
-  if (percentage >= 99.5) {
-    percentage = 100.0;
-  } else if (percentage <= 0.5) {
-    percentage = 0.0;
-  }
-  
-  lcd.print((int) percentage);
-  lcd.print("%");
-}
-
-#endif
-
 /**
  * @brief Esegue un autotest dei controlli all'avvio.
  * @details Permette di controllare stato dei LED del bottone e dell'LCD.
@@ -880,12 +876,34 @@ inline void print_stat(String str, uint32_t stat) {
 }
 
 /**
+ * @brief Stampa su LCD la versione del SW.
+ * @details Segue il formato:
+ *  |----------------| 
+ *  | Versione:      |
+ *  | <num_version>  |
+ *  |----------------|
+ * 
+ */
+inline void print_version(void) {
+  lcd.setCursor(0, 0);
+  lcd.print(" Versione:");
+
+  lcd.setCursor(0, 1);
+  lcd.print(" ");
+  lcd.print(VERSION);
+
+  delay(TIME_PER_VERSION);
+  lcd.clear();
+}
+
+/**
  * @brief Stampa su LCD le statistiche raccolte.
  * @details Stampa a turno i consumi totali da:
  *          - 1 ora;
  *          - 12 ore;
  *          - 1 giorno;
  *          - 3 giorni.
+ *          Infine stampa la versione del SW.
  *         
  */
 inline void show_stats(void) {
@@ -902,10 +920,20 @@ inline void show_stats(void) {
 
   //stampa 3d
   print_stat("Consumo 3 giorni", stats.getConsumption3d());
+
+  //stampa la versione
+  print_version();
   
   must_update_lcd = true;
 }
 
+inline void button_longpress_handle ( void ) {
+  show_stats();
+}
+
+inline void button_shortpress_handle ( void ) {
+  turn_on_lcd_light();
+}
 
 void setup(void) {
 
@@ -921,7 +949,9 @@ void setup(void) {
   lcd.createChar(PROGRESS_CHAR, LCD_PROGRESS);
   
   first_measure_done = false;
-    
+
+  in_debug = false;
+  
   //compute tank parameters
   tank_capacity     = (TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM) / CM3_PER_LITER;
   maximum_capacity  = TANK_NUMBER * tank_capacity;
@@ -946,7 +976,8 @@ void setup(void) {
 
   timestamp_lcd_on       = millis();
   timestamp_measurement  = millis();
-  timestamp_last_filling  = millis();
+  timestamp_last_led_ctrl= millis();
+  timestamp_last_filling = millis();
 
 #if DEBUG
   Serial.begin(9600);
@@ -966,41 +997,122 @@ void setup(void) {
   lcd.print("Prima misura...");
 }
 
-void loop(void) {
+inline void enter_debug(void) {
+  in_debug = true;
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  //        |----------------|
+  lcd.print("      Modo      ");
+  lcd.setCursor(0,1);
+  lcd.print("  Manutenzione  ");
+  delay(3000);
   
-  stats.updateTime();
+  lcd.clear();
+  lcd.setCursor(0,0);
+  //        |----------------|
+  lcd.print(" 1. Autotest    ");
+  delay(1000);
+
+  // do autotest
+  autotest();
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  //        |----------------|
+  lcd.print(" 2. Lettura     ");
+  delay(1000);
+
+  must_update_lcd = true;
+  measure_interval = 1000; //ms
+}
+
+inline void exit_debug(void) {
+  in_debug = false;
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  
+  lcd.print("      Modo      ");
+  lcd.setCursor(0,1);
+  
+  lcd.print("    Normale     ");
+  delay(3000);
+
+  measure_interval = MEASUREMENT_INTERVAL; //ms
+  must_update_lcd = true;
+}
+
+inline void manage_button ( void ) {
   btn_status = digitalRead(LCD_BUTTON_DPIN);
   
   if (btn_status == HIGH && last_btn_status == LOW) {
+    // RISING EDGE
+    
     last_btn_status     = HIGH;
     btn_press_timestamp = millis();
   } else if(btn_status == HIGH && last_btn_status == HIGH) {
-    uint32_t btn_press_time = (millis() - btn_press_timestamp);    
-    if(btn_press_time >= BTN_LONGPRESS_TIME) {
-      last_btn_status     = LOW;
-      btn_press_timestamp = 0;
-      
-      show_stats();      
-    } else if ( btn_press_time >= BTN_SHORTPRESS_TIME ) {
-      turn_on_lcd_light();
+    // HIGH
+    
+    // show options
+    const int32_t btn_press_time = (millis() - btn_press_timestamp);
+    if(( btn_press_time >= BTN_LONGPRESS_TIME ) && (btn_press_time < BTN_ENTER_DBG_TIME)) {      
+      lcd.clear();
+      lcd.print(" -> Statistiche ");
+    } else if(btn_press_time >= BTN_ENTER_DBG_TIME) {
+      lcd.clear();
+      if ( in_debug == false ) {
+        lcd.print(" -> Manutenzione");
+      } else {
+        lcd.print(" -> Normale");
+      }
+    } else if ( ( btn_press_time >= BTN_SHORTPRESS_TIME ) && (btn_press_time < BTN_LONGPRESS_TIME) ) {
+      button_shortpress_handle();
     }
+  } else if(btn_status == LOW && last_btn_status == HIGH) {
+    // FALLING EDGE
+        
+    // do actions
+    const int32_t btn_press_time = (millis() - btn_press_timestamp);
+    if(btn_press_time >= BTN_ENTER_DBG_TIME) {
+      if ( in_debug == true ) {
+        exit_debug();
+      } else {
+        enter_debug();
+      }
+    } else if(btn_press_time >= BTN_LONGPRESS_TIME) {      
+      button_longpress_handle();
+    }   
+
+    last_btn_status     = LOW;
+    btn_press_timestamp = 0;
   } else {
+    // LOW
+    
     last_btn_status     = LOW;
     btn_press_timestamp = 0;
   }
+  
+}
+
+void loop(void) {
+  stats.updateTime();
+
+  // button management
+  manage_button();
   
   //lcd on timer
   if ((millis() - timestamp_lcd_on) >= LCD_ON_TIMER) {
     turn_off_lcd_light();
   }
 
-  //measument timer
+  //measurement timer
   if ((millis() - timestamp_measurement) >= measure_interval) {
     distance = measure_level();
     if(abs((-1.0) - distance) < 0.1) {
       print_error();
       delay(SLEEP_TIME);
-      return; //ERRORE! Ferma il loop!
+      return;
     }
     ( void ) filter.in(roundfvalue(distance));
   }
@@ -1021,13 +1133,15 @@ void loop(void) {
     percentage = compute_percentage(liters);
     stats.updateConsumption(liters);
       
-#if DEBUG
-    update_lcd_debug(distance, percentage, liters);
-#else
-    update_lcd(percentage, liters);
-#endif
+    if ( in_debug == false ) {
+      update_lcd(percentage, liters);
+    }
   }
-  control_led(percentage);
+
+  if ( ( millis() - timestamp_last_led_ctrl ) >= LED_CONTROL_TIME ) {
+    control_led(percentage); 
+    timestamp_last_led_ctrl = millis();
+  }
   
   delay(SLEEP_TIME);
 }
