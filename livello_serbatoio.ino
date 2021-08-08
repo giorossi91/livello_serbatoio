@@ -79,6 +79,7 @@ const int32_t     MEASURE_HF_INTERVAL   =  1 * 1000                           ; 
 const int32_t     LCD_ON_TIME           = 30 * 1000                           ; // ms
 const int32_t     SLEEP_TIME            =  100                                ; // ms
 const int32_t     SHOW_STAT_TIME        = 5000                                ; // ms
+const int32_t     SHOW_PARAM_TIME       = 5000                                ; // ms
 const int32_t     SHOW_VERSION_TIME     = 3000                                ; // ms
 const int32_t     LED_CONTROL_TIME      = 1000                                ; // ms
 const int32_t     READ_DISTANCE_TIME    = 1000                                ; // ms
@@ -87,6 +88,7 @@ const int32_t     BTN_INTERVAL_2_TIME   = 2000                                ; 
 const int32_t     BTN_INTERVAL_3_TIME   = 3000                                ; // ms
 const int32_t     BTN_INTERVAL_4_TIME   = 4000                                ; // ms
 const int32_t     BTN_INTERVAL_5_TIME   = 5000                                ; // ms
+const int32_t     BTN_INTERVAL_6_TIME   = 6000                                ; // ms
 
 // Sensor parameters
 #if SENSOR == SENSOR_JSNSR04T
@@ -95,6 +97,7 @@ const float64_t   SENSOR_CALIBRATION    = 1.7                                 ; 
 const float64_t   SENSOR_MIN_RANGE      = 20.0                                ; // cm
 const float64_t   SENSOR_MAX_RANGE      = 600.0                               ; // cm
 const float64_t   SENSOR_LSB            = 58.0                                ; // usec / cm
+const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; // usec
 
 const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; // 500 ms
 const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; // 38 ms
@@ -105,6 +108,7 @@ const float64_t   SENSOR_CALIBRATION    = 0.0                                 ; 
 const float64_t   SENSOR_MIN_RANGE      = 2.0                                 ; // cm
 const float64_t   SENSOR_MAX_RANGE      = 400.0                               ; // cm
 const float64_t   SENSOR_LSB            = 58.0                                ; // usec / cm
+const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; // usec
 
 const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; // 500 ms
 const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; // 38 ms
@@ -115,6 +119,7 @@ const float64_t   SENSOR_CALIBRATION    = 0.0                                 ; 
 const float64_t   SENSOR_MIN_RANGE      = 0.0                                 ; // cm
 const float64_t   SENSOR_MAX_RANGE      = 0.0                                 ; // cm
 const float64_t   SENSOR_LSB            = 1.0                                 ; // usec / cm
+const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; // usec
 
 const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; // 500 ms
 const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; // 38 ms
@@ -212,7 +217,7 @@ public:
     oldestDataPoint = medDataPointer;                         
 
     // initialize the arrays
-    for (byte i = 0; i < medFilterWin; i++) {
+    for ( byte i = 0; i < medFilterWin; i++ ) {
       // start map with straight run
       sizeMap    [i] = i;
       locationMap[i] = i;
@@ -231,7 +236,7 @@ public:
   //!
   //! \return The median element.
   //!
-  int16_t in(int16_t value) {
+  int16_t in ( int16_t value ) {
     // sort sizeMap
     // small vaues on the left (-)
     // larger values on the right (+)
@@ -245,15 +250,15 @@ public:
     data[oldestDataPoint] = value;
     
     // SORT LEFT (-) <======(n) (+)
-    if (locationMap[oldestDataPoint] > 0) {
+    if ( locationMap[oldestDataPoint] > 0 ) {
       // don't check left neighbours if at the extreme left
-      for (byte i = locationMap[oldestDataPoint]; i > 0; i--) {
+      for ( byte i = locationMap[oldestDataPoint]; i > 0; i-- ) {
         //index through left adjacent data
 
         // neighbour location
         byte n = i - 1;
 
-        if (data[oldestDataPoint] < data[sizeMap[n]]) {
+        if ( data[oldestDataPoint] < data[sizeMap[n]] ) {
           // find insertion point, move old data into position
 
           // move existing data right so the new data can go left
@@ -276,13 +281,13 @@ public:
     if ( ( dataMoved == false ) && ( locationMap[oldestDataPoint] < rightEdge ) ) {
       // don't check right if at right border, or the data has already moved
       
-      for (byte i = locationMap[oldestDataPoint]; i < rightEdge; i++) {
+      for ( byte i = locationMap[oldestDataPoint]; i < rightEdge; i++ ) {
         //index through left adjacent data
 
         // neighbour location
         uint16_t n = i + 1;  
     
-        if (data[oldestDataPoint] > data[sizeMap[n]]) {
+        if ( data[oldestDataPoint] > data[sizeMap[n]] ) {
           // find insertion point, move old data into position
 
           // move existing data left so the new data can go right
@@ -301,7 +306,7 @@ public:
 
     // increment and wrap
     oldestDataPoint++;
-    if (oldestDataPoint == medFilterWin) {
+    if ( oldestDataPoint == medFilterWin ) {
       oldestDataPoint = 0;
     }
     
@@ -315,7 +320,7 @@ public:
   //! 
   //! \return The median.
   //!
-  int16_t out(void) {
+  int16_t out ( void ) {
     return data[sizeMap[medDataPointer]];
   }
 
@@ -342,7 +347,7 @@ public:
   //! 
   //! \return An instance of this class to be initialized with #begin method.
   //!
-  ConsumptionData(void) {
+  ConsumptionData ( void ) {
   }
 
   //!
@@ -370,14 +375,14 @@ public:
   //! 
   //! \attention It must be invoked it the #loop function.
   //!
-  void updateTime(void) {
+  void updateTime ( void ) {
 
     // get current milliseconds passed from boot
     uint32_t now         = millis();
     uint32_t millis_diff = 0U;
 
     // compute delta ms with respect to previous invocation
-    millis_diff = (uint32_t)(now - last_millis);
+    millis_diff = ( uint32_t )( now - last_millis );
 
     // update ms of previous invocation
     last_millis = now;
@@ -385,20 +390,20 @@ public:
     // increase count of milliseconds passed.
     millis_passed += millis_diff;
 
-    if(millis_passed >= ONE_SECOND_MS) {
+    if ( millis_passed >= ONE_SECOND_MS ) {
       // after 1 second
 
       // update buffer
       updateBuffer();
 
-      uint32_t n_sec = (uint32_t)(millis_passed / ONE_SECOND_MS);
+      uint32_t n_sec = ( uint32_t ) ( millis_passed / ONE_SECOND_MS );
 
       // increase seconds counter
       seconds_passed += n_sec;
-      millis_passed   = millis_passed - (n_sec * ONE_SECOND_MS); 
+      millis_passed   = millis_passed - ( n_sec * ONE_SECOND_MS ); 
     }
 
-    if(seconds_passed >= ONE_HOUR_S) {
+    if ( seconds_passed >= ONE_HOUR_S ) {
       // after 1 hour
 
       // update index and pass to next slot
@@ -418,18 +423,18 @@ public:
   //! 
   //! \attention It shall be called in #loop function when new measurement updates are available.
   //!
-  void updateConsumption(uint32_t current_liters) {
-    if(current_liters > last_liters) {
+  void updateConsumption ( uint32_t current_liters ) {
+    if ( current_liters > last_liters ) {
       // filling
-      uint32_t temp_refill = (current_liters - last_liters);
-      if(temp_refill > LITERS_THRESHOLD) {
+      const uint32_t temp_refill = ( current_liters - last_liters );
+      if ( temp_refill > LITERS_THRESHOLD ) {
         // hysteresis (sensor readings are often noisy)
         last_liters = current_liters; 
       }
     } else { 
       // emptying
-      uint32_t temp_consumption = (last_liters - current_liters);
-      if(temp_consumption > LITERS_THRESHOLD) {
+      const uint32_t temp_consumption = ( last_liters - current_liters );
+      if ( temp_consumption > LITERS_THRESHOLD ) {
         // hysteresis (sensor readings are often noisy)
         consumption += temp_consumption; 
         last_liters = current_liters; 
@@ -444,8 +449,8 @@ public:
   //! 
   //! \return The water consumption in liters.
   //!
-  uint32_t getConsumption1h(void) {
-    return sumSamples(1U);
+  uint32_t getConsumption1h ( void ) {
+    return sumSamples ( 1U );
   }
 
   //!
@@ -455,8 +460,8 @@ public:
   //! 
   //! \return The water consumption in liters.
   //!
-  uint32_t getConsumption12h(void) {
-    return sumSamples(12U);
+  uint32_t getConsumption12h ( void ) {
+    return sumSamples ( 12U );
   }
 
   //!
@@ -466,8 +471,8 @@ public:
   //! 
   //! \return The water consumption in liters.
   //!
-  uint32_t getConsumption1d(void) {
-    return sumSamples(24U);
+  uint32_t getConsumption1d ( void ) {
+    return sumSamples ( 24U );
   }
 
 
@@ -478,8 +483,8 @@ public:
   //! 
   //! \return The water consumption in liters.
   //!
-  uint32_t getConsumption3d(void) {
-    return sumSamples(24U * 3U);
+  uint32_t getConsumption3d ( void ) {
+    return sumSamples ( 24U * 3U );
   }
   
 private:
@@ -493,10 +498,10 @@ private:
   //!
   //! \attention Assumption: The tank(s) contain(s) 1000L maximum and there no more than 2 fillings per day.
   //!
-  uint32_t sumSamples(uint32_t back_time) {
+  uint32_t sumSamples ( uint32_t back_time ) {
     uint32_t sum = 0U;
     
-    if(back_time >= STAT_SIZE) {      
+    if ( back_time >= STAT_SIZE ) {      
       // impossible value in 3 days (see assumption above).
       sum = 9999U;
     } else {
@@ -504,14 +509,14 @@ private:
       uint32_t time_index = back_time;
 
       // go back to #back_time hours
-      while(time_index != 0) {
+      while ( time_index != 0U ) {
 
         // sum the consumption
         sum += consumption_samples[i];
         i--;
 
         // restart from beginning if buffer is terminated
-        if(i < 0) {
+        if ( i < 0 ) {
           i = STAT_SIZE - 1;
         }
 
@@ -527,7 +532,7 @@ private:
   //!
   //! \details Updates the consumption accumulated in the last hour.
   //!
-  void updateBuffer(void) {
+  void updateBuffer ( void ) {
     consumption_samples[index] += consumption;
     consumption = 0;
   }
@@ -537,9 +542,9 @@ private:
   //!
   //! \details Updates the buffer index and reset the older values to 0.
   //!
-  void updateIndex(void) {
+  void updateIndex ( void ) {
     index ++;
-    if(index >= STAT_SIZE) {
+    if ( index >= STAT_SIZE ) {
       index = 0;
     }
     
@@ -566,13 +571,32 @@ private:
 // Instances of the classes
 
 //Format (RS, E, DB4, DB5, DB6, DB7)
-LiquidCrystal lcd(RS, E, DB4, DB5, DB6, DB7);
+LiquidCrystal lcd ( RS, E, DB4, DB5, DB6, DB7 );
 
 MedianFilter filter;
 
 ConsumptionData stats;
 
 // SW Functions
+
+//!
+//! \brief Determines if two float values are equal.
+//!
+//! \param[in] x The first value.
+//! \param[in] y The second value.
+//! \param[in] th The threshold.
+//!
+//! \return 0 if different, 1 if equal (distance between #x and #y is below #th).
+//!
+inline int32_t compare_float ( const float64_t x, const float64_t y, const float64_t th ) {
+  int32_t ret_value = 0;
+  
+  if ( abs ( x - y ) <= th ) {
+    ret_value = 1;
+  }
+
+  return ret_value;
+}
 
 //!
 //! \brief Initializes all variables.
@@ -671,7 +695,7 @@ inline float64_t compute_percentage ( float64_t read_liters ) {
   }
 
   // compute the percentage
-  const float64_t filling_percentage = (read_liters / maximum_capacity) * 100.0;
+  const float64_t filling_percentage = ( read_liters / maximum_capacity ) * 100.0;
   
   return filling_percentage;
 }
@@ -683,13 +707,13 @@ inline float64_t compute_percentage ( float64_t read_liters ) {
 //!
 inline void turn_on_lcd_light ( void ) {
   // activate backlight
-  digitalWrite(LCD_LIGHT_DPIN, HIGH);
+  digitalWrite ( LCD_LIGHT_DPIN, HIGH );
 
   // get timestamp for future deactivation
   timestamp_lcd_on = millis();
 #if DEBUG
-  Serial.print("LCD on -> t:");
-  Serial.println(timestamp_lcd_on);
+  Serial.print   ( "LCD on -> t:"   );
+  Serial.println ( timestamp_lcd_on );
 #endif
 }
 
@@ -701,9 +725,9 @@ inline void turn_on_lcd_light ( void ) {
 inline void turn_off_lcd_light ( void ) {
 
   // deactivate backlight
-  digitalWrite(LCD_LIGHT_DPIN, LOW);
+  digitalWrite ( LCD_LIGHT_DPIN, LOW );
 #if DEBUG
-  Serial.println("LCD off");
+  Serial.println ( "LCD off" );
 #endif
 }
 
@@ -713,12 +737,14 @@ inline void turn_off_lcd_light ( void ) {
 inline void print_error ( void ) {
 
   if ( in_debug == false ) {
+    // only in normal mode
     lcd.clear();
     lcd.setCursor(5, 1);
     lcd.print("Errore");
-  }
 
-  was_error = true;
+    // the LCD is printing an error message, may need an update
+    was_error = true;
+  }
 }
 
 //!
@@ -732,13 +758,17 @@ inline void print_error ( void ) {
 //!
 inline void show_err_code_debug ( void ) {
   if ( ( in_debug == true ) && ( last_btn_status != HIGH ) ) {
-    lcd.setCursor(12,0);
-    lcd.print("e: ");
-    lcd.setCursor(14,0);
+    // if in debug mode and menu is not shown (the button in pressed)
+    
+    lcd.setCursor ( 12, 0 );
+    lcd.print ( "e: " );
+    lcd.setCursor ( 14, 0 );
     if ( was_error == true ) {
-      lcd.print((int32_t) err_code);
+      // print the error code
+      lcd.print ( ( int32_t ) err_code );
     } else {
-      lcd.print((int32_t) 0);
+      // if not error, print always 0
+      lcd.print ( ( int32_t ) 0 );
     }
   }
 }
@@ -752,426 +782,608 @@ inline void show_err_code_debug ( void ) {
 //! \param distance_to_print[in] The distance from the water in centimeters.
 //! \param distance_comp[in] The distance from water (calibrated value in centimeters).
 //!
-inline void update_lcd_debug ( float64_t distance_to_print, float64_t distance_comp ) {
-  if ( must_update_lcd == true ) {   
+inline void update_lcd_debug ( const float64_t distance_to_print, const float64_t distance_comp ) {
+  if ( ( in_debug == true ) && ( must_update_lcd == true ) ) {
+    // if in debug mode and LCD needs an update
+
+    // reset update LCD flag
     must_update_lcd = false;
-  
+
+    // clear the LCD
     lcd.clear();
 
     // show distance
-    lcd.setCursor(0, 0);
-    lcd.print("d:");
-    lcd.print((int32_t) distance_to_print);
-    lcd.print(" cm");
-    
-    lcd.setCursor(0,1);
-    lcd.print("dc:");
-    lcd.print((int32_t) distance_comp);
+    lcd.setCursor ( 0, 0 );
+    lcd.print ( "d:" );
+    lcd.print ( ( int32_t ) distance_to_print );
+    lcd.print ( " cm" );
+
+    // show the calibrated distance (depending on sensor)
+    lcd.setCursor ( 0, 1 );
+    lcd.print ( "dc:" );
+    lcd.print ( ( int32_t ) distance_comp );
 
     // show volume
-    lcd.print(" L:");
-    lcd.print((int32_t) compute_liters(distance_comp));
+    lcd.print ( " L:" );
+    lcd.print ( ( int32_t ) compute_liters ( distance_comp ) );
   }
 }
 
-/**
- * @brief Esegue una misurazione di livello dell'acqua.
- * @details Attiva il sensore ad ultrasuoni ed applica eventuali compensazioni necessarie.
- * 
- * @return La misura in cm oppure -1.0 in caso di errore di misura.
- */
-inline float64_t measure_level(void) {
-  //activate distance measurement
-  digitalWrite(TRIG_DPIN, HIGH);
-  delayMicroseconds(15); //>= 10 usec da datasheet
-  digitalWrite(TRIG_DPIN, LOW);
+//!
+//! \brief Executes a measurement of water level.
+//!
+//! \details Activates the ultrasonic sensor and applies the needed corrections (e.g. calibration).
+//! 
+//! \return The distance from water in centimeters or -1 in case of errors.
+//!
+inline float64_t measure_level ( void ) {
+  float64_t distance_output = 0.0;
   
-  uint32_t time = pulseIn(ECHO_DPIN, HIGH, SENSOR_RESPONSE_TIMEOUT_US);
-  if ((time == 0U) || (time >= SENSOR_NO_OBSTACLE_US)) {
+  // activate distance measurement
+  digitalWrite ( TRIG_DPIN, HIGH );
+  delayMicroseconds( SENSOR_ACTIVATION_TH );
+  digitalWrite ( TRIG_DPIN, LOW );
+
+  // read sensor response (pulse time)
+  const uint32_t pulse_time = pulseIn ( ECHO_DPIN, HIGH, SENSOR_RESPONSE_TIMEOUT_US );
+  if ( ( pulse_time == 0U ) || ( pulse_time >= SENSOR_NO_OBSTACLE_US ) ) {
+    // assign proper error code
     err_code = ERR_SENS;
-    was_error = true;
-    show_err_code_debug();
-    return -1.0; //Error
-  }
-  
-  float64_t distance_read = (float64_t) time / (SENSOR_LSB);  //convert to cm
-  
-  //compensate the constant error introduced by new sensor
-  float64_t dist_compensated = distance_read + SENSOR_CALIBRATION;
-  //
 
-  if ( ( in_debug == true ) && ( last_btn_status == LOW ) ) {
-    must_update_lcd = true;
-    update_lcd_debug(distance_read, dist_compensated);
+    // signal error
+    was_error = true;
+
+    // show error code if in debug
+    show_err_code_debug();
+
+    // assign -1 to return value
+    distance_output = -1.0;
   }
 
-  //check ranges
-  if ( ( dist_compensated < SENSOR_MIN_RANGE ) || ( dist_compensated > SENSOR_MAX_RANGE ) ) {
-    err_code = ERR_RANGE;
-    was_error = true;
-    show_err_code_debug();
-    return -1.0;
-  }
-  //
+  if ( compare_float ( distance_output, -1.0, 0.1 ) == 0 ) {
+
+    // convert to cm
+    const float64_t distance_read = ( float64_t ) pulse_time / SENSOR_LSB;
+    
+    // apply calibration
+    const float64_t dist_compensated = distance_read + SENSOR_CALIBRATION;
   
+    if ( ( in_debug == true ) && ( last_btn_status == LOW ) ) {
+      // if in debug and not showing the menu (button is released)
+      must_update_lcd = true;
+
+      // update LCD with debug data
+      update_lcd_debug ( distance_read, dist_compensated );
+    }
+  
+    // check ranges
+    if ( ( distance_read < SENSOR_MIN_RANGE ) || ( distance_read > SENSOR_MAX_RANGE ) ) {
+      // if out of range with respect to sensor limits
+
+      // assign proper error code
+      err_code = ERR_RANGE;
+
+      // signal error
+      was_error = true;
+
+      // show error code on LCD if in debug mode
+      show_err_code_debug();
+
+      // assign -1 to return value
+      distance_output = -1.0;
+    }
+    
 #if DEBUG
-  Serial.print("dist: ");
-  Serial.print(distance_read);
-  Serial.print(" + calib: ");
-  Serial.print(dist_compensated);
-  Serial.print(" round: ");
-  Serial.println(roundfvalue(dist_compensated));
+    Serial.print   ( "dist: "                         );
+    Serial.print   ( distance_read                    );
+    Serial.print   ( " + calib: "                     );
+    Serial.print   ( dist_compensated                 );
+    Serial.print   ( " round: "                       );
+    Serial.println ( roundfvalue ( dist_compensated ) );
 #endif
-  
-  timestamp_measurement = millis();
 
+    // if all ok
+    if ( compare_float(distance_output, -1.0, 0.1) == 0 ) {
 
-  if(first_measure_done == false) {
-    number_measures_done++;
-  }
+      // assign timestamp to measure (to compute next time of measure)
+      timestamp_measurement = millis();
+    
+      // if we are doing the first measures
+      if(first_measure_done == false) {
+        number_measures_done++;
+      }
 
-  if(number_measures_done > (FILTER_SIZE / 2)) {
-    first_measure_done = true;
-    if ( in_debug == true ) {
-      measure_interval = MEASURE_HF_INTERVAL; //ms
-    } else {
-      measure_interval = MEASURE_LF_INTERVAL; //ms
+      // if we have done enough measures to feed the median filter.
+      if ( number_measures_done > ( FILTER_SIZE / 2 ) ) {
+
+        // flag first measure done
+        first_measure_done = true;
+        
+        if ( in_debug == true ) {
+          // if in debug, use a higher frequency measure timing for better responsiveness
+          measure_interval = MEASURE_HF_INTERVAL; //ms
+        } else {
+          // if not in debug, use a lower frequency measure timing (low responsiveness required)
+          measure_interval = MEASURE_LF_INTERVAL; //ms
+        }
+      }
+
+      // reset error indicators
+      was_error = false;
+
+      err_code = ERR_OK;
+
+      // show "no error" info on LCD in debug mode
+      show_err_code_debug();
+
+      // assign distance to be returned
+      distance_output = dist_compensated;
     }
   }
-  
-  was_error = false;
-  err_code = ERR_OK;
-  show_err_code_debug();
     
-  return dist_compensated;
+  return distance_output;
 }
 
-/**
- * @brief Controlla lo stato del LED in base al livello dell'acqua.
- * @details Se il livello dell'acqua è al di sotto di LOW_LEVEL_THRESHOLD ma al di sopra di EMPTY_LEVEL_THRESHOLD
- *          lo fa accendere, se è al di sotto di EMPTY_LEVEL_THRESHOLD lo fa lampeggiare, altrimenti lo lascia spento.
- *          
- * @param percentage La percentuale di riempimento del serbatoio (in [0, 100]).
- */
-inline void control_led(float64_t percentage) {
-  if ( percentage < 0.0 ) {
+//!
+//! \brief Controls the LED status depending on water level.
+//!
+//! \details If the tank filling is under LOW_LEVEL_THRESHOLD but over EMPTY_LEVEL_THRESHOLD turns on the LED.
+//!          If the tank fillink is under EMPTY_LEVEL_THRESHOLD makes the LED to blink.
+//!          In all other cases the LED is off.
+//!          
+//! \param[in] water_percentage The percentage of filling of the tank (in range [0, 100]).
+//!
+inline void control_led ( const float64_t water_percentage ) {
+  if ( water_percentage < 0.0 ) {
+    // below 0, all OFF
     led_status = false;
     led_on     = false;
-  } else if (percentage <= EMPTY_LEVEL_THRESHOLD) {
+  } else if ( water_percentage <= EMPTY_LEVEL_THRESHOLD ) {
+    // LED blinks
     led_status = true;
     led_on     = !led_on;
-  } else if (percentage <= LOW_LEVEL_THRESHOLD) {
+  } else if ( water_percentage <= LOW_LEVEL_THRESHOLD ) {
+    // LED on
     led_status = true;
     led_on     = true;
   } else {
+    // LED off
     led_status = false;
     led_on     = false;
   }
-  digitalWrite(LED_CAPACITY_DPIN, led_on);
+
+  // write new led status
+  digitalWrite ( LED_CAPACITY_DPIN, led_on );
 }
 
-/**
- * @brief Pulisce i dati in input costringendoli all'interno di un range valido.
- * @details Se data è sotto la min_threshold lo imposta a min_val, 
- *          se data è sopra la max_threshold lo imposta a max_val, 
- *          altrimenti lo lascia inalterato.
- *        
- * @param data Il dato da ripulire.
- * @param min_val Il valore minimo ammissibile.
- * @param max_val Il valore massimo ammissibile.
- * @param min_threshold Il valore di soglia minimo ammissibile.
- * @param max_threshold Il valore di soglia massimo ammissibile.
- * 
- * @return Il dato nel range [min_val, max_val].
- */
-inline float64_t sanitize_data(float64_t data, float64_t min_val, float64_t max_val, float64_t min_threshold, float64_t max_threshold) {
+//!
+//! \brief Sanitizes the input value and contraints it in specified valid range.
+//!
+//! \details If #data is under #min_threshold it returns #min_val.
+//!          If #data is over #max_threshold it returns #max_val.
+//!          If in range it returns #data.
+//!        
+//! \param[in] data The value to be sanitized.
+//! \param[in] min_val The minimum value in the admissible range.
+//! \param[in] max_val The maximum value in the admissible range.
+//! \param[in] min_threshold The lowest threshold value.
+//! \param[in] max_threshold The highest threshold value.
+//! 
+//! \return The value in range [#min_val, #max_val].
+//!
+inline float64_t sanitize_data ( const float64_t data, const float64_t min_val, const float64_t max_val, const float64_t min_threshold, const float64_t max_threshold ) {
   float64_t sanitized_data = min_val;
   
-  if (data < min_threshold) {
+  if ( data < min_threshold ) {
+    // if below the minimum value threshold assign to minimum
     sanitized_data = min_val;
-  } else if (data > max_threshold) {
+  } else if ( data > max_threshold ) {
+    // if over the maximum value threshold assign to maximum
     sanitized_data = max_val;
   } else {
+    // else output the same value
     sanitized_data = data;
   }
-  
+
+  // return the sanitized value
   return sanitized_data;
 }
 
 
-/**
- * @brief Aggiorna l'LCD con i parametri attuali se necessario.
- * @details L'aggiornamento segue lo schema:
- * 
- *  |----------------| 
- *  | xxxx L   yyy % |
- *  | ############## |
- *  |----------------|
- *  
- *  es.
- *  |----------------| 
- *  |  876 L ^  87 % |
- *  | ############   |
- *  |----------------|
- *  
- *  |----------------| 
- *  | xxxx L   yyy % |
- *  | ##  Riserva    |
- *  |----------------|
- *  
- *  |----------------| 
- *  | xxxx L   yyy % |
- *  |     Vuoto      |
- *  |----------------|
- *  
- *  <xxxx> = [0, 9999] L
- *  <yyy> = [0, 100] %
- *  # X 16 => 0 = 0%, 16 = 100%
- *  
- * @param percentage La percentuale di riempimento del serbatoio.
- * @param liters I litri di acqua rimanenti.
- */
-inline void update_lcd(float64_t percentage, float64_t liters) {
-  if( ( percentage < 0.0 ) || ( percentage > 100.0 ) || ( liters < 0.0 ) || ( liters > 9999.9 ) ) {
+//!
+//! \brief Updates the LCD with the actual parameters if needed.
+//! \details The data are printed as follows:
+//! 
+//!  |----------------| 
+//!  | xxxx L   yyy % |
+//!  | ############## |
+//!  |----------------|
+//!  
+//!  ex:
+//!  |----------------| 
+//!  |  876 L ^  87 % |
+//!  | ############   |
+//!  |----------------|
+//!  
+//!  |----------------| 
+//!  | xxxx L   yyy % |
+//!  | ##  Riserva    |
+//!  |----------------|
+//!  
+//!  |----------------| 
+//!  | xxxx L   yyy % |
+//!  |     Vuoto      |
+//!  |----------------|
+//!  
+//!  <xxxx> = [0, 9999] L
+//!  <yyy> = [0, 100] %
+//!  # X 16 => 0 = 0%, 16 = 100%
+//!  
+//! \param[in] water_percentage The tank filling percentage.
+//! \param[in] liters The water volume in liters.
+//!
+inline void update_lcd ( const float64_t water_percentage, const float64_t liters ) {
+  if( ( water_percentage < 0.0 ) || ( water_percentage > 100.0 ) || ( liters < 0.0 ) || ( liters > 9999.9 ) ) {
+    // if data are invalid, don't update the LCD
     must_update_lcd = false;
   }
   
-  if(must_update_lcd == true) {
+  if ( must_update_lcd == true ) {
+    // if the LCD must be updates
     must_update_lcd = false;
-    
+
+    // Clear the LCD
     lcd.clear();
-    lcd.setCursor(6, 0);
-    lcd.print("L");
-    lcd.setCursor(14, 0);
-    lcd.print("%");
-  
+
+    // Print unit symbols in specified locations
+    lcd.setCursor ( 6, 0 );
+    lcd.print ( "L" );
+    lcd.setCursor ( 14, 0 );
+    lcd.print ( "%" );
+
+    // print the liters
+
+    // determine the index of the first cipher of #liters to be written.
     int16_t index = 4;
-    int16_t l = (int16_t) liters;
-    if (l >= 10) {
+    const int16_t l = ( int16_t ) liters;
+
+    // 2 digits
+    if ( l >= 10 ) {
       index--;
     }
-    if (l >= 100) {
+    
+    // 3 digits
+    if ( l >= 100 ) {
       index--;
     }
-    if (l >= 1000) {
+    
+    // 4 digits
+    if ( l >= 1000 ) {
       index--;
     }
 
-    lcd.setCursor(index, 0);
-    lcd.print(l);
-  
-    percentage = sanitize_data(percentage, 0.0, 100.0, 0.5, 99.5);
-    
-    int16_t p = (int16_t) percentage;
+    // set the cursor
+    lcd.setCursor ( index, 0 );
+
+    // print the value
+    lcd.print ( l );
+
+    // print the percentage
+
+    // sanitize the value (constrained in 0, 100).
+    const float64_t sanitized_water_percentage = sanitize_data(water_percentage, 0.0, 100.0, 0.5, 99.5);
+
+    // compute the starting index to print the #water_percentage
+    const int16_t p = ( int16_t ) sanitized_water_percentage;
     index = 12;
-    if(p >= 10) {
+
+    // 2 digits
+    if ( p >= 10 ) {
       index --;
     }
 
-    if(p >= 100) {
+    // 3 digits
+    if( p >= 100 ) {
       index --;
     }
-    
-    lcd.setCursor(index, 0);
-    lcd.print(p);
-  
-    lcd.setCursor(1, 1);
-    int16_t howmany = (14 * p) / 100;
-    for (int16_t i = 0; i < howmany; i++) {
+
+    // set the cursor
+    lcd.setCursor ( index, 0 );
+
+    // print the value
+    lcd.print ( p );
+
+    // set the cursor to print the progress bar
+    lcd.setCursor( 1, 1 );
+
+    // determine how many symbols must be printed to represent the percentage of filling
+
+    // 14 because we leave one space before and after to center the bar (16 - 2 spaces)
+    const int16_t howmany = ( 14 * p ) / 100;
+    for ( int16_t i = 0; i < howmany; i++ ) {
+      // print each symbol
       lcd.write(PROGRESS_CHAR);
     }
   
-    if (howmany == 0) {
-      lcd.setCursor(5, 1);
-      lcd.print("Vuoto");
-    } else if (howmany <= 2) {
-      lcd.setCursor(5, 1);
-      lcd.print("Riserva");
+    if ( howmany == 0 ) {
+      // special case: empty
+      lcd.setCursor ( 5, 1 );
+      lcd.print ( "Vuoto" );
+    } else if ( howmany <= 2 ) {
+      // special case: under minimum threashold (for better readability)
+      lcd.setCursor ( 5, 1 );
+      lcd.print ( "Riserva" );
     }
   }
 }
 
-/**
- * @brief Esegue un autotest dei controlli all'avvio.
- * @details Permette di controllare stato dei LED del bottone e dell'LCD.
- * 
- */
+//!
+//! \brief Executes an autotest of LCD and LED.
+//!
 inline void autotest(void) {
-  digitalWrite(LCD_LIGHT_DPIN, LOW);
-  digitalWrite(LED_CAPACITY_DPIN, LOW);
+  // 1. Reset state of LCD backlight and text and LED (all off)
+  digitalWrite ( LCD_LIGHT_DPIN, LOW );
+  digitalWrite ( LED_CAPACITY_DPIN, LOW );
   lcd.clear();
 
-  delay(1000);
-  
-  digitalWrite(LCD_LIGHT_DPIN, HIGH);
-  digitalWrite(LED_CAPACITY_DPIN, HIGH);
+  // wait 1 second to let user to see result
+  delay ( 1000 );
 
-  delay(1000);
+  // 2. Turn on all
+  digitalWrite ( LCD_LIGHT_DPIN, HIGH );
+  digitalWrite ( LED_CAPACITY_DPIN, HIGH );
 
+  // wait 1 second to let user to see result
+  delay ( 1000 );
+
+  // 3. Write character to fill the LCD
   lcd.clear();
-  lcd.setCursor(0, 0);
-  for (uint16_t i = 0; i < 16; i++) {
-      lcd.write(PROGRESS_CHAR);
+  lcd.setCursor ( 0, 0 );
+  for ( uint16_t i = 0; i < 16; i++ ) {
+    // this symbol turns on all pixels of the LCD (first row)
+    lcd.write ( PROGRESS_CHAR );
   }
-  lcd.setCursor(0, 1);
-  for (uint16_t i = 0; i < 16; i++) {
-      lcd.write(PROGRESS_CHAR);
+  lcd.setCursor ( 0, 1 );
+  for ( uint16_t i = 0; i < 16; i++ ) {
+    // this symbol turns on all pixels of the LCD (second row)
+    lcd.write ( PROGRESS_CHAR );
   }
 
-  delay(3000);
+  // wait 3 second to let user to see result
+  delay ( 3000 );
 
-  digitalWrite(LED_CAPACITY_DPIN, LOW);
-  digitalWrite(LCD_LIGHT_DPIN, LOW);
+  // 4. Reset state
+  digitalWrite ( LED_CAPACITY_DPIN, LOW );
+  digitalWrite ( LCD_LIGHT_DPIN, LOW );
   lcd.clear();
 
-  delay(1000);
+  // wait and back to normal
+  delay ( 1000 );
 }
 
-/**
- * @brief Stampa su LCD l'informazione passata.
- * @details Segue il formato:
- *  |----------------| 
- *  |<      str     >|
- *  |Tot. <stat>   L |
- *  |----------------|
- *  
- * @param str Il titolo della statistica.
- * @param stat Il valore della statistica.
- * 
- */
-inline void print_stat(String str, uint32_t stat) {
-  if (stat == 9999U) {
+//!
+//! \brief Prints on LCD the consumption statistic passed.
+//!
+//! \details Follows the format:
+//!  |----------------| 
+//!  |<      str     >|
+//!  |Tot. <stat>   L |
+//!  |----------------|
+//!  
+//! \param[in] str The statistic title.
+//! \param[in] stat The statistic value.
+//! 
+inline void print_stat ( String str, const uint32_t stat ) {
+  if ( stat == 9999U ) {
+    // this is an error value
     was_error = true;
+    // assign proper error code to display
     err_code = ERR_STAT;
   } else {
+    // all ok, the value is valid
     was_error = false;
     err_code = ERR_OK;
   }
+
+  // show the error code in debug mode
   show_err_code_debug();
-  
-  lcd.setCursor(0, 0);
-  lcd.print(str);
-  
-  lcd.setCursor(0, 1);
-  lcd.print("Tot. ");
-  lcd.print(stat);
-  //lcd.print(9999);
-  
-  lcd.setCursor(14, 1);
-  lcd.print("L");
-  
-  delay(SHOW_STAT_TIME);
+
+  // print the title
+  lcd.setCursor ( 0, 0 );
+  lcd.print ( str );
+
+  // print the value
+  lcd.setCursor ( 0, 1 );
+  lcd.print ( "Tot. " );
+  lcd.print ( stat );
+  lcd.setCursor ( 14, 1 );
+  lcd.print ( "L" );
+
+  // wait to let user see the value
+  delay ( SHOW_STAT_TIME );
+
+  // clear all
   lcd.clear(); 
 }
 
-/**
- * @brief Stampa su LCD la versione del SW.
- * @details Segue il formato:
- *  |----------------| 
- *  | Versione:      |
- *  | <num_version>  |
- *  |----------------|
- * 
- */
-inline void show_version(void) {
+//!
+//! \brief Prints the SW version on LCD.
+//!
+//! \details Follows the format:
+//!  |----------------| 
+//!  | Versione:      |
+//!  | <num_version>  |
+//!  |----------------|
+//!
+inline void show_version ( void ) {
   lcd.clear();
-  
-  lcd.setCursor(0, 0);
-  lcd.print(" Versione:");
 
-  lcd.setCursor(0, 1);
-  lcd.print(" ");
-  lcd.print(VERSION);
+  // print the version
+  lcd.setCursor ( 0, 0 );
+  lcd.print ( " Versione:" );
+  lcd.setCursor ( 0, 1 );
+  lcd.print ( " " );
+  lcd.print ( VERSION );
 
+  // wait to let the user see
   delay(SHOW_VERSION_TIME);
-  
+
+  // clear all
   lcd.clear();
 }
 
-/**
- * @brief Stampa su LCD le statistiche raccolte.
- * @details Stampa a turno i consumi totali da:
- *          - 1 ora;
- *          - 12 ore;
- *          - 1 giorno;
- *          - 3 giorni.
- *          Infine stampa la versione del SW.
- *         
- */
-inline void show_stats(void) {
+//!
+//! \brief Prints the tank parameters (diameter, number of tanks, max water heigh, max total capacity).
+//!
+//! \details Follows the format:
+//!  |----------------| 
+//!  |D:xxxxx N:xx    |
+//!  |H:xxxxx C:xxxxx |
+//!  |----------------|
+//!
+inline void show_params ( void ) {
   lcd.clear();
   
-  //stampa 1h
-  print_stat("Consumo 1 ora", stats.getConsumption1h());
-  
-  //stampa 12h
-  print_stat("Consumo 12 ore", stats.getConsumption12h());
-  
-  //stampa 1d
-  print_stat("Consumo 1 giorno", stats.getConsumption1d());
+  lcd.setCursor ( 0, 0 ); 
+  lcd.print ( "D:" );
+  lcd.print ( TANK_RADIUS_CM * 2.0 );
 
-  //stampa 3d
-  print_stat("Consumo 3 giorni", stats.getConsumption3d());
+  lcd.print ( " N:" );
+  lcd.print ( TANK_NUMBER );
+
+  lcd.setCursor ( 0, 1 );
+
+  lcd.print ( "H:" );
+  lcd.print ( WATER_MAX_HEIGHT_CM );
+
+  lcd.print ( " C:" );
+  lcd.print ( maximum_capacity );
+
+  // wait to let user see the value
+  delay ( SHOW_PARAM_TIME );
+
+  // clear all
+  lcd.clear();
 }
 
-inline void enter_debug(void) {
+//!
+//! \brief Prints on LCD all the statistics.
+//!
+//! \details Prints consumptions since:
+//!          - 1 hour;
+//!          - 12 hours;
+//!          - 1 day;
+//!          - 3 days.
+//!
+inline void show_stats ( void ) {
+  lcd.clear();
+  
+  // print 1h
+  print_stat ( "Consumo 1 ora", stats.getConsumption1h() );
+  
+  // print 12h
+  print_stat ( "Consumo 12 ore", stats.getConsumption12h() );
+  
+  // print 1d
+  print_stat ( "Consumo 1 giorno", stats.getConsumption1d() );
+
+  // print 3d
+  print_stat ( "Consumo 3 giorni", stats.getConsumption3d() );
+}
+
+//!
+//! \brief Changes operative mode to DEBUG.
+//!
+inline void enter_debug ( void ) {
+  // update status variable
   in_debug = true;
 
+  // notify the user by writing on LCD
   lcd.clear();
   lcd.setCursor(0,0);
-  //        |----------------|
   lcd.print("      Modo      ");
   lcd.setCursor(0,1);
   lcd.print("  Manutenzione  ");
-  
+
+  // wait to let user read
   delay(3000);
-  
+
+  // perform an autotest
   lcd.clear();
   lcd.setCursor(0,0);
-  //        |----------------|
   lcd.print(" 1. Autotest    ");
-  
-  delay(1000);
+
+  // wait to let user read
+  delay ( 1000 );
 
   // do autotest
   autotest();
 
+  // perform real-time readings
   lcd.clear();
   lcd.setCursor(0,0);
-  //        |----------------|
   lcd.print(" 2. Lettura     ");
-  
+
+  // wait to let user read
   delay(1000);
 
+  // update the LCD
   must_update_lcd = true;
+
+  // change measure frequency to the highest value
   measure_interval = MEASURE_HF_INTERVAL; //ms
 }
 
-inline void exit_debug(void) {
+//!
+//! \brief Changes operative mode to NORMAL.
+//!
+inline void exit_debug ( void ) {
+  // update status variable
   in_debug = false;
 
+  // print the information on LCD
   lcd.clear();
-  lcd.setCursor(0,0);
-  
+  lcd.setCursor ( 0,0 );
   lcd.print("      Modo      ");
   lcd.setCursor(0,1);
-  
   lcd.print("    Normale     ");
+
+  // wait to let user read
   delay(3000);
 
+  // update the LCD
+  must_update_lcd = true;
+
+  // change measure frequency to the lowest value
   measure_interval = MEASURE_LF_INTERVAL; //ms
+}
+
+//!
+//! \brief Actions for sixth menu slot.
+//!
+inline void button_interval_6_handle ( void ) {
   must_update_lcd = true;
 }
 
+//!
+//! \brief Actions for fifth menu slot.
+//!
 inline void button_interval_5_handle ( void ) {
+  show_params();
   must_update_lcd = true;
 }
 
+//!
+//! \brief Actions for fourth menu slot.
+//!
 inline void button_interval_4_handle ( void ) {
   show_version();
   must_update_lcd = true;
 }
 
+//!
+//! \brief Actions for third menu slot.
+//!
 inline void button_interval_3_handle ( void ) {
   if ( in_debug == true ) {
     exit_debug();
@@ -1180,73 +1392,114 @@ inline void button_interval_3_handle ( void ) {
   }
 }
 
+//!
+//! \brief Actions for second menu slot.
+//!
 inline void button_interval_2_handle ( void ) {
   show_stats();
   must_update_lcd = true;
 }
 
+//!
+//! \brief Actions for first menu slot.
+//!
 inline void button_interval_1_handle ( void ) {
   must_update_lcd = true;
 }
 
+//!
+//! \brief Prints on LCD the menu options based on button press time.
+//!
+//! \param[in] btn_press_time Time since button is kept pressed.
+//!
 inline void show_menu_options ( const int32_t btn_press_time ) {
   if ( ( btn_press_time >= BTN_INTERVAL_1_TIME ) && ( btn_press_time < BTN_INTERVAL_2_TIME ) ) {
+    // slot 1
     turn_on_lcd_light();
-  } else if( ( btn_press_time >= BTN_INTERVAL_2_TIME ) && ( btn_press_time < BTN_INTERVAL_3_TIME ) ) {      
+  } else if( ( btn_press_time >= BTN_INTERVAL_2_TIME ) && ( btn_press_time < BTN_INTERVAL_3_TIME ) ) {   
+    // slot 2   
     lcd.clear();
-    lcd.print(" -> Consumi ");
+    lcd.print ( " -> Consumi " );
   } else if( ( btn_press_time >= BTN_INTERVAL_3_TIME ) && ( btn_press_time < BTN_INTERVAL_4_TIME ) ) {
+    // slot 3
     lcd.clear();
     if ( in_debug == false ) {
-      lcd.print(" -> Manutenzione");
+      lcd.print ( " -> Manutenzione" );
     } else {
-      lcd.print(" -> Normale");
+      lcd.print ( " -> Normale" );
     }
-  } else if ( ( btn_press_time >= BTN_INTERVAL_4_TIME ) && (btn_press_time < BTN_INTERVAL_5_TIME) ) {      
+  } else if ( ( btn_press_time >= BTN_INTERVAL_4_TIME ) && (btn_press_time < BTN_INTERVAL_5_TIME) ) {
+    // slot 4 
     lcd.clear();
-    lcd.print(" -> Versione");
-  } else if( ( btn_press_time >= BTN_INTERVAL_5_TIME ) ) {      
+    lcd.print ( " -> Versione" );
+  } else if ( ( btn_press_time >= BTN_INTERVAL_5_TIME ) && (btn_press_time < BTN_INTERVAL_6_TIME) ) {
+    // slot 4 
     lcd.clear();
-    lcd.print(" -> Esci Menù");
+    lcd.print ( " -> Parametri" );
+    lcd.setCursor ( 0, 1 );
+    lcd.print ( "    Serbatoio" );
+  } else if( ( btn_press_time >= BTN_INTERVAL_6_TIME ) ) {
+    // slot 5
+    lcd.clear();
+    lcd.print ( " -> Esci Menù" );
   }
 }
 
+//!
+//! \brief Performs the menu associated actions based on button press time.
+//!
+//! \param[in] btn_press_time Time since button is kept pressed.
+//!
 inline void do_menu_actions ( const int32_t btn_press_time ) {
-  if (btn_press_time >= BTN_INTERVAL_5_TIME) {
+  if ( btn_press_time >= BTN_INTERVAL_6_TIME ) {
+    // Slot 6
+    button_interval_6_handle();
+  } else if ( btn_press_time >= BTN_INTERVAL_5_TIME ) {
+    // Slot 5
     button_interval_5_handle();
-  } else if (btn_press_time >= BTN_INTERVAL_4_TIME) {
+  } else if ( btn_press_time >= BTN_INTERVAL_4_TIME ) {
+    // Slot 4
     button_interval_4_handle();
-  } else if(btn_press_time >= BTN_INTERVAL_3_TIME) {
+  } else if ( btn_press_time >= BTN_INTERVAL_3_TIME ) {
+    // Slot 3
     button_interval_3_handle();
-  } else if(btn_press_time >= BTN_INTERVAL_2_TIME) {      
+  } else if ( btn_press_time >= BTN_INTERVAL_2_TIME ) {
+    // Slot 2      
     button_interval_2_handle();
-  } else if(btn_press_time >= BTN_INTERVAL_1_TIME) {      
+  } else if ( btn_press_time >= BTN_INTERVAL_1_TIME ) {
+    // Slot 1      
     button_interval_1_handle();
   }
 }
 
+//!
+//! \brief Manages the button events.
+//!
 inline void manage_button ( void ) {
   // read button status
-  btn_status = digitalRead(LCD_BUTTON_DPIN);
+  btn_status = digitalRead ( LCD_BUTTON_DPIN );
+
+  // get current time
+  const int32_t timestamp_now = millis();
   
-  if (btn_status == HIGH && last_btn_status == LOW) {
+  if ( ( btn_status == HIGH ) && ( last_btn_status == LOW ) ) {
     // Detect the RISING EDGE 
     last_btn_status     = HIGH;
-    timestamp_btn_press = millis();
+    timestamp_btn_press = timestamp_now;
     
-  } else if(btn_status == HIGH && last_btn_status == HIGH) {
+  } else if ( ( btn_status == HIGH ) && ( last_btn_status == HIGH ) ) {
     // Detect when kept PRESSED
     
     // show options
-    const int32_t btn_press_time = (millis() - timestamp_btn_press);
+    const int32_t btn_press_time = ( timestamp_now - timestamp_btn_press );
 
     show_menu_options ( btn_press_time );
     
-  } else if(btn_status == LOW && last_btn_status == HIGH) {
+  } else if ( ( btn_status == LOW ) && ( last_btn_status == HIGH ) ) {
     // Detect the FALLING EDGE
         
     // do actions
-    const int32_t btn_press_time = (millis() - timestamp_btn_press);
+    const int32_t btn_press_time = ( timestamp_now - timestamp_btn_press );
 
     do_menu_actions ( btn_press_time );
 
@@ -1258,48 +1511,63 @@ inline void manage_button ( void ) {
     last_btn_status     = LOW;
     timestamp_btn_press = 0;
   }
-  
 }
 
-void setup(void) {
+// Setup function
 
+void setup ( void ) {
+
+  // initialize variables
   initialize();
 
-  filter.begin(FILTER_SEED);
-  stats.begin();
-  
-  //16 characters e 2 lines
-  lcd.begin(16, 2);
-  
-  lcd.createChar(UP_ARROW_CHAR, LCD_UP_ARROW);
-  lcd.createChar(PROGRESS_CHAR, LCD_PROGRESS);
-  
-  first_measure_done = false;
+  // initialize median filter
+  filter.begin ( FILTER_SEED );
 
-  in_debug = false;
+  // initialize consumption statistics
+  stats.begin();
+
+  // initialize the LCD
   
-  //compute tank parameters
-  tank_capacity     = (TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM) / CM3_PER_LITER;
+  // we have a 16 characters and 2 lines
+  lcd.begin ( 16, 2 );
+
+  // add special symbols
+  lcd.createChar ( UP_ARROW_CHAR, LCD_UP_ARROW );
+  lcd.createChar ( PROGRESS_CHAR, LCD_PROGRESS );
+  
+  // compute tank parameters
+  tank_capacity     = ( TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM ) / CM3_PER_LITER;
   maximum_capacity  = TANK_NUMBER * tank_capacity;
   
-  //pin setup
-  pinMode(ECHO_DPIN,         INPUT );
-  pinMode(TRIG_DPIN,         OUTPUT);
-  pinMode(LED_CAPACITY_DPIN, OUTPUT);
-  pinMode(LCD_LIGHT_DPIN,    OUTPUT);
-  pinMode(LCD_BUTTON_DPIN,   INPUT );
+  // pin setup
+  pinMode ( ECHO_DPIN,         INPUT  );
+  pinMode ( TRIG_DPIN,         OUTPUT );
+  pinMode ( LED_CAPACITY_DPIN, OUTPUT );
+  pinMode ( LCD_LIGHT_DPIN,    OUTPUT );
+  pinMode ( LCD_BUTTON_DPIN,   INPUT  );
 
-  delay(1000);
+  delay ( 1000 );
+
+  // do autotest
   autotest();
-  lcd.print("Avvio...");
-  lcd.setCursor(0,1);
-  lcd.print(VERSION);
-   
-  led_on     = false;
-  led_status = false;
 
-  digitalWrite(LCD_LIGHT_DPIN, HIGH);
+  // turn on LCD backlight
+  digitalWrite ( LCD_LIGHT_DPIN, HIGH );
 
+  // print SW information
+  lcd.print ( "Avvio..." );
+
+  delay ( 1000 );
+  
+  show_version();
+
+  // initialize status variables
+  first_measure_done = false; // First measure to do
+  in_debug           = false; // NORMAL mode
+  led_on             = false; // LED off
+  led_status         = false; // LED not blinking
+
+  // initialize timestamps
   const int32_t timestamp_now = millis();
 
   timestamp_lcd_on         = timestamp_now;
@@ -1309,24 +1577,26 @@ void setup(void) {
   timestamp_last_filling   = timestamp_now;
 
 #if DEBUG
-  Serial.begin(9600);
-  Serial.print("Tank Radius (cm): ");
-  Serial.println(TANK_RADIUS_CM);
+  Serial.begin ( 9600 );
+  Serial.print ( "Tank Radius (cm): " );
+  Serial.println ( TANK_RADIUS_CM );
   
-  Serial.print("Water Max Height (cm): ");
-  Serial.println(WATER_MAX_HEIGHT_CM);
+  Serial.print ( "Water Max Height (cm): " );
+  Serial.println ( WATER_MAX_HEIGHT_CM );
   
-  Serial.print("Maximum Capacity (L): ");
-  Serial.println(maximum_capacity);
+  Serial.print ( "Maximum Capacity (L): " );
+  Serial.println ( maximum_capacity );
 #endif
 
-  delay(1000);
+  delay ( 1000 );
   
   lcd.clear();
-  lcd.print("Prima misura...");
+  lcd.print ( "Prima misura..." );
 }
 
-void loop(void) {
+// Loop function
+
+void loop ( void ) {
 
   // read current milliseconds passed from boot.
   const int32_t timestamp_now = millis();
@@ -1338,53 +1608,76 @@ void loop(void) {
   manage_button();
   
   // lcd light timer
-  if ((timestamp_now - timestamp_lcd_on) >= LCD_ON_TIME) {
+  if ( ( timestamp_now - timestamp_lcd_on ) >= LCD_ON_TIME ) {
     turn_off_lcd_light();
   }
 
   // measurement timer
-  if ((timestamp_now - timestamp_measurement) >= measure_interval) {
+  if ( ( timestamp_now - timestamp_measurement ) >= measure_interval ) {
     distance = measure_level();
-    if(abs((-1.0) - distance) < 0.1) {
+    if ( compare_float ( distance, -1, 0.1 ) == 1 ) {
+      // measure error
       print_error();
-      delay(READ_DISTANCE_TIME);
+      delay ( READ_DISTANCE_TIME );
+
+      // skip to next cycle
       return;
     }
-    ( void ) filter.in(roundfvalue(distance));
+
+    // feed the filter
+    ( void ) filter.in ( roundfvalue ( distance ) );
   }
 
   // read distance timer
-  if ((timestamp_now - timestamp_last_read_dist) >= READ_DISTANCE_TIME) {
+  if ( ( timestamp_now - timestamp_last_read_dist ) >= READ_DISTANCE_TIME ) {
+
+    // get median value from filter
     distance = filter.out();
-    distance = sanitize_data(distance, SENSOR_DISTANCE_CM, (WATER_MAX_HEIGHT_CM + SENSOR_DISTANCE_CM), SENSOR_DISTANCE_CM, (WATER_MAX_HEIGHT_CM + SENSOR_DISTANCE_CM));
 
-    if (first_measure_done) {
-      float64_t liters = compute_liters(distance);
-      liters = sanitize_data(liters, 0.0, maximum_capacity, 0.5, maximum_capacity);
+    // sanitize the value
+    distance = sanitize_data ( 
+      distance, 
+      SENSOR_DISTANCE_CM, 
+      ( WATER_MAX_HEIGHT_CM + SENSOR_DISTANCE_CM ), 
+      SENSOR_DISTANCE_CM, 
+      ( WATER_MAX_HEIGHT_CM + SENSOR_DISTANCE_CM )
+    );
 
-      if( ( previous_liters != liters ) || ( was_error == true ) ) {
+    if ( first_measure_done == true ) {
+
+      // compute the current water volume
+      float64_t liters = compute_liters ( distance );
+      liters = sanitize_data ( liters, 0.0, maximum_capacity, 0.5, maximum_capacity );
+
+      // update needed if previous message was error or volume was different
+      if( ( compare_float ( previous_liters, liters, 0.1 ) == 0 ) || ( was_error == true ) ) {
         must_update_lcd = true;
         was_error       = false;
       }
       previous_liters = liters;
-    
-      percentage = compute_percentage(liters);
-      stats.updateConsumption(liters);
-      
+
+      // compute the percentage
+      percentage = compute_percentage ( liters );
+
+      // update statistics
+      stats.updateConsumption ( liters );
+
+      // update LCD if not in debug
       if ( in_debug == false ) {
-        update_lcd(percentage, liters);
+        update_lcd ( percentage, liters );
       }
     }
 
+    // update the timestamp for next value
     timestamp_last_read_dist = timestamp_now;
   }
 
   // led control timer
   if ( ( timestamp_now - timestamp_last_led_ctrl ) >= LED_CONTROL_TIME ) {
-    control_led(percentage); 
+    control_led ( percentage ); 
     timestamp_last_led_ctrl = timestamp_now;
   }
 
   // go to sleep
-  delay(SLEEP_TIME);
+  delay ( SLEEP_TIME );
 }
