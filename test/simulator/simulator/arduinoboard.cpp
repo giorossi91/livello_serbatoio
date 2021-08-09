@@ -36,7 +36,7 @@ int32_t ArduinoBoard::max(int32_t a, int32_t b) {
     return (a > b) ? a : b;
 }
 
-int32_t ArduinoBoard::millis ( void ) {
+uint32_t ArduinoBoard::millis ( void ) {
     int32_t ms = 0;
 
     struct timespec curr_time;

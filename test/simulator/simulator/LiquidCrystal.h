@@ -84,7 +84,7 @@ public:
       ss_fail << "Setting LCD cursor out of bounds " << "[ r=" << row << ", c=" << col << "]." << 
         " Maximum: [ r=" << rows << ", c=" << cols << "]";
 
-      CPPUNIT_FAIL(ss_fail.str().c_str());
+      CPPUNIT_FAIL(ss_fail.str().c_str())
     }   
   
     cursor_col = col;
@@ -101,7 +101,7 @@ public:
       while ( pStr[i] != '\0' ) {
       
         if( cursor_col >= cols ) {
-          CPPUNIT_FAIL ( "LCD cols limit exceeded."); 
+          CPPUNIT_FAIL ( "LCD cols limit exceeded.")
         } 
       
         pLcdMatrix[cursor_row][cursor_col] = pStr[i];
@@ -124,7 +124,9 @@ public:
   void write ( byte c ) {
     if ( c == 1 ) {
       print("#", true);
-    } else {
+    } else if ( c == 0 ) {
+      print("^", true);
+     } else {
       print("$", true);
     }
   }

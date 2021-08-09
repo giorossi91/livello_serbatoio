@@ -5,7 +5,7 @@
 
 extern int32_t max(int32_t a, int32_t b);
 
-extern int32_t millis ( void );
+extern uint32_t millis ( void );
 
 extern void delay ( int32_t ms );
 

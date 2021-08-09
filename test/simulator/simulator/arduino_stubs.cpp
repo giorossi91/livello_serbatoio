@@ -7,7 +7,7 @@ int32_t max(int32_t a, int32_t b) {
 }
 
 
-int32_t millis ( void ) {
+uint32_t millis ( void ) {
   return arduino.millis();
 }
 

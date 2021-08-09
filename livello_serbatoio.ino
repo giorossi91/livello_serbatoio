@@ -37,8 +37,6 @@
 #define SENSOR_HCSR04   0
 #define SENSOR_JSNSR04T 1
 
-#define roundfvalue(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
-
 // Configuration
 #ifndef UNIT_TEST
 # define DEBUG  CONF_RELEASE
@@ -74,21 +72,21 @@ const float64_t   EMPTY_LEVEL_THRESHOLD = 10.0                                ; 
 const float64_t   CM3_PER_LITER         = 1000.0                              ; // 1 l = 1000 cm^3
 
 // Timers
-const int32_t     MEASURE_LF_INTERVAL   = 10 * 1000                           ; // ms
-const int32_t     MEASURE_HF_INTERVAL   =  1 * 1000                           ; // ms
-const int32_t     LCD_ON_TIME           = 30 * 1000                           ; // ms
-const int32_t     SLEEP_TIME            =  100                                ; // ms
-const int32_t     SHOW_STAT_TIME        = 5000                                ; // ms
-const int32_t     SHOW_PARAM_TIME       = 5000                                ; // ms
-const int32_t     SHOW_VERSION_TIME     = 3000                                ; // ms
-const int32_t     LED_CONTROL_TIME      = 1000                                ; // ms
-const int32_t     READ_DISTANCE_TIME    = 1000                                ; // ms
-const int32_t     BTN_INTERVAL_1_TIME   =  200                                ; // ms
-const int32_t     BTN_INTERVAL_2_TIME   = 2000                                ; // ms
-const int32_t     BTN_INTERVAL_3_TIME   = 3000                                ; // ms
-const int32_t     BTN_INTERVAL_4_TIME   = 4000                                ; // ms
-const int32_t     BTN_INTERVAL_5_TIME   = 5000                                ; // ms
-const int32_t     BTN_INTERVAL_6_TIME   = 6000                                ; // ms
+const uint32_t    MEASURE_LF_INTERVAL   = 10 * 1000                           ; // ms
+const uint32_t    MEASURE_HF_INTERVAL   =  1 * 1000                           ; // ms
+const uint32_t    LCD_ON_TIME           = 30 * 1000                           ; // ms
+const uint32_t    SLEEP_TIME            =  100                                ; // ms
+const uint32_t    SHOW_STAT_TIME        = 5000                                ; // ms
+const uint32_t    SHOW_PARAM_TIME       = 5000                                ; // ms
+const uint32_t    SHOW_VERSION_TIME     = 3000                                ; // ms
+const uint32_t    LED_CONTROL_TIME      = 1000                                ; // ms
+const uint32_t    READ_DISTANCE_TIME    = 1000                                ; // ms
+const uint32_t    BTN_INTERVAL_1_TIME   =  200                                ; // ms
+const uint32_t    BTN_INTERVAL_2_TIME   = 2000                                ; // ms
+const uint32_t    BTN_INTERVAL_3_TIME   = 3000                                ; // ms
+const uint32_t    BTN_INTERVAL_4_TIME   = 4000                                ; // ms
+const uint32_t    BTN_INTERVAL_5_TIME   = 5000                                ; // ms
+const uint32_t    BTN_INTERVAL_6_TIME   = 6000                                ; // ms
 
 // Sensor parameters
 #if SENSOR == SENSOR_JSNSR04T
@@ -126,12 +124,14 @@ const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; 
 
 #endif
 
-// LCD special characters
-const byte        UP_ARROW_CHAR         = 0                                   ;
-const byte        PROGRESS_CHAR         = 1                                   ;
+// LCD constants
+const int32_t     LCD_COLS              = 16                                  ;
+const int32_t     LCD_ROWS              =  2                                  ;
 
-      byte        LCD_UP_ARROW[]        = { 4, 14, 21, 4, 4, 0, 0, 0 }                      ;
-      byte        LCD_PROGRESS[]        = { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
+// LCD special characters
+const byte        PROGRESS_CHAR         = 1                                   ;
+const int32_t     LCD_CHAR_SIZE         = 8                                   ;
+const byte        LCD_PROGRESS[LCD_CHAR_SIZE] = { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
 
 // LCD pins
 const int16_t     RS                    = 3                                   ;
@@ -150,36 +150,36 @@ const int32_t     ERR_STAT              = 3                                   ; 
 // Global variables
 
 // Status flags
-volatile bool        led_on                    ;
-volatile bool        led_status                ;
-volatile bool        must_update_lcd           ;
-volatile bool        was_error                 ;
-volatile bool        in_debug                  ;
-volatile bool        first_measure_done        ;
-volatile byte        btn_status                ;
-volatile byte        last_btn_status           ;
-volatile int32_t     err_code                  ;
+static volatile bool        led_on                    ;
+static volatile bool        led_status                ;
+static volatile bool        must_update_lcd           ;
+static volatile bool        was_error                 ;
+static volatile bool        in_debug                  ;
+static volatile bool        first_measure_done        ;
+static volatile byte        btn_status                ;
+static volatile byte        last_btn_status           ;
+static volatile int32_t     err_code                  ;
 
 // Timestamps
-volatile int32_t     timestamp_lcd_on          ;
-volatile int32_t     timestamp_measurement     ;
-volatile int32_t     timestamp_last_led_ctrl   ;
-volatile int32_t     timestamp_last_read_dist  ;
-volatile int32_t     timestamp_last_filling    ;
-volatile int32_t     timestamp_btn_press       ;
+static volatile uint32_t    timestamp_lcd_on          ;
+static volatile uint32_t    timestamp_measurement     ;
+static volatile uint32_t    timestamp_last_led_ctrl   ;
+static volatile uint32_t    timestamp_last_read_dist  ;
+static volatile uint32_t    timestamp_last_filling    ;
+static volatile uint32_t    timestamp_btn_press       ;
 
 // Timings
-uint16_t             measure_interval          ;
+static uint16_t             measure_interval          ;
 
 // Computed tank(s) parameters
-float64_t            tank_capacity             ;
-float64_t            maximum_capacity          ;
+static float64_t            tank_capacity             ;
+static float64_t            maximum_capacity          ;
 
 // Current reads
-uint16_t             number_measures_done      ;   
-float64_t            percentage                ;
-volatile float64_t   distance                  ;
-volatile float64_t   previous_liters           ;
+static uint16_t             number_measures_done      ;   
+static float64_t            percentage                ;
+static volatile float64_t   distance                  ;
+static volatile float64_t   previous_liters           ;
 
 // Classes
 
@@ -320,7 +320,7 @@ public:
   //! 
   //! \return The median.
   //!
-  int16_t out ( void ) {
+  int16_t out ( void ) const {
     return data[sizeMap[medDataPointer]];
   }
 
@@ -382,7 +382,7 @@ public:
     uint32_t millis_diff = 0U;
 
     // compute delta ms with respect to previous invocation
-    millis_diff = ( uint32_t )( now - last_millis );
+    millis_diff = static_cast< uint32_t >( now - last_millis );
 
     // update ms of previous invocation
     last_millis = now;
@@ -396,7 +396,7 @@ public:
       // update buffer
       updateBuffer();
 
-      uint32_t n_sec = ( uint32_t ) ( millis_passed / ONE_SECOND_MS );
+      uint32_t n_sec = static_cast< uint32_t >( millis_passed / ONE_SECOND_MS );
 
       // increase seconds counter
       seconds_passed += n_sec;
@@ -429,7 +429,7 @@ public:
       const uint32_t temp_refill = ( current_liters - last_liters );
       if ( temp_refill > LITERS_THRESHOLD ) {
         // hysteresis (sensor readings are often noisy)
-        last_liters = current_liters; 
+        last_liters = current_liters;
       }
     } else { 
       // emptying
@@ -437,7 +437,7 @@ public:
       if ( temp_consumption > LITERS_THRESHOLD ) {
         // hysteresis (sensor readings are often noisy)
         consumption += temp_consumption; 
-        last_liters = current_liters; 
+        last_liters = current_liters;
       }
     }
   }
@@ -449,7 +449,7 @@ public:
   //! 
   //! \return The water consumption in liters.
   //!
-  uint32_t getConsumption1h ( void ) {
+  uint32_t getConsumption1h ( void ) const {
     return sumSamples ( 1U );
   }
 
@@ -460,7 +460,7 @@ public:
   //! 
   //! \return The water consumption in liters.
   //!
-  uint32_t getConsumption12h ( void ) {
+  uint32_t getConsumption12h ( void ) const {
     return sumSamples ( 12U );
   }
 
@@ -471,7 +471,7 @@ public:
   //! 
   //! \return The water consumption in liters.
   //!
-  uint32_t getConsumption1d ( void ) {
+  uint32_t getConsumption1d ( void ) const {
     return sumSamples ( 24U );
   }
 
@@ -483,10 +483,10 @@ public:
   //! 
   //! \return The water consumption in liters.
   //!
-  uint32_t getConsumption3d ( void ) {
+  uint32_t getConsumption3d ( void ) const {
     return sumSamples ( 24U * 3U );
   }
-  
+
 private:
 
   //!
@@ -498,14 +498,14 @@ private:
   //!
   //! \attention Assumption: The tank(s) contain(s) 1000L maximum and there no more than 2 fillings per day.
   //!
-  uint32_t sumSamples ( uint32_t back_time ) {
+  uint32_t sumSamples ( uint32_t back_time ) const {
     uint32_t sum = 0U;
     
     if ( back_time >= STAT_SIZE ) {      
       // impossible value in 3 days (see assumption above).
       sum = 9999U;
     } else {
-      int16_t i = index;
+      int32_t i = static_cast< int32_t > ( index );
       uint32_t time_index = back_time;
 
       // go back to #back_time hours
@@ -571,11 +571,11 @@ private:
 // Instances of the classes
 
 //Format (RS, E, DB4, DB5, DB6, DB7)
-LiquidCrystal lcd ( RS, E, DB4, DB5, DB6, DB7 );
+static LiquidCrystal lcd ( RS, E, DB4, DB5, DB6, DB7 );
 
-MedianFilter filter;
+static MedianFilter filter;
 
-ConsumptionData stats;
+static ConsumptionData stats;
 
 // SW Functions
 
@@ -596,6 +596,23 @@ inline int32_t compare_float ( const float64_t x, const float64_t y, const float
   }
 
   return ret_value;
+}
+
+//!
+//! \brief Round the given float value to the nearest integer.
+//!
+//! \param[in] x The value.
+//!
+//! \return The rounded integer value.
+//!
+inline int32_t round_float_value ( const float64_t x ) {
+  int32_t rounded_x = 0;
+  if ( x >= 0.0 ) {
+    rounded_x = static_cast < int32_t > ( x + 0.5 );
+  } else {
+    rounded_x = static_cast < int32_t > ( x - 0.5 );
+  }
+  return rounded_x;
 }
 
 //!
@@ -765,10 +782,10 @@ inline void show_err_code_debug ( void ) {
     lcd.setCursor ( 14, 0 );
     if ( was_error == true ) {
       // print the error code
-      lcd.print ( ( int32_t ) err_code );
+      lcd.print ( err_code );
     } else {
       // if not error, print always 0
-      lcd.print ( ( int32_t ) 0 );
+      lcd.print ( 0 );
     }
   }
 }
@@ -794,18 +811,18 @@ inline void update_lcd_debug ( const float64_t distance_to_print, const float64_
 
     // show distance
     lcd.setCursor ( 0, 0 );
-    lcd.print ( "d:" );
-    lcd.print ( ( int32_t ) distance_to_print );
+    lcd.print ( "D:" );
+    lcd.print ( static_cast< int32_t > ( distance_to_print ) );
     lcd.print ( " cm" );
 
     // show the calibrated distance (depending on sensor)
     lcd.setCursor ( 0, 1 );
-    lcd.print ( "dc:" );
-    lcd.print ( ( int32_t ) distance_comp );
+    lcd.print ( "DC:" );
+    lcd.print ( static_cast< int32_t > ( distance_comp ) );
 
     // show volume
     lcd.print ( " L:" );
-    lcd.print ( ( int32_t ) compute_liters ( distance_comp ) );
+    lcd.print ( static_cast< int32_t > ( compute_liters ( distance_comp ) ) );
   }
 }
 
@@ -843,7 +860,7 @@ inline float64_t measure_level ( void ) {
   if ( compare_float ( distance_output, -1.0, 0.1 ) == 0 ) {
 
     // convert to cm
-    const float64_t distance_read = ( float64_t ) pulse_time / SENSOR_LSB;
+    const float64_t distance_read = static_cast< float64_t > ( pulse_time ) / SENSOR_LSB;
     
     // apply calibration
     const float64_t dist_compensated = distance_read + SENSOR_CALIBRATION;
@@ -874,12 +891,12 @@ inline float64_t measure_level ( void ) {
     }
     
 #if DEBUG
-    Serial.print   ( "dist: "                         );
-    Serial.print   ( distance_read                    );
-    Serial.print   ( " + calib: "                     );
-    Serial.print   ( dist_compensated                 );
-    Serial.print   ( " round: "                       );
-    Serial.println ( roundfvalue ( dist_compensated ) );
+    Serial.print   ( "dist: "                               );
+    Serial.print   ( distance_read                          );
+    Serial.print   ( " + calib: "                           );
+    Serial.print   ( dist_compensated                       );
+    Serial.print   ( " round: "                             );
+    Serial.println ( round_float_value ( dist_compensated ) );
 #endif
 
     // if all ok
@@ -1001,7 +1018,7 @@ inline float64_t sanitize_data ( const float64_t data, const float64_t min_val, 
 //!  
 //!  ex:
 //!  |----------------| 
-//!  |  876 L ^  87 % |
+//!  |  876 L    87 % |
 //!  | ############   |
 //!  |----------------|
 //!  
@@ -1045,7 +1062,7 @@ inline void update_lcd ( const float64_t water_percentage, const float64_t liter
 
     // determine the index of the first cipher of #liters to be written.
     int16_t index = 4;
-    const int16_t l = ( int16_t ) liters;
+    const int16_t l = static_cast< int16_t > ( liters );
 
     // 2 digits
     if ( l >= 10 ) {
@@ -1074,7 +1091,7 @@ inline void update_lcd ( const float64_t water_percentage, const float64_t liter
     const float64_t sanitized_water_percentage = sanitize_data(water_percentage, 0.0, 100.0, 0.5, 99.5);
 
     // compute the starting index to print the #water_percentage
-    const int16_t p = ( int16_t ) sanitized_water_percentage;
+    const int16_t p = static_cast< int16_t > ( sanitized_water_percentage );
     index = 12;
 
     // 2 digits
@@ -1098,8 +1115,8 @@ inline void update_lcd ( const float64_t water_percentage, const float64_t liter
 
     // determine how many symbols must be printed to represent the percentage of filling
 
-    // 14 because we leave one space before and after to center the bar (16 - 2 spaces)
-    const int16_t howmany = ( 14 * p ) / 100;
+    // center the progress bar (leave 2 space at the edges)
+    const int16_t howmany = ( ( LCD_COLS - 2 ) * p ) / 100;
     for ( int16_t i = 0; i < howmany; i++ ) {
       // print each symbol
       lcd.write(PROGRESS_CHAR);
@@ -1195,7 +1212,7 @@ inline void print_stat ( String str, const uint32_t stat ) {
   // print the value
   lcd.setCursor ( 0, 1 );
   lcd.print ( "Tot. " );
-  lcd.print ( stat );
+  lcd.print ( static_cast< int32_t >( stat ) );
   lcd.setCursor ( 14, 1 );
   lcd.print ( "L" );
 
@@ -1225,6 +1242,9 @@ inline void show_version ( void ) {
   lcd.print ( " " );
   lcd.print ( VERSION );
 
+  lcd.setCursor ( 12, 1 );
+  lcd.print ( "GR21" );
+
   // wait to let the user see
   delay(SHOW_VERSION_TIME);
 
@@ -1246,7 +1266,7 @@ inline void show_params ( void ) {
   
   lcd.setCursor ( 0, 0 ); 
   lcd.print ( "D:" );
-  lcd.print ( TANK_RADIUS_CM * 2.0 );
+  lcd.print ( static_cast < int32_t > ( TANK_RADIUS_CM * 2.0 ) );
 
   lcd.print ( " N:" );
   lcd.print ( TANK_NUMBER );
@@ -1254,10 +1274,10 @@ inline void show_params ( void ) {
   lcd.setCursor ( 0, 1 );
 
   lcd.print ( "H:" );
-  lcd.print ( WATER_MAX_HEIGHT_CM );
+  lcd.print ( static_cast < int32_t > ( WATER_MAX_HEIGHT_CM ) );
 
   lcd.print ( " C:" );
-  lcd.print ( maximum_capacity );
+  lcd.print ( static_cast < int32_t > ( maximum_capacity ) );
 
   // wait to let user see the value
   delay ( SHOW_PARAM_TIME );
@@ -1412,7 +1432,7 @@ inline void button_interval_1_handle ( void ) {
 //!
 //! \param[in] btn_press_time Time since button is kept pressed.
 //!
-inline void show_menu_options ( const int32_t btn_press_time ) {
+inline void show_menu_options ( const uint32_t btn_press_time ) {
   if ( ( btn_press_time >= BTN_INTERVAL_1_TIME ) && ( btn_press_time < BTN_INTERVAL_2_TIME ) ) {
     // slot 1
     turn_on_lcd_light();
@@ -1423,23 +1443,25 @@ inline void show_menu_options ( const int32_t btn_press_time ) {
   } else if( ( btn_press_time >= BTN_INTERVAL_3_TIME ) && ( btn_press_time < BTN_INTERVAL_4_TIME ) ) {
     // slot 3
     lcd.clear();
+    lcd.print ( " -> Modo" );
+    lcd.setCursor ( 0, 1 );
     if ( in_debug == false ) {
-      lcd.print ( " -> Manutenzione" );
+      lcd.print ( "    Manutenzione" );
     } else {
-      lcd.print ( " -> Normale" );
+      lcd.print ( "    Normale" );
     }
   } else if ( ( btn_press_time >= BTN_INTERVAL_4_TIME ) && (btn_press_time < BTN_INTERVAL_5_TIME) ) {
     // slot 4 
     lcd.clear();
     lcd.print ( " -> Versione" );
   } else if ( ( btn_press_time >= BTN_INTERVAL_5_TIME ) && (btn_press_time < BTN_INTERVAL_6_TIME) ) {
-    // slot 4 
+    // slot 5 
     lcd.clear();
     lcd.print ( " -> Parametri" );
     lcd.setCursor ( 0, 1 );
     lcd.print ( "    Serbatoio" );
   } else if( ( btn_press_time >= BTN_INTERVAL_6_TIME ) ) {
-    // slot 5
+    // slot 6
     lcd.clear();
     lcd.print ( " -> Esci Menù" );
   }
@@ -1450,7 +1472,7 @@ inline void show_menu_options ( const int32_t btn_press_time ) {
 //!
 //! \param[in] btn_press_time Time since button is kept pressed.
 //!
-inline void do_menu_actions ( const int32_t btn_press_time ) {
+inline void do_menu_actions ( const uint32_t btn_press_time ) {
   if ( btn_press_time >= BTN_INTERVAL_6_TIME ) {
     // Slot 6
     button_interval_6_handle();
@@ -1477,10 +1499,10 @@ inline void do_menu_actions ( const int32_t btn_press_time ) {
 //!
 inline void manage_button ( void ) {
   // read button status
-  btn_status = digitalRead ( LCD_BUTTON_DPIN );
+  btn_status = static_cast < byte > ( digitalRead ( LCD_BUTTON_DPIN ) );
 
   // get current time
-  const int32_t timestamp_now = millis();
+  const uint32_t timestamp_now = millis();
   
   if ( ( btn_status == HIGH ) && ( last_btn_status == LOW ) ) {
     // Detect the RISING EDGE 
@@ -1491,7 +1513,7 @@ inline void manage_button ( void ) {
     // Detect when kept PRESSED
     
     // show options
-    const int32_t btn_press_time = ( timestamp_now - timestamp_btn_press );
+    const uint32_t btn_press_time = ( timestamp_now - timestamp_btn_press );
 
     show_menu_options ( btn_press_time );
     
@@ -1499,7 +1521,7 @@ inline void manage_button ( void ) {
     // Detect the FALLING EDGE
         
     // do actions
-    const int32_t btn_press_time = ( timestamp_now - timestamp_btn_press );
+    const uint32_t btn_press_time = ( timestamp_now - timestamp_btn_press );
 
     do_menu_actions ( btn_press_time );
 
@@ -1528,12 +1550,16 @@ void setup ( void ) {
 
   // initialize the LCD
   
-  // we have a 16 characters and 2 lines
-  lcd.begin ( 16, 2 );
+  // configure LCD size
+  lcd.begin ( LCD_COLS, LCD_ROWS );
 
   // add special symbols
-  lcd.createChar ( UP_ARROW_CHAR, LCD_UP_ARROW );
-  lcd.createChar ( PROGRESS_CHAR, LCD_PROGRESS );
+
+  byte lcd_progress_array [ LCD_CHAR_SIZE ];
+  for ( int32_t i = 0;  i < LCD_CHAR_SIZE; i++ ) {
+    lcd_progress_array [ i ] = LCD_PROGRESS [ i ];
+  }
+  lcd.createChar ( PROGRESS_CHAR, lcd_progress_array );
   
   // compute tank parameters
   tank_capacity     = ( TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM ) / CM3_PER_LITER;
@@ -1568,7 +1594,7 @@ void setup ( void ) {
   led_status         = false; // LED not blinking
 
   // initialize timestamps
-  const int32_t timestamp_now = millis();
+  const uint32_t timestamp_now = millis();
 
   timestamp_lcd_on         = timestamp_now;
   timestamp_measurement    = timestamp_now;
@@ -1599,7 +1625,7 @@ void setup ( void ) {
 void loop ( void ) {
 
   // read current milliseconds passed from boot.
-  const int32_t timestamp_now = millis();
+  const uint32_t timestamp_now = millis();
 
   // consumption time management
   stats.updateTime();
@@ -1625,7 +1651,7 @@ void loop ( void ) {
     }
 
     // feed the filter
-    ( void ) filter.in ( roundfvalue ( distance ) );
+    ( void ) filter.in ( static_cast < int16_t > ( round_float_value ( distance ) ) );
   }
 
   // read distance timer
@@ -1660,10 +1686,10 @@ void loop ( void ) {
       percentage = compute_percentage ( liters );
 
       // update statistics
-      stats.updateConsumption ( liters );
+      stats.updateConsumption ( static_cast< uint32_t > ( liters ) );
 
       // update LCD if not in debug
-      if ( in_debug == false ) {
+      if ( in_debug == false ) {       
         update_lcd ( percentage, liters );
       }
     }
