@@ -1,6 +1,9 @@
 #ifndef LYQUIDCRYSTAL_H_
 #define LYQUIDCRYSTAL_H_
 
+#include <QObject>
+#include <QString>
+
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "arduino_types.h"
@@ -8,7 +11,9 @@
 
 #include <sstream>
 
-class LiquidCrystal {
+class LiquidCrystal : public QObject {
+    Q_OBJECT
+
 public:
 
   LiquidCrystal ( int16_t RS, int16_t E, int16_t DB4, int16_t DB5, int16_t DB6, int16_t DB7 ) {
@@ -69,7 +74,7 @@ public:
       ss_fail << "Setting LCD cursor out of bounds " << "[ r=" << row << ", c=" << col << "]." << 
         " Maximum: [ r=" << rows << ", c=" << cols << "]";
 
-      CPPUNIT_FAIL(ss_fail.str());
+      CPPUNIT_FAIL(ss_fail.str().c_str());
     }   
   
     cursor_col = col;
@@ -86,7 +91,7 @@ public:
       while ( pStr[i] != '\0' ) {
       
         if( cursor_col >= cols ) {
-          CPPUNIT_FAIL ( "LCD cols limit exceeded."); 
+          CPPUNIT_FAIL ( "LCD cols limit exceeded.");
         } 
       
         pLcdMatrix[cursor_row][cursor_col] = pStr[i];
@@ -109,7 +114,9 @@ public:
   void write ( byte c ) {
     if ( c == 1 ) {
       print("#", true);
-    } else {
+    } else if ( c == 0 ) {
+      print("^", true);
+     } else {
       print("$", true);
     }
   }
@@ -130,17 +137,22 @@ public:
   }
   
   void printLcd ( void ) {
-    std::cout << std::endl;
+    std::stringstream ss;
+
     for (int32_t i = 0; i < cols; i++) {
-      std::cout << "=";
+      ss << "=";
     }
-    std::cout << std::endl;
-    std::cout << harness_getLcdText();
-    std::cout << std::endl;
+    ss << std::endl;
+    ss << harness_getLcdText();
+    ss << std::endl;
     for (int32_t i = 0; i < cols; i++) {
-      std::cout << "=";
+      ss << "=";
     }
-    std::cout << std::endl; 
+
+    emit printTextOnLcd(ss.str());
+
+    ss << std::endl;
+    std::cout << ss.str() << std::flush;
   }
   
 private:
@@ -154,6 +166,10 @@ private:
   
   int32_t cursor_col;
   int32_t cursor_row;
+
+signals:
+  void printTextOnLcd(std::string text);
+
 };
 
 #endif // LYQUIDCRYSTAL_H_

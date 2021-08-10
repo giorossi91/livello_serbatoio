@@ -11,6 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = simulator
 TEMPLATE = app
 
+LIBS += -L$$PWD/../deploy/arduino_environment/lib -larduino_environment
+LIBS += -lcppunit
+INCLUDEPATH += $$PWD/../deploy/arduino_environment/inc
+
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -25,9 +30,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        Serial.cpp \
-        arduino_stubs.cpp \
-        arduinoboard.cpp \
         chart.cpp \
         chartview.cpp \
         main.cpp \
@@ -35,11 +37,6 @@ SOURCES += \
         showevents.cpp
 
 HEADERS += \
-        LiquidCrystal.h \
-        Serial.h \
-        arduino_stubs.h \
-        arduino_types.h \
-        arduinoboard.h \
         chart.h \
         chartview.h \
         livello_serbatoio_uut.hpp \
@@ -49,8 +46,3 @@ HEADERS += \
 FORMS += \
         livelloserbatoiosim.ui \
         showevents.ui
-
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target

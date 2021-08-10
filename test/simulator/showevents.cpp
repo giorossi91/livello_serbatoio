@@ -1,6 +1,7 @@
 #include "showevents.h"
 #include "ui_showevents.h"
 
+#include "arduino_stubs.h"
 #include "arduinoboard.h"
 #include <QDateTime>
 #include <QGridLayout>
@@ -36,7 +37,7 @@ ShowEvents::ShowEvents(QWidget *parent) :
     dataChart->addAxis(x_axis, Qt::AlignBottom);
     dataChart->setTitle("Events");
 
-    connect(&arduino, SIGNAL(boardEvent(int32_t,int32_t)), this, SLOT(addNewPoint(int32_t,int32_t)));
+    connect(board, SIGNAL(boardEvent(int32_t,int32_t)), this, SLOT(addNewPoint(int32_t,int32_t)));
 }
 
 ShowEvents::~ShowEvents ( void ) {

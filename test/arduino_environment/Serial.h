@@ -4,17 +4,10 @@
 #include "arduino_types.h"
 #include "arduino_stubs.h"
 
-#ifdef QT_CORE_LIB
 #include <QObject>
-#endif
 
-class SerialClass
-#ifdef QT_CORE_LIB
-        : public QObject {
+class SerialClass : public QObject {
     Q_OBJECT
-#else
-{
-#endif
 
 public:
 
@@ -23,44 +16,32 @@ public:
   }
   
   void print ( String str ) {
-#ifdef QT_CORE_LIB
     emit printSerialText(str);
-#else
-    std::cout << str;
-#endif
+    std::cout << str << std::flush;
   }
   
   void print ( double n ) {
-#ifdef QT_CORE_LIB
     emit printSerialText(std::to_string(n));
-#else
-    std::cout << std::to_string(n);
-#endif
+    std::cout << std::to_string(n) << std::flush;
   }
   
   void println ( double n ) {
     print ( n );
 
-#ifdef QT_CORE_LIB
     emit printSerialText("\n");
-#else
-    std::cout << std::endl;
-#endif
+    std::cout << std::endl << std::flush;
   }
   
   void println ( String str ) {
     print ( str );
-#ifdef QT_CORE_LIB
+
     emit printSerialText("\n");
-#else
-    std::cout << std::endl;
-#endif
+
+    std::cout << std::endl << std::flush;
   }
 
-#ifdef QT_CORE_LIB
 signals:
   void printSerialText(std::string text);
-#endif
 };
 
 extern SerialClass Serial;

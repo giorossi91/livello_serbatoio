@@ -93,13 +93,13 @@ void LivelloSerbatoioTests::test_compute_liters ( void ) {
   CPPUNIT_ASSERT_DOUBLES_EQUAL(1193.0, uut::compute_liters(distance), 0.1);
 
   //
-  distance = uut::SENSOR_DISTANCE - 1.0;
+  distance = uut::SENSOR_DISTANCE_CM - 1.0;
   CPPUNIT_ASSERT_DOUBLES_EQUAL(1008.2, uut::compute_liters(distance), 0.1);
 
-  distance = uut::SENSOR_DISTANCE;
+  distance = uut::SENSOR_DISTANCE_CM;
   CPPUNIT_ASSERT_DOUBLES_EQUAL(1000.5, uut::compute_liters(distance), 0.1);
 
-  distance = uut::SENSOR_DISTANCE + 1.0;
+  distance = uut::SENSOR_DISTANCE_CM + 1.0;
   CPPUNIT_ASSERT_DOUBLES_EQUAL(992.9, uut::compute_liters(distance), 0.1);
 
   //
@@ -118,76 +118,76 @@ void LivelloSerbatoioTests::test_compute_liters ( void ) {
 
 void LivelloSerbatoioTests::test_turn_on_lcd_light  ( void ) {
 
-  timePassedFromBootMs = rand() % 1000U; // any
+  timePassedFromBootMs = rand() % 1000; // any
 
   uut::turn_on_lcd_light();
 
   uint32_t uut_timestamp_lcd = uut::timestamp_lcd_on;
 
-  CPPUNIT_ASSERT_EQUAL(HIGH                       , arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH                       , board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(timePassedFromBootMs.load(), uut_timestamp_lcd                       );
 }
 
 void LivelloSerbatoioTests::test_turn_off_lcd_light  ( void ) {
   uut::turn_off_lcd_light();
 
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
 }
 
 void LivelloSerbatoioTests::test_measure_level ( void ) {
   double level;
 
   // timeout
-  arduino_pins[uut::ECHO_DPIN].pulse_time = 0;
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = 0;
 
   level = uut::measure_level();
 
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, level, 0.1);
 
   //
-  arduino_pins[uut::ECHO_DPIN].pulse_time = 1 * 58; // from datasheet ( range = 2 - 400 cm - lsb is 1/58 cm/us )
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = 1 * 58; // from datasheet ( range = 2 - 400 cm - lsb is 1/58 cm/us )
 
   level = uut::measure_level();
 
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, level, 0.1);
 
   //
-  arduino_pins[uut::ECHO_DPIN].pulse_time = 2 * 58;
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = 2 * 58;
 
   level = uut::measure_level();
 
   CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0 + uut::SENSOR_CALIBRATION, level, 0.1);
 
   //
-  arduino_pins[uut::ECHO_DPIN].pulse_time = 3 * 58;
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = 3 * 58;
 
   level = uut::measure_level();
 
   CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0 + uut::SENSOR_CALIBRATION, level, 0.1);
 
   //
-  arduino_pins[uut::ECHO_DPIN].pulse_time = 399 * 58;
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = 399 * 58;
 
   level = uut::measure_level();
 
   CPPUNIT_ASSERT_DOUBLES_EQUAL(399.0 + uut::SENSOR_CALIBRATION, level, 0.1);
 
   //
-  arduino_pins[uut::ECHO_DPIN].pulse_time = 400 * 58;
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = 400 * 58;
 
   level = uut::measure_level();
 
   CPPUNIT_ASSERT_DOUBLES_EQUAL(400.0 + uut::SENSOR_CALIBRATION, level, 0.1);
 
   //
-  arduino_pins[uut::ECHO_DPIN].pulse_time = 401 * 58;
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = 401 * 58;
 
   level = uut::measure_level();
 
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, level, 0.1);
 
   //
-  arduino_pins[uut::ECHO_DPIN].pulse_time = UINT32_MAX;
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = UINT32_MAX;
 
   level = uut::measure_level();
 
@@ -198,129 +198,129 @@ void LivelloSerbatoioTests::test_control_led ( void ) {
   double level;
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = -DBL_MAX;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(false, uut::led_status);
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = 0.0;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(true, uut::led_status);
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = uut::EMPTY_LEVEL_THRESHOLD;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(true, uut::led_status);
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = uut::EMPTY_LEVEL_THRESHOLD + 1.0;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(true, uut::led_status);
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = uut::LOW_LEVEL_THRESHOLD - 1.0;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(true, uut::led_status);
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = uut::LOW_LEVEL_THRESHOLD;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(true, uut::led_status);
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = uut::LOW_LEVEL_THRESHOLD + 1.0;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(false, uut::led_status);
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = 100.0;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   CPPUNIT_ASSERT_EQUAL(false, uut::led_status);
 
   //
-  arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
+  board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val = LOW;
   uut::led_on = false;
   uut::led_status = false;
   level = DBL_MAX;
 
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
   uut::control_led(level);
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LED_CAPACITY_DPIN].in_val);
 
   CPPUNIT_ASSERT_EQUAL(false, uut::led_status);
 
@@ -432,9 +432,9 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
   uut::setup();
   
-  arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE ) * 58;
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE_CM ) * 58;
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   uint32_t current_time = millis();
   
@@ -444,91 +444,91 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
   
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
 
   timePassedFromBootMs += 30000;
 
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   // simulate button press - single shot
   
   uut::turn_on_lcd_light();
-  arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
+  board->arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
   
   loopNTimes ( 1 );
   
-  arduino_pins[uut::LCD_BUTTON_DPIN].out_val = LOW;
+  board->arduino_pins[uut::LCD_BUTTON_DPIN].out_val = LOW;
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   timePassedFromBootMs += 29999;
 
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   timePassedFromBootMs += 1;
 
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   // simulate button press - short press
-  arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
+  board->arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
   
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
-  timePassedFromBootMs += uut::BTN_SHORTPRESS_TIME - 1;
+  timePassedFromBootMs += uut::BTN_INTERVAL_1_TIME - 1;
 
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(LOW, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(LOW, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   timePassedFromBootMs += 1;
 
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   
   // simulate button press - long press
   uut::turn_on_lcd_light();
-  arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
+  board->arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
   
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
-  timePassedFromBootMs += uut::BTN_LONGPRESS_TIME - 1;
+  timePassedFromBootMs += uut::BTN_INTERVAL_2_TIME - 1;
 
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   timePassedFromBootMs += 1;
 
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
   // simulate button press - long press
   uut::turn_on_lcd_light();
-  arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
+  board->arduino_pins[uut::LCD_BUTTON_DPIN].out_val = HIGH;
   
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
   
-  arduino_pins[uut::LCD_BUTTON_DPIN].out_val = LOW;
-  timePassedFromBootMs += uut::BTN_LONGPRESS_TIME;
+  board->arduino_pins[uut::LCD_BUTTON_DPIN].out_val = LOW;
+  timePassedFromBootMs += uut::BTN_INTERVAL_2_TIME;
 
   loopNTimes ( 1 );
   
-  CPPUNIT_ASSERT_EQUAL(HIGH, arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
+  CPPUNIT_ASSERT_EQUAL(HIGH, board->arduino_pins[uut::LCD_LIGHT_DPIN].in_val);
 }
 
 void LivelloSerbatoioTests::test_loop ( void ) {
@@ -536,7 +536,7 @@ void LivelloSerbatoioTests::test_loop ( void ) {
 
   uut::setup();
   
-  arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE + 20U ) * 58; //84%
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE_CM + 20U ) * 58; //84%
   
   CPPUNIT_ASSERT_EQUAL(static_cast<uint16_t>(1000), uut::measure_interval);
   
@@ -552,7 +552,7 @@ void LivelloSerbatoioTests::test_loop ( void ) {
   
   CPPUNIT_ASSERT_DOUBLES_EQUAL(84.0, uut::percentage, 1.0);
   
-  arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE + 50U ) * 58; //61%
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE_CM + 50U ) * 58; //61%
   
   timePassedFromBootMs += uut::measure_interval;
   
@@ -578,7 +578,7 @@ void LivelloSerbatoioTests::test_loop ( void ) {
   
   CPPUNIT_ASSERT_DOUBLES_EQUAL(61.0, uut::percentage, 1.0);
   
-  arduino_pins[uut::ECHO_DPIN].pulse_time = ( 401 ) * 58; // Error
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = ( 401 ) * 58; // Error
   
   timePassedFromBootMs += uut::measure_interval;
   
@@ -587,7 +587,7 @@ void LivelloSerbatoioTests::test_loop ( void ) {
   std::string text = uut::lcd.harness_getLcdText();
   CPPUNIT_ASSERT_EQUAL(std::string("                \n     Errore     "), text);
   
-  arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE + 50U ) * 58; //61%
+  board->arduino_pins[uut::ECHO_DPIN].pulse_time = ( uut::SENSOR_DISTANCE_CM + 50U ) * 58; //61%
   
   timePassedFromBootMs += uut::measure_interval;
   
@@ -615,6 +615,8 @@ void LivelloSerbatoioTests::timesim_thread ( void ) {
 void LivelloSerbatoioTests::setUp ( void ) {
   std::cout << std::endl << HARNESS_PREFIX << "Set-Up" << std::endl;
 
+  board = new ArduinoBoardStub();
+
   cycle_num = 0U;
 }
 
@@ -632,6 +634,8 @@ void LivelloSerbatoioTests::stop_time ( void ) {
 
 void LivelloSerbatoioTests::tearDown ( void ) {
   std::cout << std::endl << HARNESS_PREFIX << "Tear-Down" << std::endl;
+
+  delete board;
 }
 
 void LivelloSerbatoioTests::loopNTimes ( uint32_t n ) {
@@ -646,7 +650,7 @@ void LivelloSerbatoioTests::loopNTimes ( uint32_t n ) {
 
 
 void LivelloSerbatoioTests::test_MedianFilter_init ( void ) {
-  int16_t init_value = rand() % 1000U; // any;
+  int16_t init_value = rand() % 1000; // any;
 
   uut::MedianFilter mf1;
   mf1.begin(init_value);
@@ -699,19 +703,19 @@ void LivelloSerbatoioTests::test_MedianFilter_out ( void ) {
 }
 
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_init ( void ) {
+void LivelloSerbatoioTests::test_ConsumptionData_init ( void ) {
   timePassedFromBootMs = 100U;
   
-  uut::StatisticheConsumo sc1;
+  uut::ConsumptionData sc1;
   sc1.begin();
   
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( timePassedFromBootMs ), sc1.last_millis);
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_updateTime ( void ) {
+void LivelloSerbatoioTests::test_ConsumptionData_updateTime ( void ) {
   timePassedFromBootMs = 0U;
   
-  uut::StatisticheConsumo sc1;
+  uut::ConsumptionData sc1;
   sc1.begin();
 
   timePassedFromBootMs = 0U;
@@ -776,8 +780,8 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateTime ( void ) {
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(                    0 ), sc1.seconds_passed);
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_updateConsumption ( void ) {
-  uut::StatisticheConsumo sc1;
+void LivelloSerbatoioTests::test_ConsumptionData_updateConsumption ( void ) {
+  uut::ConsumptionData sc1;
   sc1.begin();
   
   // filling
@@ -789,17 +793,17 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateConsumption ( void ) {
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.consumption);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.last_liters);
   
-  sc1.updateConsumption(uut::StatisticheConsumo::LITERS_THRESHOLD - 1U);
+  sc1.updateConsumption(uut::ConsumptionData::LITERS_THRESHOLD - 1U);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.consumption);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.last_liters);
   
-  sc1.updateConsumption(uut::StatisticheConsumo::LITERS_THRESHOLD);
+  sc1.updateConsumption(uut::ConsumptionData::LITERS_THRESHOLD);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.consumption);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0), sc1.last_liters);
   
-  sc1.updateConsumption(uut::StatisticheConsumo::LITERS_THRESHOLD + 1U);
+  sc1.updateConsumption(uut::ConsumptionData::LITERS_THRESHOLD + 1U);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)                                             , sc1.consumption);
-  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(uut::StatisticheConsumo::LITERS_THRESHOLD + 1U), sc1.last_liters);
+  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(uut::ConsumptionData::LITERS_THRESHOLD + 1U), sc1.last_liters);
   
   sc1.updateConsumption(1000U);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)    , sc1.consumption);
@@ -810,73 +814,73 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateConsumption ( void ) {
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)    , sc1.consumption);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U), sc1.last_liters);
   
-  sc1.updateConsumption(1000U - uut::StatisticheConsumo::LITERS_THRESHOLD + 1U);
+  sc1.updateConsumption(1000U - uut::ConsumptionData::LITERS_THRESHOLD + 1U);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)    , sc1.consumption);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U), sc1.last_liters);
   
-  sc1.updateConsumption(1000U - uut::StatisticheConsumo::LITERS_THRESHOLD);
+  sc1.updateConsumption(1000U - uut::ConsumptionData::LITERS_THRESHOLD);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(0)    , sc1.consumption);
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U), sc1.last_liters);
   
-  sc1.updateConsumption(1000U - uut::StatisticheConsumo::LITERS_THRESHOLD - 1U);
-  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(uut::StatisticheConsumo::LITERS_THRESHOLD + 1U)        , sc1.consumption);
-  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U - uut::StatisticheConsumo::LITERS_THRESHOLD - 1U), sc1.last_liters);
+  sc1.updateConsumption(1000U - uut::ConsumptionData::LITERS_THRESHOLD - 1U);
+  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(uut::ConsumptionData::LITERS_THRESHOLD + 1U)        , sc1.consumption);
+  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>(1000U - uut::ConsumptionData::LITERS_THRESHOLD - 1U), sc1.last_liters);
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1h ( void ) {
-  uut::StatisticheConsumo sc1;
+void LivelloSerbatoioTests::test_ConsumptionData_getConsumption1h ( void ) {
+  uut::ConsumptionData sc1;
   sc1.begin();
   
   sc1.index = 0U;
   
-  for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+  for(uint32_t i = 0U; i < uut::ConsumptionData::STAT_SIZE; i++) {
     sc1.consumption_samples[i] = 1U;
   }
   
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1U ) , sc1.getConsumption1h());
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption12h ( void ) {
-  uut::StatisticheConsumo sc1;
+void LivelloSerbatoioTests::test_ConsumptionData_getConsumption12h ( void ) {
+  uut::ConsumptionData sc1;
   sc1.begin();
   
   sc1.index = 0U;
   
-  for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+  for(uint32_t i = 0U; i < uut::ConsumptionData::STAT_SIZE; i++) {
     sc1.consumption_samples[i] = 1U;
   }
   
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 12U ) , sc1.getConsumption12h());
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption1d ( void ) {
-  uut::StatisticheConsumo sc1;
+void LivelloSerbatoioTests::test_ConsumptionData_getConsumption1d ( void ) {
+  uut::ConsumptionData sc1;
   sc1.begin();
   
   sc1.index = 0U;
   
-  for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+  for(uint32_t i = 0U; i < uut::ConsumptionData::STAT_SIZE; i++) {
     sc1.consumption_samples[i] = 1U;
   }
   
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 24U ) , sc1.getConsumption1d());
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_getConsumption3d ( void ) {
-  uut::StatisticheConsumo sc1;
+void LivelloSerbatoioTests::test_ConsumptionData_getConsumption3d ( void ) {
+  uut::ConsumptionData sc1;
   sc1.begin();
   
   sc1.index = 0U;
   
-  for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+  for(uint32_t i = 0U; i < uut::ConsumptionData::STAT_SIZE; i++) {
     sc1.consumption_samples[i] = 1U;
   }
   
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 24U * 3U ) , sc1.getConsumption3d());
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_sumSamples ( void ) {
-  uut::StatisticheConsumo sc1;
+void LivelloSerbatoioTests::test_ConsumptionData_sumSamples ( void ) {
+  uut::ConsumptionData sc1;
   sc1.begin();
   
   sc1.index = 3U;
@@ -892,13 +896,13 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_sumSamples ( void ) {
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1110U ) , sc1.sumSamples(3));
   CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1111U ) , sc1.sumSamples(4));
 
-  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1111U ) , sc1.sumSamples(uut::StatisticheConsumo::STAT_SIZE - 1U));
-  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 9999U ) , sc1.sumSamples(uut::StatisticheConsumo::STAT_SIZE));
+  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 1111U ) , sc1.sumSamples(uut::ConsumptionData::STAT_SIZE - 1U));
+  CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 9999U ) , sc1.sumSamples(uut::ConsumptionData::STAT_SIZE));
   
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_updateBuffer ( void ) {
-  uut::StatisticheConsumo sc1;
+void LivelloSerbatoioTests::test_ConsumptionData_updateBuffer ( void ) {
+  uut::ConsumptionData sc1;
   sc1.begin();
   
   sc1.index = 1U;
@@ -917,18 +921,18 @@ void LivelloSerbatoioTests::test_StatisticheConsumo_updateBuffer ( void ) {
 
 }
 
-void LivelloSerbatoioTests::test_StatisticheConsumo_updateIndex ( void ) {
-  uut::StatisticheConsumo sc1;
+void LivelloSerbatoioTests::test_ConsumptionData_updateIndex ( void ) {
+  uut::ConsumptionData sc1;
   sc1.begin();
   
-  for(uint32_t i = 0U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+  for(uint32_t i = 0U; i < uut::ConsumptionData::STAT_SIZE; i++) {
     sc1.consumption_samples[i] = 1U;
   }
   
   sc1.index = 0U;
   sc1.updateIndex();
   
-  for(uint32_t i = 1U; i < uut::StatisticheConsumo::STAT_SIZE; i++) {
+  for(uint32_t i = 1U; i < uut::ConsumptionData::STAT_SIZE; i++) {
     CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( i )  , sc1.index);
     CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 0U ) , sc1.consumption_samples[sc1.index]);
     

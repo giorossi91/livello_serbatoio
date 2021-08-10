@@ -1,35 +1,32 @@
 #include "arduinoboard.h"
+
 #include <ctime>
-
-ArduinoBoard arduino;
-
-const int32_t ArduinoBoard::SLEEP_EVENT = 99;
-
-Pin_t ArduinoBoard::arduino_pins[] = {
-    { D0  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D1  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D2  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D3  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D4  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D5  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D6  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D7  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D8  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D9  , INPUT , nullptr, 0, 0, 0, 0 },
-    { D10 , INPUT , nullptr, 0, 0, 0, 0 },
-    { D11 , INPUT , nullptr, 0, 0, 0, 0 },
-    { D12 , INPUT , nullptr, 0, 0, 0, 0 },
-    { D13 , INPUT , nullptr, 0, 0, 0, 0 },
-    { A0  , INPUT , nullptr, 0, 0, 0, 0 },
-    { A1  , INPUT , nullptr, 0, 0, 0, 0 },
-    { A2  , INPUT , nullptr, 0, 0, 0, 0 },
-    { A3  , INPUT , nullptr, 0, 0, 0, 0 },
-    { A4  , INPUT , nullptr, 0, 0, 0, 0 },
-    { A5  , INPUT , nullptr, 0, 0, 0, 0 }
-};
 
 ArduinoBoard::ArduinoBoard( void ) {
     timeScale = 1.0;
+
+    uint32_t i = 0U;
+
+    arduino_pins[i++] = { D0  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D1  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D2  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D3  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D4  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D5  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D6  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D7  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D8  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D9  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D10 , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D11 , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D12 , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { D13 , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { A0  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { A1  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { A2  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { A3  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { A4  , INPUT , nullptr, 0, 0, 0, 0 };
+    arduino_pins[i++] = { A5  , INPUT , nullptr, 0, 0, 0, 0 };
 }
 
 int32_t ArduinoBoard::max(int32_t a, int32_t b) {
@@ -37,18 +34,18 @@ int32_t ArduinoBoard::max(int32_t a, int32_t b) {
 }
 
 uint32_t ArduinoBoard::millis ( void ) {
-    int32_t ms = 0;
+    uint32_t ms = 0;
 
     struct timespec curr_time;
     int ret = clock_gettime(CLOCK_MONOTONIC_RAW, &curr_time);
     if(ret == 0) {
-        ms = static_cast<int32_t>(curr_time.tv_sec * 1000) + static_cast<int32_t>(curr_time.tv_nsec / 1000000);
+        ms = static_cast<uint32_t>(curr_time.tv_sec * 1000) + static_cast<uint32_t>(curr_time.tv_nsec / 1000000);
     } else {
         ms = 0;
     }
 
     pinLock.lock();
-    ms = static_cast<int32_t> ( static_cast<double>( ms ) / timeScale );
+    ms = static_cast<uint32_t> ( static_cast<double>( ms ) / timeScale );
     pinLock.unlock();
 
     return ms;
@@ -60,15 +57,11 @@ void ArduinoBoard::delay ( int32_t ms ) {
     useconds_t sleepTime = static_cast<useconds_t>(ms * 1000 * timeScale);
     pinLock.unlock();
 
-#ifdef QT_CORE_LIB
     emit boardEvent(SLEEP_EVENT, HIGH);
-#endif
 
     usleep(sleepTime);
 
-#ifdef QT_CORE_LIB
     emit boardEvent(SLEEP_EVENT, LOW);
-#endif
 }
 
 void ArduinoBoard::digitalWrite ( int32_t pin, int32_t v ) {
@@ -78,10 +71,7 @@ void ArduinoBoard::digitalWrite ( int32_t pin, int32_t v ) {
     arduino_pins[pin].in_val = v;
     pinLock.unlock();
 
-#ifdef QT_CORE_LIB
     emit boardEvent(pin, v);
-#endif
-
 }
 
 int32_t ArduinoBoard::digitalRead ( int32_t pin ) {
@@ -91,9 +81,7 @@ int32_t ArduinoBoard::digitalRead ( int32_t pin ) {
 
     //std::cout << HARNESS_PREFIX"DIG-I[" << std::setw(4) << pin << "] v = " << v << std::endl;
 
-#ifdef QT_CORE_LIB
     emit boardEvent(pin, v);
-#endif
 
     return v;
 }
@@ -152,16 +140,11 @@ void ArduinoBoard::delayMicroseconds ( int32_t usec ) {
     useconds_t sleepTime = static_cast<useconds_t>(usec * timeScale);
     pinLock.unlock();
 
-#ifdef QT_CORE_LIB
     emit boardEvent(SLEEP_EVENT, HIGH);
-#endif
 
     usleep(static_cast<useconds_t>(sleepTime));
 
-#ifdef QT_CORE_LIB
     emit boardEvent(SLEEP_EVENT, LOW);
-#endif
-
 }
 
 void ArduinoBoard::setTimeScale ( double scale ) {

@@ -3,6 +3,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+#include "arduinoboardstub.h"
+
 #include <thread>
 #include <atomic>
 #include <cstdint>
@@ -26,16 +28,16 @@ class LivelloSerbatoioTests  : public CppUnit::TestFixture {
   CPPUNIT_TEST(test_MedianFilter_in  );
   CPPUNIT_TEST(test_MedianFilter_out );
   
-  CPPUNIT_TEST(test_StatisticheConsumo_init             );
-  CPPUNIT_TEST(test_StatisticheConsumo_updateTime       );
-  CPPUNIT_TEST(test_StatisticheConsumo_updateConsumption);
-  CPPUNIT_TEST(test_StatisticheConsumo_getConsumption1h );
-  CPPUNIT_TEST(test_StatisticheConsumo_getConsumption12h);
-  CPPUNIT_TEST(test_StatisticheConsumo_getConsumption1d );
-  CPPUNIT_TEST(test_StatisticheConsumo_getConsumption3d );
-  CPPUNIT_TEST(test_StatisticheConsumo_sumSamples       );
-  CPPUNIT_TEST(test_StatisticheConsumo_updateBuffer     );
-  CPPUNIT_TEST(test_StatisticheConsumo_updateIndex      );
+  CPPUNIT_TEST(test_ConsumptionData_init             );
+  CPPUNIT_TEST(test_ConsumptionData_updateTime       );
+  CPPUNIT_TEST(test_ConsumptionData_updateConsumption);
+  CPPUNIT_TEST(test_ConsumptionData_getConsumption1h );
+  CPPUNIT_TEST(test_ConsumptionData_getConsumption12h);
+  CPPUNIT_TEST(test_ConsumptionData_getConsumption1d );
+  CPPUNIT_TEST(test_ConsumptionData_getConsumption3d );
+  CPPUNIT_TEST(test_ConsumptionData_sumSamples       );
+  CPPUNIT_TEST(test_ConsumptionData_updateBuffer     );
+  CPPUNIT_TEST(test_ConsumptionData_updateIndex      );
 
   //CPPUNIT_TEST(test_loop); //TODO va riscritto in base a nuovo flusso
   //CPPUNIT_TEST(test_loop_btn); //TODO va riscritto in base a nuovo flusso
@@ -43,8 +45,8 @@ class LivelloSerbatoioTests  : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE_END();
   
 public:
-  void setUp   ( void );
-  void tearDown( void );
+  void setUp   ( void ) override;
+  void tearDown( void ) override;
 
 protected:
   // === Unit tests ===
@@ -65,16 +67,16 @@ protected:
   void test_MedianFilter_in    ( void );
   void test_MedianFilter_out   ( void );
   
-  void test_StatisticheConsumo_init              ( void );
-  void test_StatisticheConsumo_updateTime        ( void );
-  void test_StatisticheConsumo_updateConsumption ( void );
-  void test_StatisticheConsumo_getConsumption1h  ( void );
-  void test_StatisticheConsumo_getConsumption12h ( void );
-  void test_StatisticheConsumo_getConsumption1d  ( void );
-  void test_StatisticheConsumo_getConsumption3d  ( void );
-  void test_StatisticheConsumo_sumSamples        ( void );
-  void test_StatisticheConsumo_updateBuffer      ( void );
-  void test_StatisticheConsumo_updateIndex       ( void );
+  void test_ConsumptionData_init              ( void );
+  void test_ConsumptionData_updateTime        ( void );
+  void test_ConsumptionData_updateConsumption ( void );
+  void test_ConsumptionData_getConsumption1h  ( void );
+  void test_ConsumptionData_getConsumption12h ( void );
+  void test_ConsumptionData_getConsumption1d  ( void );
+  void test_ConsumptionData_getConsumption3d  ( void );
+  void test_ConsumptionData_sumSamples        ( void );
+  void test_ConsumptionData_updateBuffer      ( void );
+  void test_ConsumptionData_updateIndex       ( void );
   
   // ==================
 
