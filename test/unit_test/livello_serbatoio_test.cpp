@@ -616,6 +616,7 @@ void LivelloSerbatoioTests::setUp ( void ) {
   std::cout << std::endl << HARNESS_PREFIX << "Set-Up" << std::endl;
 
   board = new ArduinoBoardStub();
+  uut::lcd.setPrintFailFunction(printFail);
 
   cycle_num = 0U;
 }
@@ -646,6 +647,11 @@ void LivelloSerbatoioTests::loopNTimes ( uint32_t n ) {
 
     uut::loop();
   }
+}
+
+void LivelloSerbatoioTests::printFail(const char *str)
+{
+    CPPUNIT_FAIL(str);
 }
 
 

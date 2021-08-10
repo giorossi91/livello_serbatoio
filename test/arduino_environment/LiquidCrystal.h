@@ -4,12 +4,12 @@
 #include <QObject>
 #include <QString>
 
-#include <cppunit/extensions/HelperMacros.h>
-
 #include "arduino_types.h"
 #include "arduino_stubs.h"
 
 #include <sstream>
+
+typedef void ( * printfail )( const char * );
 
 class LiquidCrystal : public QObject {
     Q_OBJECT
@@ -30,6 +30,12 @@ public:
     rows = LCD_ROWS_MAX_SIZE;
     cursor_col = 0;
     cursor_row = 0;
+
+    printFailFunction = defaultPrintFail;
+  }
+
+  static void defaultPrintFail ( const char * str ) {
+      std::cerr << str << std::endl;
   }
   
   void begin ( int32_t col, int32_t row ) {
@@ -47,7 +53,7 @@ public:
       cursor_col = 0;
       cursor_row = 0;
     } else {
-      CPPUNIT_FAIL("Exceeded maximum LCD sizes");
+      printFailFunction("Exceeded maximum LCD sizes");
     }
   }
   
@@ -74,7 +80,7 @@ public:
       ss_fail << "Setting LCD cursor out of bounds " << "[ r=" << row << ", c=" << col << "]." << 
         " Maximum: [ r=" << rows << ", c=" << cols << "]";
 
-      CPPUNIT_FAIL(ss_fail.str().c_str());
+      printFailFunction(ss_fail.str().c_str());
     }   
   
     cursor_col = col;
@@ -91,7 +97,7 @@ public:
       while ( pStr[i] != '\0' ) {
       
         if( cursor_col >= cols ) {
-          CPPUNIT_FAIL ( "LCD cols limit exceeded.");
+          printFailFunction ( "LCD cols limit exceeded.");
         } 
       
         pLcdMatrix[cursor_row][cursor_col] = pStr[i];
@@ -152,12 +158,17 @@ public:
     emit printTextOnLcd(ss.str());
 
     ss << std::endl;
+
     std::cout << ss.str() << std::flush;
+  }
+
+  void setPrintFailFunction ( printfail func ) {
+      this->printFailFunction = func;
   }
   
 private:
-  static const int32_t LCD_COLS_MAX_SIZE = 50;
-  static const int32_t LCD_ROWS_MAX_SIZE = 10;
+  static constexpr int32_t LCD_COLS_MAX_SIZE = 50;
+  static constexpr int32_t LCD_ROWS_MAX_SIZE = 10;
   
   char pLcdMatrix[LCD_ROWS_MAX_SIZE][LCD_COLS_MAX_SIZE];
   
@@ -166,6 +177,8 @@ private:
   
   int32_t cursor_col;
   int32_t cursor_row;
+
+  printfail printFailFunction;
 
 signals:
   void printTextOnLcd(std::string text);

@@ -17,11 +17,13 @@ public:
   
   void print ( String str ) {
     emit printSerialText(str);
+
     std::cout << str << std::flush;
   }
   
   void print ( double n ) {
     emit printSerialText(std::to_string(n));
+
     std::cout << std::to_string(n) << std::flush;
   }
   
@@ -29,6 +31,7 @@ public:
     print ( n );
 
     emit printSerialText("\n");
+
     std::cout << std::endl << std::flush;
   }
   

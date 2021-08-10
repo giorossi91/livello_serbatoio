@@ -34,6 +34,9 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     ui(new Ui::LivelloSerbatoioSim) {
     ui->setupUi(this);
 
+    // setup arduino board to use for simulator
+    board = new ArduinoBoard();
+
     showEventsPanel = new ShowEvents(this);
 
     showEventsPanel->registerDigitalIO(uut::TRIG_DPIN           , "TRIG"     );
@@ -103,6 +106,8 @@ LivelloSerbatoioSim::~LivelloSerbatoioSim ( void ) {
     delete ui;
 
     delete showEventsPanel;
+
+    delete board;
 }
 
 void LivelloSerbatoioSim::monitorSignal(int32_t id, int32_t periodMs) {

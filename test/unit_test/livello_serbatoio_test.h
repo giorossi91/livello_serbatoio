@@ -94,6 +94,8 @@ private:
   void stop_time  ( void );
 
   void loopNTimes ( uint32_t n );
+
+  static void printFail ( const char * str );
 };
 
 }

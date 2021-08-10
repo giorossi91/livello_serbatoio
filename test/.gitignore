@@ -9,3 +9,4 @@ build*/*
 *.pro.user*
 old
 deploy/*
+test_result

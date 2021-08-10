@@ -12,9 +12,9 @@ TARGET = simulator
 TEMPLATE = app
 
 LIBS += -L$$PWD/../deploy/arduino_environment/lib -larduino_environment
-LIBS += -lcppunit
 INCLUDEPATH += $$PWD/../deploy/arduino_environment/inc
 
+QMAKE_CXXFLAGS += -Wno-deprecated-copy
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
