@@ -236,7 +236,7 @@ public:
   //!
   //! \return The median element.
   //!
-  int16_t in ( int16_t value ) {
+  int16_t in ( const int16_t value ) {
     // sort sizeMap
     // small vaues on the left (-)
     // larger values on the right (+)
@@ -423,7 +423,7 @@ public:
   //! 
   //! \attention It shall be called in #loop function when new measurement updates are available.
   //!
-  void updateConsumption ( uint32_t current_liters ) {
+  void updateConsumption ( const uint32_t current_liters ) {
     if ( current_liters > last_liters ) {
       // filling
       const uint32_t temp_refill = ( current_liters - last_liters );
@@ -498,7 +498,7 @@ private:
   //!
   //! \attention Assumption: The tank(s) contain(s) 1000L maximum and there no more than 2 fillings per day.
   //!
-  uint32_t sumSamples ( uint32_t back_time ) const {
+  uint32_t sumSamples ( const uint32_t back_time ) const {
     uint32_t sum = 0U;
     
     if ( back_time >= STAT_SIZE ) {      
@@ -534,7 +534,7 @@ private:
   //!
   void updateBuffer ( void ) {
     consumption_samples[index] += consumption;
-    consumption = 0;
+    consumption = 0U;
   }
 
   //!
@@ -774,8 +774,8 @@ inline void print_error ( void ) {
 //!          |----------------|
 //!
 inline void show_err_code_debug ( void ) {
-  if ( ( in_debug == true ) && ( last_btn_status != HIGH ) ) {
-    // if in debug mode and menu is not shown (the button in pressed)
+  if ( ( in_debug == true ) && ( last_btn_status == LOW ) ) {
+    // if in debug mode and menu is not shown (the button in released)
     
     lcd.setCursor ( 12, 0 );
     lcd.print ( "e: " );
@@ -900,7 +900,7 @@ inline float64_t measure_level ( void ) {
 #endif
 
     // if all ok
-    if ( compare_float(distance_output, -1.0, 0.1) == 0 ) {
+    if ( compare_float ( distance_output, -1.0, 0.1 ) == 0 ) {
 
       // assign timestamp to measure (to compute next time of measure)
       timestamp_measurement = millis();
@@ -945,7 +945,7 @@ inline float64_t measure_level ( void ) {
 //! \brief Controls the LED status depending on water level.
 //!
 //! \details If the tank filling is under LOW_LEVEL_THRESHOLD but over EMPTY_LEVEL_THRESHOLD turns on the LED.
-//!          If the tank fillink is under EMPTY_LEVEL_THRESHOLD makes the LED to blink.
+//!          If the tank filling is under EMPTY_LEVEL_THRESHOLD makes the LED to blink.
 //!          In all other cases the LED is off.
 //!          
 //! \param[in] water_percentage The percentage of filling of the tank (in range [0, 100]).
@@ -1137,7 +1137,7 @@ inline void update_lcd ( const float64_t water_percentage, const float64_t liter
 //!
 //! \brief Executes an autotest of LCD and LED.
 //!
-inline void autotest(void) {
+inline void autotest ( void ) {
   // 1. Reset state of LCD backlight and text and LED (all off)
   digitalWrite ( LCD_LIGHT_DPIN, LOW );
   digitalWrite ( LED_CAPACITY_DPIN, LOW );
