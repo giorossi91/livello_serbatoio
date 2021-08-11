@@ -5,14 +5,20 @@
 
 #include <atomic>
 
-extern std::atomic<uint32_t> timePassedFromBootMs;
-
 class ArduinoBoardStub : public ArduinoBoard
 {
 public:
     ArduinoBoardStub ( void );
 
-    virtual uint32_t millis( void ) override;
+    virtual uint32_t millis ( void ) override;
+
+    virtual void harness_setTimePassedFromBoot ( const uint32_t timePassedFromBoot ) override;
+
+    virtual uint32_t harness_getTimePassedFromBoot ( void ) override;
+
+private:
+    std::atomic<uint32_t> timePassedFromBootMs;
+
 };
 
 #endif // ARDUINOBOARDSTUB_H

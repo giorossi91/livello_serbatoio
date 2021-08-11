@@ -35,7 +35,7 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     ui->setupUi(this);
 
     // setup arduino board to use for simulator
-    board = new ArduinoBoard();
+    harness_initBoard();
 
     showEventsPanel = new ShowEvents(this);
 
@@ -43,7 +43,7 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     showEventsPanel->registerDigitalIO(uut::LED_CAPACITY_DPIN   , "LED"      );
     showEventsPanel->registerDigitalIO(uut::LCD_BUTTON_DPIN     , "BUTTON"   );
     showEventsPanel->registerDigitalIO(uut::LCD_LIGHT_DPIN      , "LCD_LIGHT");
-    //showEventsPanel->registerDigitalIO(ArduinoBoard::SLEEP_EVENT, "Sleep"    );
+    //showEventsPanel->registerDigitalIO(Arduinoharness_getBoard()::SLEEP_EVENT, "Sleep"    );
 
     monitorSignal(uut::TRIG_DPIN         , 500);
     monitorSignal(uut::LED_CAPACITY_DPIN , 500);
@@ -66,9 +66,9 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     ui->distance_spinbox->setMinimum(0);
     ui->distance_spinbox->setMaximum(static_cast<uint32_t>(uut::TANK_HEIGHT_CM + 2));
 
-    connect(&uut::lcd, SIGNAL(printTextOnLcd(std::string)) , this, SLOT(updateLcdScreen(std::string))     , Qt::QueuedConnection);
-    connect(&Serial  , SIGNAL(printSerialText(std::string)), this, SLOT(updateSerialMonitor(std::string)) , Qt::QueuedConnection);
-    connect(board    , SIGNAL(boardEvent(int32_t,int32_t)) , this, SLOT(updatePinStatus(int32_t,int32_t)) , Qt::QueuedConnection);
+    connect(&uut::lcd         , SIGNAL(printTextOnLcd(std::string)) , this, SLOT(updateLcdScreen(std::string))     , Qt::QueuedConnection);
+    connect(&Serial           , SIGNAL(printSerialText(std::string)), this, SLOT(updateSerialMonitor(std::string)) , Qt::QueuedConnection);
+    connect(harness_getBoard(), SIGNAL(boardEvent(int32_t,int32_t)) , this, SLOT(updatePinStatus(int32_t,int32_t)) , Qt::QueuedConnection);
 
     QString status =  "Simulation of " VERSION " in "
 #if DEBUG == CONF_DEBUG
@@ -84,7 +84,7 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     ui->actionResume->setEnabled(false);
 
     executor = QThread::create([=](void) {
-        board->setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(ui->distance_spinbox->value() * DISTANCE_LSB));
+        harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(ui->distance_spinbox->value() * DISTANCE_LSB));
 
         uut::setup();
 
@@ -107,19 +107,18 @@ LivelloSerbatoioSim::~LivelloSerbatoioSim ( void ) {
 
     delete showEventsPanel;
 
-    delete board;
+    delete harness_getBoard();
 }
 
 void LivelloSerbatoioSim::monitorSignal(int32_t id, int32_t periodMs) {
     showEventsPanel->addDigitalMonitor(id, periodMs, [=]( void ) {
         int32_t v = 0;
-        board->pinLock.lock();
-        if(board->arduino_pins[id].mode == OUTPUT) {
-            v = board->arduino_pins[id].in_val;
+
+        if(harness_getBoard()->harness_getPinMode(id) == OUTPUT) {
+            v = harness_getBoard()->harness_getPinInternalValue(id);
         } else {
-            v = board->arduino_pins[id].out_val;
+            v = harness_getBoard()->harness_getPinExternalValue(id);
         }
-        board->pinLock.unlock();
         return v;
     });
 }
@@ -150,49 +149,53 @@ void LivelloSerbatoioSim::updatePinStatus ( int32_t pin, int32_t value ) {
 
 void LivelloSerbatoioSim::on_distance_vslider_valueChanged ( int value ) {
     ui->distance_spinbox->setValue(value);
-    board->setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(value * DISTANCE_LSB));
+    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(value * DISTANCE_LSB));
 }
 
 
 void LivelloSerbatoioSim::on_distance_spinbox_valueChanged ( double position ) {
     ui->distance_vslider->setValue(static_cast<int>(position));
-    board->setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(position * DISTANCE_LSB));
+    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(position * DISTANCE_LSB));
 }
 
 void LivelloSerbatoioSim::on_show_button_pressed ( void ) {
-    board->setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
-    if( ( ( board->arduino_pins[uut::LCD_BUTTON_DPIN].isrMode == RISING ) ||
-          ( board->arduino_pins[uut::LCD_BUTTON_DPIN].isrMode == CHANGE ) ) &&
-          ( board->arduino_pins[uut::LCD_BUTTON_DPIN].pIsr != nullptr ) ) {
-        board->arduino_pins[uut::LCD_BUTTON_DPIN].pIsr();
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
+    const int32_t isrMode = harness_getBoard()->harness_getIsrMode(uut::LCD_BUTTON_DPIN);
+    const isr_t isrFunc = harness_getBoard()->harness_getIsrFunc(uut::LCD_BUTTON_DPIN);
+    if( ( ( isrMode == RISING ) ||
+          ( isrMode == CHANGE ) ) &&
+          ( isrFunc != nullptr ) ) {
+        isrFunc();
     }
 }
 
 void LivelloSerbatoioSim::on_show_button_released ( void ) {
-    board->setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
-    if( ( ( board->arduino_pins[uut::LCD_BUTTON_DPIN].isrMode == FALLING ) ||
-          ( board->arduino_pins[uut::LCD_BUTTON_DPIN].isrMode == CHANGE ) ) &&
-          ( board->arduino_pins[uut::LCD_BUTTON_DPIN].pIsr != nullptr ) ) {
-        board->arduino_pins[uut::LCD_BUTTON_DPIN].pIsr();
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+    const int32_t isrMode = harness_getBoard()->harness_getIsrMode(uut::LCD_BUTTON_DPIN);
+    const isr_t isrFunc = harness_getBoard()->harness_getIsrFunc(uut::LCD_BUTTON_DPIN);
+    if( ( ( isrMode == FALLING ) ||
+          ( isrMode == CHANGE ) ) &&
+          ( isrFunc != nullptr ) ) {
+        isrFunc();
     }
 }
 
 void LivelloSerbatoioSim::on_timescale_combobox_currentIndexChanged ( int index ) {
     switch ( index ) {
     case 0:
-        board->setTimeScale(0.01);
+        harness_getBoard()->harness_setTimeScale(0.01);
         break;
     case 1:
-        board->setTimeScale(0.1);
+        harness_getBoard()->harness_setTimeScale(0.1);
         break;
     case 2:
-        board->setTimeScale(1.0);
+        harness_getBoard()->harness_setTimeScale(1.0);
         break;
     case 3:
-        board->setTimeScale(10.0);
+        harness_getBoard()->harness_setTimeScale(10.0);
         break;
     case 4:
-        board->setTimeScale(100.0);
+        harness_getBoard()->harness_setTimeScale(100.0);
         break;
     }
 }

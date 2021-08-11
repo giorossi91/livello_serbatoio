@@ -17,6 +17,8 @@ typedef void ( *isr_t ) ( void );
 
 #define HARNESS_PREFIX "[Harness] "
 
+typedef void ( * printFailFunc )( const char * );
+
 const double  PI     = M_PI;
 
 const int32_t LOW    = 0;
@@ -33,8 +35,8 @@ struct Pin_t {
   int32_t  mode;
   isr_t    pIsr;
   int32_t  isrMode;
-  int32_t  in_val;
-  int32_t  out_val;
+  int32_t  internal_val;
+  int32_t  external_val;
   uint32_t pulse_time;
 };
 

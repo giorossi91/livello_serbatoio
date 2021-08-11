@@ -1,10 +1,16 @@
 #include "arduinoboardstub.h"
 
-std::atomic<uint32_t> timePassedFromBootMs;
-
 ArduinoBoardStub::ArduinoBoardStub ( void ) : ArduinoBoard() {
 }
 
 uint32_t ArduinoBoardStub::millis ( void ) {
-    return timePassedFromBootMs;
+    return this->timePassedFromBootMs;
+}
+
+void ArduinoBoardStub::harness_setTimePassedFromBoot(const uint32_t timePassedFromBoot) {
+    this->timePassedFromBootMs = timePassedFromBoot;
+}
+
+uint32_t ArduinoBoardStub::harness_getTimePassedFromBoot( void ) {
+    return this->timePassedFromBootMs.load();
 }

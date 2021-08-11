@@ -15,7 +15,7 @@ public:
 
     int32_t max ( int32_t a, int32_t b );
 
-    virtual uint32_t millis( void );
+    virtual uint32_t millis ( void );
 
     virtual void delay ( int32_t ms );
 
@@ -27,17 +27,38 @@ public:
 
     virtual uint32_t pulseIn ( int32_t pin, int32_t mode, int32_t timeout );
 
-    virtual void setPulseTime ( int32_t pin, uint32_t time );
-
-    virtual void setPinValue ( int32_t pin, int32_t mode, int32_t value );
-
-    virtual void attachInterrupt ( int32_t pin, void (*isr)(void), int32_t mode );
+    virtual void attachInterrupt ( int32_t pin, isr_t isr, int32_t mode );
 
     virtual int32_t digitalPinToInterrupt ( int32_t pin );
 
     virtual void delayMicroseconds ( int32_t usec );
 
-    virtual void setTimeScale ( double scale );
+
+    virtual void harness_setPulseTime ( int32_t pin, uint32_t time );
+
+    virtual void harness_setPinValue ( int32_t pin, int32_t mode, int32_t value );
+
+    virtual int32_t harness_getPinMode ( int32_t pin );
+
+    virtual int32_t harness_getIsrMode ( int32_t pin );
+
+    virtual isr_t harness_getIsrFunc ( int32_t pin );
+
+    virtual int32_t harness_getPinExternalValue ( int32_t pin );
+
+    virtual int32_t harness_getPinInternalValue ( int32_t pin );
+
+    virtual void harness_setTimeScale ( double scale );
+
+    virtual uint32_t harness_getTimePassedFromBoot ( void );
+
+    virtual void harness_setTimePassedFromBoot ( const uint32_t timePassedFromBoot );
+
+signals:
+    void boardEvent ( int32_t id, int32_t val );
+
+protected:
+    bool harness_checkPinNumber ( const int32_t pin ) const;
 
     static constexpr int32_t N_PINS = 20;
 
@@ -47,10 +68,7 @@ public:
 
     std::mutex pinLock;
 
-signals:
-    void boardEvent ( int32_t id, int32_t val );
-
-protected:
+    std::mutex timeScaleLock;
 
     double timeScale;
 };

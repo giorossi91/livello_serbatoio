@@ -37,7 +37,7 @@ ShowEvents::ShowEvents(QWidget *parent) :
     dataChart->addAxis(x_axis, Qt::AlignBottom);
     dataChart->setTitle("Events");
 
-    connect(board, SIGNAL(boardEvent(int32_t,int32_t)), this, SLOT(addNewPoint(int32_t,int32_t)));
+    connect(harness_getBoard(), SIGNAL(boardEvent(int32_t,int32_t)), this, SLOT(addNewPoint(int32_t,int32_t)));
 }
 
 ShowEvents::~ShowEvents ( void ) {
@@ -87,7 +87,7 @@ void ShowEvents::addSeries ( int32_t id, QString seriesName ) {
     uid++;
 
     current_y_max = idMap[id] + 1;
-    for(auto axes : dataChart->axes(Qt::Vertical)) {
+    for(auto &axes : dataChart->axes(Qt::Vertical)) {
         axes->setMax(current_y_max);
     }
 
