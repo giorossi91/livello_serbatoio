@@ -29,7 +29,7 @@
 #endif
 
 // Defines
-#define VERSION "v0.6"
+#define VERSION "v0.7"
 
 #define CONF_DEBUG   1
 #define CONF_RELEASE 0
@@ -159,6 +159,12 @@ static volatile bool        first_measure_done        ;
 static volatile byte        btn_status                ;
 static volatile byte        last_btn_status           ;
 static volatile int32_t     err_code                  ;
+static volatile bool        is_displaying_slot_1      ;
+static volatile bool        is_displaying_slot_2      ;
+static volatile bool        is_displaying_slot_3      ;
+static volatile bool        is_displaying_slot_4      ;
+static volatile bool        is_displaying_slot_5      ;
+static volatile bool        is_displaying_slot_6      ;
 
 // Timestamps
 static volatile uint32_t    timestamp_lcd_on          ;
@@ -627,6 +633,12 @@ inline void initialize ( void ) {
   err_code                 = ERR_OK              ;
   btn_status               = LOW                 ;
   last_btn_status          = LOW                 ;
+  is_displaying_slot_1     = false               ;
+  is_displaying_slot_2     = false               ;
+  is_displaying_slot_3     = false               ;
+  is_displaying_slot_4     = false               ;
+  is_displaying_slot_5     = false               ;
+  is_displaying_slot_6     = false               ;
   
   tank_capacity            = 0.0                 ; // L
   maximum_capacity         = 0.0                 ; // L
@@ -781,6 +793,8 @@ inline void show_err_code_debug ( void ) {
     lcd.print ( "e: " );
     lcd.setCursor ( 14, 0 );
     lcd.print ( err_code );
+
+    must_update_lcd = true;
   }
 }
 
@@ -1420,33 +1434,58 @@ inline void show_menu_options ( const uint32_t btn_press_time ) {
     // slot 1
     turn_on_lcd_light();
   } else if( ( btn_press_time >= BTN_INTERVAL_2_TIME ) && ( btn_press_time < BTN_INTERVAL_3_TIME ) ) {   
-    // slot 2   
-    lcd.clear();
-    lcd.print ( " -> Consumi " );
+    // slot 2
+    if ( is_displaying_slot_2 == false ) {
+      lcd.clear();
+      lcd.print ( " -> Consumi " );
+
+      is_displaying_slot_1 = false;
+      is_displaying_slot_2 = true;
+    }
   } else if( ( btn_press_time >= BTN_INTERVAL_3_TIME ) && ( btn_press_time < BTN_INTERVAL_4_TIME ) ) {
     // slot 3
-    lcd.clear();
-    lcd.print ( " -> Modo" );
-    lcd.setCursor ( 0, 1 );
-    if ( in_debug == false ) {
-      lcd.print ( "    Manutenzione" );
-    } else {
-      lcd.print ( "    Normale" );
+    if ( is_displaying_slot_3 == false ) {
+      lcd.clear();
+      lcd.print ( " -> Modo" );
+      lcd.setCursor ( 0, 1 );
+      if ( in_debug == false ) {
+        lcd.print ( "    Manutenzione" );
+      } else {
+        lcd.print ( "    Normale" );
+      }
+
+      is_displaying_slot_2 = false;
+      is_displaying_slot_3 = true;
     }
   } else if ( ( btn_press_time >= BTN_INTERVAL_4_TIME ) && (btn_press_time < BTN_INTERVAL_5_TIME) ) {
     // slot 4 
-    lcd.clear();
-    lcd.print ( " -> Versione" );
+    if ( is_displaying_slot_4 == false ) {
+      lcd.clear();
+      lcd.print ( " -> Versione" );
+
+      is_displaying_slot_3 = false;
+      is_displaying_slot_4 = true;
+    }
   } else if ( ( btn_press_time >= BTN_INTERVAL_5_TIME ) && (btn_press_time < BTN_INTERVAL_6_TIME) ) {
-    // slot 5 
-    lcd.clear();
-    lcd.print ( " -> Parametri" );
-    lcd.setCursor ( 0, 1 );
-    lcd.print ( "    Serbatoio" );
+    // slot 5
+    if ( is_displaying_slot_5 == false ) {
+      lcd.clear();
+      lcd.print ( " -> Parametri" );
+      lcd.setCursor ( 0, 1 );
+      lcd.print ( "    Serbatoio" );
+
+      is_displaying_slot_4 = false;
+      is_displaying_slot_5 = true;
+    }
   } else if( ( btn_press_time >= BTN_INTERVAL_6_TIME ) ) {
     // slot 6
-    lcd.clear();
-    lcd.print ( " -> Esci Menu'" );
+    if ( is_displaying_slot_5 == false ) {
+      lcd.clear();
+      lcd.print ( " -> Esci Menu'" );
+
+      is_displaying_slot_5 = false;
+      is_displaying_slot_6 = true;
+    }
   }
 }
 
@@ -1502,6 +1541,14 @@ inline void manage_button ( void ) {
     
   } else if ( ( btn_status == LOW ) && ( last_btn_status == HIGH ) ) {
     // Detect the FALLING EDGE
+
+    // reset display status
+    is_displaying_slot_1     = false ;
+    is_displaying_slot_2     = false ;
+    is_displaying_slot_3     = false ;
+    is_displaying_slot_4     = false ;
+    is_displaying_slot_5     = false ;
+    is_displaying_slot_6     = false ;
         
     // do actions
     const uint32_t btn_press_time = ( timestamp_now - timestamp_btn_press );
