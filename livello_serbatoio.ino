@@ -169,7 +169,7 @@ static volatile uint32_t    timestamp_last_filling    ;
 static volatile uint32_t    timestamp_btn_press       ;
 
 // Timings
-static uint16_t             measure_interval          ;
+static uint32_t             measure_interval          ;
 
 // Computed tank(s) parameters
 static float64_t            tank_capacity             ;
@@ -780,13 +780,7 @@ inline void show_err_code_debug ( void ) {
     lcd.setCursor ( 12, 0 );
     lcd.print ( "e: " );
     lcd.setCursor ( 14, 0 );
-    if ( was_error == true ) {
-      // print the error code
-      lcd.print ( err_code );
-    } else {
-      // if not error, print always 0
-      lcd.print ( 0 );
-    }
+    lcd.print ( err_code );
   }
 }
 
@@ -847,9 +841,6 @@ inline float64_t measure_level ( void ) {
     // assign proper error code
     err_code = ERR_SENS;
 
-    // signal error
-    was_error = true;
-
     // show error code if in debug
     show_err_code_debug();
 
@@ -879,9 +870,6 @@ inline float64_t measure_level ( void ) {
 
       // assign proper error code
       err_code = ERR_RANGE;
-
-      // signal error
-      was_error = true;
 
       // show error code on LCD if in debug mode
       show_err_code_debug();
@@ -925,9 +913,7 @@ inline float64_t measure_level ( void ) {
         }
       }
 
-      // reset error indicators
-      was_error = false;
-
+      // reset error
       err_code = ERR_OK;
 
       // show "no error" info on LCD in debug mode
@@ -1192,13 +1178,10 @@ inline void autotest ( void ) {
 //! 
 inline void print_stat ( String str, const uint32_t stat ) {
   if ( stat == 9999U ) {
-    // this is an error value
-    was_error = true;
     // assign proper error code to display
     err_code = ERR_STAT;
   } else {
     // all ok, the value is valid
-    was_error = false;
     err_code = ERR_OK;
   }
 

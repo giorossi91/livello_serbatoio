@@ -432,18 +432,193 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
     uut::setup();
 
-    stop_time();
+    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>( uut::SENSOR_MIN_RANGE * uut::SENSOR_LSB ));
 
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+
+    // force lcd backlight off
+    harness_getBoard()->harness_setPinValue(uut::LCD_LIGHT_DPIN, OUTPUT, LOW);
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+
+    // inteval 1 (LCD light)
+
+    // press button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
+
+    loopNTimes( 1 );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+
+    CPPUNIT_ASSERT_EQUAL(LOW, harness_getBoard()->harness_getPinInternalValue(uut::LCD_LIGHT_DPIN));
+
+    loopNTimes( uut::BTN_INTERVAL_1_TIME / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+
+    CPPUNIT_ASSERT_EQUAL(HIGH, harness_getBoard()->harness_getPinInternalValue(uut::LCD_LIGHT_DPIN));
+
+    // release button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+
+    // wait for lcd turn off
+    loopNTimes( uut::LCD_ON_TIME / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+
+    CPPUNIT_ASSERT_EQUAL(LOW, harness_getBoard()->harness_getPinInternalValue(uut::LCD_LIGHT_DPIN));
+
+    loopNTimes( 1 );
+
+    // interval 2 (consumption data)
+
+    // press button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
+
+    loopNTimes( uut::BTN_INTERVAL_2_TIME / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+
+    // release button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+
+    loopNTimes( 1 );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+
+    // interval 3 (debug mode)
+
+    // press button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
+
+    loopNTimes( uut::BTN_INTERVAL_3_TIME / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+
+    // release button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+
+    loopNTimes( 1 );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+
+    CPPUNIT_ASSERT_EQUAL( true, uut::in_debug );
+
+    // press button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
+
+    loopNTimes( uut::BTN_INTERVAL_3_TIME / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+
+    // release button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+
+    loopNTimes( 1 );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+
+    CPPUNIT_ASSERT_EQUAL( false, uut::in_debug );
+
+    // interval 4 (version)
+
+    // press button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
+
+    loopNTimes( uut::BTN_INTERVAL_4_TIME / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+
+    // release button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+
+    loopNTimes( 1 );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+
+    // interval 5 (tank parameters)
+
+    // press button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
+
+    loopNTimes( uut::BTN_INTERVAL_5_TIME / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+
+    // release button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+
+    loopNTimes( 1 );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+
+    // interval 6 (tank parameters)
+
+    // press button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, HIGH);
+
+    loopNTimes( uut::BTN_INTERVAL_6_TIME / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+
+    // release button
+    harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
+
+    loopNTimes( 1 );
+
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+
+    stop_time();
 }
 
 void LivelloSerbatoioTests::test_loop ( void ) {
     start_time();
 
+    // start-up sequence
     uut::setup();
 
+    // check pre-conditions
+    CPPUNIT_ASSERT_EQUAL(uut::MEASURE_HF_INTERVAL  , uut::measure_interval      );
+    CPPUNIT_ASSERT_EQUAL(false                     , uut::in_debug              );
+    CPPUNIT_ASSERT_EQUAL(static_cast<uint16_t>(0U) , uut::number_measures_done  );
+    CPPUNIT_ASSERT_EQUAL(false                     , uut::first_measure_done    );
+    CPPUNIT_ASSERT_EQUAL(false                     , uut::led_on                );
+    CPPUNIT_ASSERT_EQUAL(false                     , uut::led_status            );
+
+    // set percentage to 0 (initialized to 100 in code)
+    uut::percentage = 0.0;
+
+    // set pulse time so that resulting percentage is 100%
+    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t> ( uut::SENSOR_MIN_RANGE * uut::SENSOR_LSB ) );
+
+    // loop enough time to feed the median filter
+
+    // number of cycles depends on:
+    // 1. filter size
+    // 2. period of measurement (High Frequency)
+    // 3. sleep time
+
+    loopNTimes( ( ( ( uut::FILTER_SIZE / 2 ) + 1  ) * uut::MEASURE_HF_INTERVAL ) / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_EQUAL(uut::MEASURE_LF_INTERVAL                            , uut::measure_interval       );
+    CPPUNIT_ASSERT_EQUAL(false                                               , uut::in_debug               );
+    CPPUNIT_ASSERT_EQUAL(static_cast<uint16_t>(( uut::FILTER_SIZE / 2 ) + 1) , uut::number_measures_done   );
+    CPPUNIT_ASSERT_EQUAL(true                                                , uut::first_measure_done     );
+    CPPUNIT_ASSERT_EQUAL(false                                               , uut::led_on                 );
+    CPPUNIT_ASSERT_EQUAL(false                                               , uut::led_status             );
+
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( 100.0 , uut::percentage, 1.0 );
+
+    // further measures with normal frequency
+    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t> ( 50.0 * uut::SENSOR_LSB ) );
+
+    loopNTimes( ( ( ( uut::FILTER_SIZE / 2 ) + 1  ) * uut::MEASURE_LF_INTERVAL ) / uut::SLEEP_TIME );
+
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(81.0  , uut::percentage    , 1.0 );
+    CPPUNIT_ASSERT_EQUAL        (false , uut::led_on              );
+    CPPUNIT_ASSERT_EQUAL        (false , uut::led_status          );
 
     stop_time();
-
 }
 
 // Harness utilities
