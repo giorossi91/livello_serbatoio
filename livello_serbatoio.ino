@@ -29,7 +29,7 @@
 #endif
 
 // Defines
-#define VERSION "v0.5"
+#define VERSION "v0.6"
 
 #define CONF_DEBUG   1
 #define CONF_RELEASE 0
@@ -1446,7 +1446,7 @@ inline void show_menu_options ( const uint32_t btn_press_time ) {
   } else if( ( btn_press_time >= BTN_INTERVAL_6_TIME ) ) {
     // slot 6
     lcd.clear();
-    lcd.print ( " -> Esci Menù" );
+    lcd.print ( " -> Esci Menu'" );
   }
 }
 
