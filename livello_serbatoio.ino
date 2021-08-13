@@ -29,7 +29,7 @@
 #endif
 
 // Defines
-#define VERSION "v0.7"
+#define VERSION "v0.8"
 
 #define CONF_DEBUG   1
 #define CONF_RELEASE 0
@@ -1482,7 +1482,7 @@ inline void show_menu_options ( const uint32_t btn_press_time ) {
     }
   } else if( ( btn_press_time >= BTN_INTERVAL_6_TIME ) ) {
     // slot 6
-    if ( is_displaying_slot_5 == false ) {
+    if ( is_displaying_slot_6 == false ) {
       lcd.clear();
       lcd.print ( " -> Esci Menu'" );
 
