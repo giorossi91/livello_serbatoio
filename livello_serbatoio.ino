@@ -1171,7 +1171,6 @@ inline void autotest ( void ) {
 
   // 4. Reset state
   digitalWrite ( LED_CAPACITY_DPIN, LOW );
-  digitalWrite ( LCD_LIGHT_DPIN, LOW );
   lcd.clear();
 
   // wait and back to normal
@@ -1349,6 +1348,10 @@ inline void enter_debug ( void ) {
 
   // change measure frequency to the highest value
   measure_interval = MEASURE_HF_INTERVAL; //ms
+
+  // turn on LCD
+  turn_on_lcd_light();
+  timestamp_lcd_on  = millis();
 }
 
 //!
@@ -1421,7 +1424,7 @@ inline void button_interval_2_handle ( void ) {
 //! \brief Actions for first menu slot.
 //!
 inline void button_interval_1_handle ( void ) {
-  must_update_lcd = true;
+  // do nothing
 }
 
 //!
