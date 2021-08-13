@@ -189,6 +189,163 @@ static volatile float64_t   previous_liters           ;
 
 // Classes
 
+class LcdHelper {
+public:
+  LcdHelper ( void ) {
+    lcd_instance = nullptr;
+  }
+
+  void begin ( LiquidCrystal * const lcd ) {
+
+    this->lcd_instance = lcd;
+
+    for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
+      for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
+         this->lcd_matrix[i][j] = EMPTY_CHAR;
+         this->last_lcd_matrix[i][j] = EMPTY_CHAR;
+         this->special_char_map[i][j] = false;
+         this->last_special_char_map[i][j] = false;
+      }
+    }
+    this->home();
+
+    this->lcd_instance->clear();
+  }
+
+  void clear ( void ) {    
+    for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
+      for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
+         this->lcd_matrix[i][j] = EMPTY_CHAR;
+         this->special_char_map[i][j] = false;
+      }
+    }
+    this->home();
+  }
+
+  void setCursor ( const uint16_t c, const uint16_t r ) {
+    if ( ( c < LCD_COLS ) && ( r < LCD_ROWS ) ) {
+      this->cursor_c = c;
+      this->cursor_r = r;
+    }
+  }
+
+  void home ( void ) {
+    setCursor ( 0U, 0U );
+  }
+
+  void print ( const char * str, const uint16_t str_length = LCD_COLS ) {
+    for ( uint16_t str_i = 0U; str_i < str_length; str_i ++ ) {
+      if ( str[str_i] == '\0' ) {
+        break;
+      }
+
+      if ( this->cursor_c < LCD_COLS ) {
+        this->lcd_matrix[this->cursor_r][this->cursor_c] = str[str_i];
+        this->cursor_c ++;
+      }
+    }
+        
+  }
+
+  void print ( const int32_t number ) {
+    const String number_str = String ( number );
+    this->print ( number_str.c_str() );
+  }
+
+  void print ( const String& str ) {
+    this->print ( str.c_str() );
+  }
+
+  void print ( const int16_t number ) {
+    const String number_str = String ( number );
+    this->print ( number_str.c_str() );
+  }
+
+  void print ( const uint16_t number ) {
+    const String number_str = String ( number );
+    this->print ( number_str.c_str() );
+  }
+
+  void print ( const float64_t number ) {
+    const String number_str = String ( number );
+    this->print ( number_str.c_str() );
+  }
+
+  void write ( const int32_t special_char_index ) {
+    if ( ( special_char_index >= 0 ) && ( special_char_index <= 9 ) ) {
+      this->special_char_map[this->cursor_r][this->cursor_c] = true;
+  
+      this->print ( special_char_index );
+      
+      cursor_c ++;
+    }
+  }
+
+  void update_lcd ( void ) {
+    if ( need_update() == true ) {
+      // write different chars
+      for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
+        for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
+          if ( ( this->lcd_matrix[i][j] != this->last_lcd_matrix[i][j]             ) ||
+               ( this->special_char_map[i][j] != this->last_special_char_map[i][j] )    ) {
+            this->lcd_instance->setCursor(j, i);
+            if ( is_special_symbol ( i, j ) == true ) {
+              this->lcd_instance->write ( String(this->lcd_matrix[i][j]).toInt() );
+            } else {
+              this->lcd_instance->print ( this->lcd_matrix[i][j] );
+            }
+            
+            this->last_lcd_matrix[i][j] = this->lcd_matrix[i][j];
+            this->last_special_char_map[i][j] = this->special_char_map[i][j];
+          }
+        }
+      }      
+    }
+  }
+
+private:
+  bool is_special_symbol ( const uint16_t r, const uint16_t c ) {
+    bool is_ss = false;
+    if ( ( r < LCD_ROWS ) && ( c < LCD_COLS ) ) {
+      char symbol = this->lcd_matrix[r][c];
+      if ( ( symbol >= '0' ) && ( symbol <= '9' ) && special_char_map[r][c] == true ) {
+        is_ss = true;
+      }
+    }
+    return is_ss;
+  }
+
+  bool need_update ( void ) {
+    bool is_update_needed = false;
+    
+    for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
+      for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
+        if ( last_lcd_matrix[i][j] != lcd_matrix[i][j] ) {
+          is_update_needed = true;
+        }
+      }
+    }
+
+    return is_update_needed;
+  }
+
+  uint16_t cursor_r;
+  
+  uint16_t cursor_c;
+
+  static const char EMPTY_CHAR = ' ';
+  
+  char lcd_matrix[LCD_ROWS][LCD_COLS];
+
+  char last_lcd_matrix[LCD_ROWS][LCD_COLS];
+
+  bool special_char_map[LCD_ROWS][LCD_COLS];
+
+  bool last_special_char_map[LCD_ROWS][LCD_COLS];
+
+  LiquidCrystal *lcd_instance; 
+};
+
 //!
 //! \brief Median filter manager.
 //!
@@ -577,7 +734,9 @@ private:
 // Instances of the classes
 
 //Format (RS, E, DB4, DB5, DB6, DB7)
-static LiquidCrystal lcd ( RS, E, DB4, DB5, DB6, DB7 );
+static LiquidCrystal lcd_if ( RS, E, DB4, DB5, DB6, DB7 );
+
+static LcdHelper lcd;
 
 static MedianFilter filter;
 
@@ -627,7 +786,7 @@ inline int32_t round_float_value ( const float64_t x ) {
 inline void initialize ( void ) {
   led_on                   = false               ;
   led_status               = false               ;
-  must_update_lcd          = false               ;
+  must_update_lcd          = true               ; // TODO
   first_measure_done       = false               ;
   was_error                = false               ;
   err_code                 = ERR_OK              ;
@@ -812,7 +971,7 @@ inline void update_lcd_debug ( const float64_t distance_to_print, const float64_
     // if in debug mode and LCD needs an update
 
     // reset update LCD flag
-    must_update_lcd = false;
+    // TODO must_update_lcd = false;
 
     // clear the LCD
     lcd.clear();
@@ -1042,12 +1201,12 @@ inline float64_t sanitize_data ( const float64_t data, const float64_t min_val, 
 inline void update_lcd ( const float64_t water_percentage, const float64_t liters ) {
   if( ( water_percentage < 0.0 ) || ( water_percentage > 100.0 ) || ( liters < 0.0 ) || ( liters > 9999.9 ) ) {
     // if data are invalid, don't update the LCD
-    must_update_lcd = false;
+    // TODO must_update_lcd = false;
   }
   
   if ( must_update_lcd == true ) {
     // if the LCD must be updates
-    must_update_lcd = false;
+    // TODO must_update_lcd = false;
 
     // Clear the LCD
     lcd.clear();
@@ -1584,7 +1743,7 @@ void setup ( void ) {
   // initialize the LCD
   
   // configure LCD size
-  lcd.begin ( LCD_COLS, LCD_ROWS );
+  lcd_if.begin ( LCD_COLS, LCD_ROWS );
 
   // add special symbols
 
@@ -1592,7 +1751,9 @@ void setup ( void ) {
   for ( int32_t i = 0;  i < LCD_CHAR_SIZE; i++ ) {
     lcd_progress_array [ i ] = LCD_PROGRESS [ i ];
   }
-  lcd.createChar ( PROGRESS_CHAR, lcd_progress_array );
+  lcd_if.createChar ( PROGRESS_CHAR, lcd_progress_array );
+
+  lcd.begin(&lcd_if);
   
   // compute tank parameters
   tank_capacity     = ( TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM ) / CM3_PER_LITER;
@@ -1665,6 +1826,8 @@ void loop ( void ) {
 
   // button management
   manage_button();
+
+  lcd.update_lcd();
   
   // lcd light timer
   if ( ( timestamp_now - timestamp_lcd_on ) >= LCD_ON_TIME ) {

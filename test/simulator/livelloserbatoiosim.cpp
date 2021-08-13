@@ -15,6 +15,7 @@
 #include "arduinoboard.h"
 #include "Serial.h"
 #include "LiquidCrystal.h"
+#include "String.h"
 
 // --> UUT
 #define UNIT_TEST
@@ -66,7 +67,7 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     ui->distance_spinbox->setMinimum(0);
     ui->distance_spinbox->setMaximum(static_cast<uint32_t>(uut::TANK_HEIGHT_CM + 2));
 
-    connect(&uut::lcd         , SIGNAL(printTextOnLcd(std::string)) , this, SLOT(updateLcdScreen(std::string))     , Qt::QueuedConnection);
+    connect(&uut::lcd_if      , SIGNAL(printTextOnLcd(std::string)) , this, SLOT(updateLcdScreen(std::string))     , Qt::QueuedConnection);
     connect(&Serial           , SIGNAL(printSerialText(std::string)), this, SLOT(updateSerialMonitor(std::string)) , Qt::QueuedConnection);
     connect(harness_getBoard(), SIGNAL(boardEvent(int32_t,int32_t)) , this, SLOT(updatePinStatus(int32_t,int32_t)) , Qt::QueuedConnection);
 
