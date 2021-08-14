@@ -71,7 +71,7 @@ void LiquidCrystal::setCursor ( int32_t col, int32_t row ) {
   cursor_row = row;
 }
 
-void LiquidCrystal::print ( String &str, bool pout ) {
+void LiquidCrystal::print ( const String &str, bool pout ) {
   print(str.c_str(), pout);
 }
 

@@ -24,7 +24,7 @@ public:
 
   void setCursor ( int32_t col, int32_t row );
 
-  void print ( String &str, bool pout = true );
+  void print ( const String &str, bool pout = true );
 
   void print ( const char *pStr, bool pout = true );
 

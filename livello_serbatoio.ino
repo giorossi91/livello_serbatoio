@@ -276,8 +276,6 @@ public:
       this->special_char_map[this->cursor_r][this->cursor_c] = true;
   
       this->print ( special_char_index );
-      
-      cursor_c ++;
     }
   }
 
@@ -292,7 +290,7 @@ public:
             if ( is_special_symbol ( i, j ) == true ) {
               this->lcd_instance->write ( String(this->lcd_matrix[i][j]).toInt() );
             } else {
-              this->lcd_instance->print ( this->lcd_matrix[i][j] );
+              this->lcd_instance->print ( String(this->lcd_matrix[i][j]) );
             }
             
             this->last_lcd_matrix[i][j] = this->lcd_matrix[i][j];
@@ -1776,10 +1774,12 @@ void setup ( void ) {
 
   // print SW information
   lcd.print ( "Avvio..." );
+  lcd.update_lcd();
 
   delay ( 1000 );
   
   show_version();
+  lcd.update_lcd();
 
   // initialize status variables
   first_measure_done = false; // First measure to do
@@ -1812,6 +1812,7 @@ void setup ( void ) {
   
   lcd.clear();
   lcd.print ( "Prima misura..." );
+  lcd.update_lcd();
 }
 
 // Loop function
