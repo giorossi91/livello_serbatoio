@@ -29,13 +29,13 @@
 #endif
 
 // Defines
-#define VERSION "v0.8"
+#define VERSION "v0.9" /// Version tag
 
-#define CONF_DEBUG   1
-#define CONF_RELEASE 0
+#define CONF_DEBUG   1 /// Constant used to compile in DEBUG mode (Serial enabled).
+#define CONF_RELEASE 0 /// Constant used to compile in RELEASE mode (Serial disabled).
 
-#define SENSOR_HCSR04   0
-#define SENSOR_JSNSR04T 1
+#define SENSOR_HCSR04   0 /// Constant used to compile code for HC-SR04 ultrasonic sensor.
+#define SENSOR_JSNSR04T 1 /// Constant used to compile code for JSN-SR04T ultrasonic sensor (waterproof).
 
 // Configuration
 #ifndef UNIT_TEST
@@ -49,27 +49,27 @@ typedef double float64_t;
 // Constants
 
 // Median filter
-const int16_t     FILTER_SEED           = 0                                   ;
-const int16_t     FILTER_SIZE           = 5                                   ;
+const int16_t     FILTER_SEED           = 0                                   ; /// Initial value for Median Filter.
+const int16_t     FILTER_SIZE           = 5                                   ; /// Median Filter size.
 
 // Pins
-const int16_t     ECHO_DPIN             = 12                                  ;
-const int16_t     TRIG_DPIN             = 11                                  ;
-const int16_t     LED_CAPACITY_DPIN     = 13                                  ;
-const int16_t     LCD_BUTTON_DPIN       = 2                                   ;
-const int16_t     LCD_LIGHT_DPIN        = 9                                   ;
+const int16_t     ECHO_DPIN             = 12                                  ; /// Digital pin for ultrasonic sensor ECHO pin.
+const int16_t     TRIG_DPIN             = 11                                  ; /// Digital pin for ultrasonic sensor TRIG pin.
+const int16_t     LED_CAPACITY_DPIN     = 13                                  ; /// Digital pin for LED.
+const int16_t     LCD_BUTTON_DPIN       = 2                                   ; /// Digital pin for Button.
+const int16_t     LCD_LIGHT_DPIN        = 9                                   ; /// Digital pin for LCD backlight.
 
 // Tank and volume
-const uint16_t    TANK_NUMBER           = 2U                                  ;
-const float64_t   TANK_RADIUS_CM        = 35.0                                ; // cm
-const float64_t   TANK_HEIGHT_CM        = 156.0                               ; // cm
-const float64_t   SENSOR_DISTANCE_CM    = 26.0                                ; // cm
-const float64_t   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE_CM ; // cm
-const float64_t   LOW_LEVEL_THRESHOLD   = 30.0                                ; // %
-const float64_t   EMPTY_LEVEL_THRESHOLD = 10.0                                ; // %
+const uint16_t    TANK_NUMBER           = 2U                                  ; /// The number of tanks.
+const float64_t   TANK_RADIUS_CM        = 35.0                                ; /// The radius of the tank(s) in cm.
+const float64_t   TANK_HEIGHT_CM        = 156.0                               ; /// The height of the tank(s) in cm.
+const float64_t   SENSOR_DISTANCE_CM    = 26.0                                ; /// The distance between sensor and the highest water level in cm.
+const float64_t   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE_CM ; /// The maximum water height in cm.
+const float64_t   LOW_LEVEL_THRESHOLD   = 30.0                                ; /// The percentage threshold used to indicate the low level of water.
+const float64_t   EMPTY_LEVEL_THRESHOLD = 10.0                                ; /// The percentage threshold used to indicate the tank(s) emptiness.
 
 // Conversion units
-const float64_t   CM3_PER_LITER         = 1000.0                              ; // 1 l = 1000 cm^3
+const float64_t   CM3_PER_LITER         = 1000.0                              ; /// Constant used to convert liters in cm^3 (1 l = 1000 cm^3).
 
 // Timers
 const uint32_t    MEASURE_LF_INTERVAL   = 10 * 1000                           ; // ms
@@ -152,19 +152,11 @@ const int32_t     ERR_STAT              = 3                                   ; 
 // Status flags
 static volatile bool        led_on                    ;
 static volatile bool        led_status                ;
-static volatile bool        must_update_lcd           ;
-static volatile bool        was_error                 ;
 static volatile bool        in_debug                  ;
 static volatile bool        first_measure_done        ;
 static volatile byte        btn_status                ;
 static volatile byte        last_btn_status           ;
 static volatile int32_t     err_code                  ;
-static volatile bool        is_displaying_slot_1      ;
-static volatile bool        is_displaying_slot_2      ;
-static volatile bool        is_displaying_slot_3      ;
-static volatile bool        is_displaying_slot_4      ;
-static volatile bool        is_displaying_slot_5      ;
-static volatile bool        is_displaying_slot_6      ;
 
 // Timestamps
 static volatile uint32_t    timestamp_lcd_on          ;
@@ -192,12 +184,13 @@ static volatile float64_t   previous_liters           ;
 class LcdHelper {
 public:
   LcdHelper ( void ) {
-    lcd_instance = nullptr;
+    this->lcd_instance = nullptr;
   }
 
-  void begin ( LiquidCrystal * const lcd ) {
+  void begin ( LiquidCrystal * const lcd, const int32_t backlight_dpin ) {
 
     this->lcd_instance = lcd;
+    this->backlight_digital_pin = backlight_dpin;
 
     for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
       for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
@@ -210,6 +203,14 @@ public:
     this->home();
 
     this->lcd_instance->clear();
+  }
+
+  void turn_on_backlight ( void ) {
+    digitalWrite ( this->backlight_digital_pin, HIGH );
+  }
+
+  void turn_off_backlight ( void ) {
+    digitalWrite ( this->backlight_digital_pin, LOW );
   }
 
   void clear ( void ) {    
@@ -230,7 +231,7 @@ public:
   }
 
   void home ( void ) {
-    setCursor ( 0U, 0U );
+    this->setCursor ( 0U, 0U );
   }
 
   void print ( const char * str, const uint16_t str_length = LCD_COLS ) {
@@ -280,17 +281,17 @@ public:
   }
 
   void update_lcd ( void ) {
-    if ( need_update() == true ) {
+    if ( this->need_update() == true ) {
       // write different chars
       for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
         for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
           if ( ( this->lcd_matrix[i][j] != this->last_lcd_matrix[i][j]             ) ||
                ( this->special_char_map[i][j] != this->last_special_char_map[i][j] )    ) {
             this->lcd_instance->setCursor(j, i);
-            if ( is_special_symbol ( i, j ) == true ) {
-              this->lcd_instance->write ( String(this->lcd_matrix[i][j]).toInt() );
+            if ( this->is_special_symbol ( i, j ) == true ) {
+              this->lcd_instance->write ( static_cast<byte> ( String ( this->lcd_matrix[i][j] ).toInt() ) );
             } else {
-              this->lcd_instance->print ( String(this->lcd_matrix[i][j]) );
+              this->lcd_instance->print ( String ( this->lcd_matrix[i][j] ) );
             }
             
             this->last_lcd_matrix[i][j] = this->lcd_matrix[i][j];
@@ -306,7 +307,7 @@ private:
     bool is_ss = false;
     if ( ( r < LCD_ROWS ) && ( c < LCD_COLS ) ) {
       char symbol = this->lcd_matrix[r][c];
-      if ( ( symbol >= '0' ) && ( symbol <= '9' ) && special_char_map[r][c] == true ) {
+      if ( ( symbol >= '0' ) && ( symbol <= '9' ) && this->special_char_map[r][c] == true ) {
         is_ss = true;
       }
     }
@@ -318,7 +319,7 @@ private:
     
     for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
       for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
-        if ( last_lcd_matrix[i][j] != lcd_matrix[i][j] ) {
+        if ( this->last_lcd_matrix[i][j] != this->lcd_matrix[i][j] ) {
           is_update_needed = true;
         }
       }
@@ -330,6 +331,8 @@ private:
   uint16_t cursor_r;
   
   uint16_t cursor_c;
+
+  int32_t backlight_digital_pin;
 
   static const char EMPTY_CHAR = ' ';
   
@@ -580,7 +583,7 @@ public:
   //!
   //! \details Computes the current consumption and updates buffer.
   //! 
-  //! \param current_liters[in] The water volume in the tank(s).
+  //! \param[in] current_liters The water volume in the tank(s).
   //! 
   //! \attention It shall be called in #loop function when new measurement updates are available.
   //!
@@ -653,7 +656,7 @@ private:
   //!
   //! \brief Sums the consumption samples.
   //! 
-  //! \param back_time[in] The hours passed.
+  //! \param[in] back_time The hours passed.
   //! 
   //! \return 9999 if back_time is >= STAT_SIZE (3d) otherwise the total consumption in liters.
   //!
@@ -784,18 +787,10 @@ inline int32_t round_float_value ( const float64_t x ) {
 inline void initialize ( void ) {
   led_on                   = false               ;
   led_status               = false               ;
-  must_update_lcd          = true               ; // TODO
   first_measure_done       = false               ;
-  was_error                = false               ;
   err_code                 = ERR_OK              ;
   btn_status               = LOW                 ;
   last_btn_status          = LOW                 ;
-  is_displaying_slot_1     = false               ;
-  is_displaying_slot_2     = false               ;
-  is_displaying_slot_3     = false               ;
-  is_displaying_slot_4     = false               ;
-  is_displaying_slot_5     = false               ;
-  is_displaying_slot_6     = false               ;
   
   tank_capacity            = 0.0                 ; // L
   maximum_capacity         = 0.0                 ; // L
@@ -820,6 +815,7 @@ inline void initialize ( void ) {
 //!
 //! \details See below for details on computation.
 //!           
+//! <pre>
 //!            sensor
 //!       +----| W |----+ ---  TANK_HEIGHT_CM
 //!       |      |      |    } 
@@ -834,8 +830,9 @@ inline void initialize ( void ) {
 //!    ----------------------> level 0
 //!       
 //!   real distance = distance - SENSOR_DISTANCE_CM
+//! </pre>
 //!
-//! \param read_distance[in] The water distance from sensor.
+//! \param[in] read_distance The water distance from sensor.
 //!
 //! \return The volume in liters.
 //!
@@ -865,7 +862,7 @@ inline float64_t compute_liters ( float64_t read_distance ) {
 //! 
 //! \details It uses the most recent reading and the maximum capacity computed in #setup.
 //!
-//! \param read_liters[in] The volume of water read.
+//! \param[in] read_liters The volume of water read.
 //! 
 //! \return The filling percentage in range [0, 100].
 //!
@@ -893,7 +890,7 @@ inline float64_t compute_percentage ( float64_t read_liters ) {
 //!
 inline void turn_on_lcd_light ( void ) {
   // activate backlight
-  digitalWrite ( LCD_LIGHT_DPIN, HIGH );
+  lcd.turn_on_backlight();
 
   // get timestamp for future deactivation
   timestamp_lcd_on = millis();
@@ -911,7 +908,7 @@ inline void turn_on_lcd_light ( void ) {
 inline void turn_off_lcd_light ( void ) {
 
   // deactivate backlight
-  digitalWrite ( LCD_LIGHT_DPIN, LOW );
+  lcd.turn_off_backlight();
 #if DEBUG
   Serial.println ( "LCD off" );
 #endif
@@ -927,9 +924,6 @@ inline void print_error ( void ) {
     lcd.clear();
     lcd.setCursor(5, 1);
     lcd.print("Errore");
-
-    // the LCD is printing an error message, may need an update
-    was_error = true;
   }
 }
 
@@ -937,10 +931,12 @@ inline void print_error ( void ) {
 //! \brief Shows the current error code to LCD (only in debug mode).
 //!
 //! \details Implemented layout:
+//! <pre>
 //!          |----------------|
 //!          |XXXXXXXXXXX e:XX|
 //!          |XXXXXXXXXXXXXXXX|
 //!          |----------------|
+//! </pre>
 //!
 inline void show_err_code_debug ( void ) {
   if ( ( in_debug == true ) && ( last_btn_status == LOW ) ) {
@@ -951,7 +947,7 @@ inline void show_err_code_debug ( void ) {
     lcd.setCursor ( 14, 0 );
     lcd.print ( err_code );
 
-    must_update_lcd = true;
+    lcd.update_lcd();
   }
 }
 
@@ -961,15 +957,12 @@ inline void show_err_code_debug ( void ) {
 //!
 //! \details Used only in debug mode.
 //!  
-//! \param distance_to_print[in] The distance from the water in centimeters.
-//! \param distance_comp[in] The distance from water (calibrated value in centimeters).
+//! \param[in] distance_to_print The distance from the water in centimeters.
+//! \param[in] distance_comp The distance from water (calibrated value in centimeters).
 //!
 inline void update_lcd_debug ( const float64_t distance_to_print, const float64_t distance_comp ) {
-  if ( ( in_debug == true ) && ( must_update_lcd == true ) ) {
+  if ( in_debug == true ) {
     // if in debug mode and LCD needs an update
-
-    // reset update LCD flag
-    // TODO must_update_lcd = false;
 
     // clear the LCD
     lcd.clear();
@@ -1028,8 +1021,6 @@ inline float64_t measure_level ( void ) {
     const float64_t dist_compensated = distance_read + SENSOR_CALIBRATION;
   
     if ( ( in_debug == true ) && ( last_btn_status == LOW ) ) {
-      // if in debug and not showing the menu (button is released)
-      must_update_lcd = true;
 
       // update LCD with debug data
       update_lcd_debug ( distance_read, dist_compensated );
@@ -1168,6 +1159,7 @@ inline float64_t sanitize_data ( const float64_t data, const float64_t min_val, 
 //! \brief Updates the LCD with the actual parameters if needed.
 //! \details The data are printed as follows:
 //! 
+//! <pre>
 //!  |----------------| 
 //!  | xxxx L   yyy % |
 //!  | ############## |
@@ -1192,19 +1184,20 @@ inline float64_t sanitize_data ( const float64_t data, const float64_t min_val, 
 //!  <xxxx> = [0, 9999] L
 //!  <yyy> = [0, 100] %
 //!  # X 16 => 0 = 0%, 16 = 100%
+//! </pre>
 //!  
 //! \param[in] water_percentage The tank filling percentage.
 //! \param[in] liters The water volume in liters.
 //!
 inline void update_lcd ( const float64_t water_percentage, const float64_t liters ) {
+  bool must_update_lcd = true;
   if( ( water_percentage < 0.0 ) || ( water_percentage > 100.0 ) || ( liters < 0.0 ) || ( liters > 9999.9 ) ) {
     // if data are invalid, don't update the LCD
-    // TODO must_update_lcd = false;
+    must_update_lcd = false;
   }
   
   if ( must_update_lcd == true ) {
     // if the LCD must be updates
-    // TODO must_update_lcd = false;
 
     // Clear the LCD
     lcd.clear();
@@ -1218,7 +1211,7 @@ inline void update_lcd ( const float64_t water_percentage, const float64_t liter
     // print the liters
 
     // determine the index of the first cipher of #liters to be written.
-    int16_t index = 4;
+    uint16_t index = 4;
     const int16_t l = static_cast< int16_t > ( liters );
 
     // 2 digits
@@ -1299,6 +1292,7 @@ inline void autotest ( void ) {
   digitalWrite ( LCD_LIGHT_DPIN, LOW );
   digitalWrite ( LED_CAPACITY_DPIN, LOW );
   lcd.clear();
+  lcd.update_lcd();
 
   // wait 1 second to let user to see result
   delay ( 1000 );
@@ -1322,6 +1316,7 @@ inline void autotest ( void ) {
     // this symbol turns on all pixels of the LCD (second row)
     lcd.write ( PROGRESS_CHAR );
   }
+  lcd.update_lcd();
 
   // wait 3 second to let user to see result
   delay ( 3000 );
@@ -1329,6 +1324,7 @@ inline void autotest ( void ) {
   // 4. Reset state
   digitalWrite ( LED_CAPACITY_DPIN, LOW );
   lcd.clear();
+  lcd.update_lcd();
 
   // wait and back to normal
   delay ( 1000 );
@@ -1338,11 +1334,13 @@ inline void autotest ( void ) {
 //! \brief Prints on LCD the consumption statistic passed.
 //!
 //! \details Follows the format:
+//! <pre>
 //!  |----------------| 
 //!  |<      str     >|
 //!  |Tot. <stat>   L |
 //!  |----------------|
-//!  
+//! </pre>
+//!
 //! \param[in] str The statistic title.
 //! \param[in] stat The statistic value.
 //! 
@@ -1369,6 +1367,8 @@ inline void print_stat ( String str, const uint32_t stat ) {
   lcd.setCursor ( 14, 1 );
   lcd.print ( "L" );
 
+  lcd.update_lcd();
+
   // wait to let user see the value
   delay ( SHOW_STAT_TIME );
 
@@ -1380,10 +1380,12 @@ inline void print_stat ( String str, const uint32_t stat ) {
 //! \brief Prints the SW version on LCD.
 //!
 //! \details Follows the format:
+//! <pre>
 //!  |----------------| 
 //!  | Versione:      |
 //!  | <num_version>  |
 //!  |----------------|
+//! </pre>
 //!
 inline void show_version ( void ) {
   lcd.clear();
@@ -1398,6 +1400,8 @@ inline void show_version ( void ) {
   lcd.setCursor ( 12, 1 );
   lcd.print ( "GR21" );
 
+  lcd.update_lcd();
+
   // wait to let the user see
   delay(SHOW_VERSION_TIME);
 
@@ -1409,10 +1413,12 @@ inline void show_version ( void ) {
 //! \brief Prints the tank parameters (diameter, number of tanks, max water heigh, max total capacity).
 //!
 //! \details Follows the format:
+//! <pre>
 //!  |----------------| 
 //!  |D:xxxxx N:xx    |
 //!  |H:xxxxx C:xxxxx |
 //!  |----------------|
+//! </pre>
 //!
 inline void show_params ( void ) {
   lcd.clear();
@@ -1431,6 +1437,8 @@ inline void show_params ( void ) {
 
   lcd.print ( " C:" );
   lcd.print ( static_cast < int32_t > ( maximum_capacity ) );
+
+  lcd.update_lcd();
 
   // wait to let user see the value
   delay ( SHOW_PARAM_TIME );
@@ -1478,6 +1486,8 @@ inline void enter_debug ( void ) {
   lcd.setCursor(0,1);
   lcd.print("  Manutenzione  ");
 
+  lcd.update_lcd();
+
   // wait to let user read
   delay(3000);
 
@@ -1485,6 +1495,8 @@ inline void enter_debug ( void ) {
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print(" 1. Autotest    ");
+
+  lcd.update_lcd();
 
   // wait to let user read
   delay ( 1000 );
@@ -1497,18 +1509,16 @@ inline void enter_debug ( void ) {
   lcd.setCursor(0,0);
   lcd.print(" 2. Lettura     ");
 
+  lcd.update_lcd();
+
   // wait to let user read
   delay(1000);
-
-  // update the LCD
-  must_update_lcd = true;
 
   // change measure frequency to the highest value
   measure_interval = MEASURE_HF_INTERVAL; //ms
 
   // turn on LCD
   turn_on_lcd_light();
-  timestamp_lcd_on  = millis();
 }
 
 //!
@@ -1525,11 +1535,10 @@ inline void exit_debug ( void ) {
   lcd.setCursor(0,1);
   lcd.print("    Normale     ");
 
+  lcd.update_lcd();
+
   // wait to let user read
   delay(3000);
-
-  // update the LCD
-  must_update_lcd = true;
 
   // change measure frequency to the lowest value
   measure_interval = MEASURE_LF_INTERVAL; //ms
@@ -1539,7 +1548,7 @@ inline void exit_debug ( void ) {
 //! \brief Actions for sixth menu slot.
 //!
 inline void button_interval_6_handle ( void ) {
-  must_update_lcd = true;
+  // do nothing
 }
 
 //!
@@ -1547,7 +1556,6 @@ inline void button_interval_6_handle ( void ) {
 //!
 inline void button_interval_5_handle ( void ) {
   show_params();
-  must_update_lcd = true;
 }
 
 //!
@@ -1555,7 +1563,6 @@ inline void button_interval_5_handle ( void ) {
 //!
 inline void button_interval_4_handle ( void ) {
   show_version();
-  must_update_lcd = true;
 }
 
 //!
@@ -1574,7 +1581,6 @@ inline void button_interval_3_handle ( void ) {
 //!
 inline void button_interval_2_handle ( void ) {
   show_stats();
-  must_update_lcd = true;
 }
 
 //!
@@ -1595,57 +1601,32 @@ inline void show_menu_options ( const uint32_t btn_press_time ) {
     turn_on_lcd_light();
   } else if( ( btn_press_time >= BTN_INTERVAL_2_TIME ) && ( btn_press_time < BTN_INTERVAL_3_TIME ) ) {   
     // slot 2
-    if ( is_displaying_slot_2 == false ) {
-      lcd.clear();
-      lcd.print ( " -> Consumi " );
-
-      is_displaying_slot_1 = false;
-      is_displaying_slot_2 = true;
-    }
+    lcd.clear();
+    lcd.print ( " -> Consumi " );
   } else if( ( btn_press_time >= BTN_INTERVAL_3_TIME ) && ( btn_press_time < BTN_INTERVAL_4_TIME ) ) {
     // slot 3
-    if ( is_displaying_slot_3 == false ) {
-      lcd.clear();
-      lcd.print ( " -> Modo" );
-      lcd.setCursor ( 0, 1 );
-      if ( in_debug == false ) {
-        lcd.print ( "    Manutenzione" );
-      } else {
-        lcd.print ( "    Normale" );
-      }
-
-      is_displaying_slot_2 = false;
-      is_displaying_slot_3 = true;
+    lcd.clear();
+    lcd.print ( " -> Modo" );
+    lcd.setCursor ( 0, 1 );
+    if ( in_debug == false ) {
+      lcd.print ( "    Manutenzione" );
+    } else {
+      lcd.print ( "    Normale" );
     }
   } else if ( ( btn_press_time >= BTN_INTERVAL_4_TIME ) && (btn_press_time < BTN_INTERVAL_5_TIME) ) {
     // slot 4 
-    if ( is_displaying_slot_4 == false ) {
-      lcd.clear();
-      lcd.print ( " -> Versione" );
-
-      is_displaying_slot_3 = false;
-      is_displaying_slot_4 = true;
-    }
+    lcd.clear();
+    lcd.print ( " -> Versione" );
   } else if ( ( btn_press_time >= BTN_INTERVAL_5_TIME ) && (btn_press_time < BTN_INTERVAL_6_TIME) ) {
     // slot 5
-    if ( is_displaying_slot_5 == false ) {
-      lcd.clear();
-      lcd.print ( " -> Parametri" );
-      lcd.setCursor ( 0, 1 );
-      lcd.print ( "    Serbatoio" );
-
-      is_displaying_slot_4 = false;
-      is_displaying_slot_5 = true;
-    }
+    lcd.clear();
+    lcd.print ( " -> Parametri" );
+    lcd.setCursor ( 0, 1 );
+    lcd.print ( "    Serbatoio" );
   } else if( ( btn_press_time >= BTN_INTERVAL_6_TIME ) ) {
     // slot 6
-    if ( is_displaying_slot_6 == false ) {
-      lcd.clear();
-      lcd.print ( " -> Esci Menu'" );
-
-      is_displaying_slot_5 = false;
-      is_displaying_slot_6 = true;
-    }
+    lcd.clear();
+    lcd.print ( " -> Esci Menu'" );
   }
 }
 
@@ -1701,14 +1682,6 @@ inline void manage_button ( void ) {
     
   } else if ( ( btn_status == LOW ) && ( last_btn_status == HIGH ) ) {
     // Detect the FALLING EDGE
-
-    // reset display status
-    is_displaying_slot_1     = false ;
-    is_displaying_slot_2     = false ;
-    is_displaying_slot_3     = false ;
-    is_displaying_slot_4     = false ;
-    is_displaying_slot_5     = false ;
-    is_displaying_slot_6     = false ;
         
     // do actions
     const uint32_t btn_press_time = ( timestamp_now - timestamp_btn_press );
@@ -1728,6 +1701,12 @@ inline void manage_button ( void ) {
 // Setup function
 
 void setup ( void ) {
+  // pin setup
+  pinMode ( ECHO_DPIN,         INPUT  );
+  pinMode ( TRIG_DPIN,         OUTPUT );
+  pinMode ( LED_CAPACITY_DPIN, OUTPUT );
+  pinMode ( LCD_LIGHT_DPIN,    OUTPUT );
+  pinMode ( LCD_BUTTON_DPIN,   INPUT  );
 
   // initialize variables
   initialize();
@@ -1751,19 +1730,12 @@ void setup ( void ) {
   }
   lcd_if.createChar ( PROGRESS_CHAR, lcd_progress_array );
 
-  lcd.begin(&lcd_if);
+  lcd.begin ( &lcd_if, LCD_LIGHT_DPIN );
   
   // compute tank parameters
   tank_capacity     = ( TANK_RADIUS_CM * TANK_RADIUS_CM * PI * WATER_MAX_HEIGHT_CM ) / CM3_PER_LITER;
   maximum_capacity  = TANK_NUMBER * tank_capacity;
   
-  // pin setup
-  pinMode ( ECHO_DPIN,         INPUT  );
-  pinMode ( TRIG_DPIN,         OUTPUT );
-  pinMode ( LED_CAPACITY_DPIN, OUTPUT );
-  pinMode ( LCD_LIGHT_DPIN,    OUTPUT );
-  pinMode ( LCD_BUTTON_DPIN,   INPUT  );
-
   delay ( 1000 );
 
   // do autotest
@@ -1818,10 +1790,6 @@ void setup ( void ) {
 // Loop function
 
 void loop ( void ) {
-
-  // read current milliseconds passed from boot.
-  const uint32_t timestamp_now = millis();
-
   // consumption time management
   stats.updateTime();
 
@@ -1829,6 +1797,9 @@ void loop ( void ) {
   manage_button();
 
   lcd.update_lcd();
+
+  // read current milliseconds passed from boot.
+  const uint32_t timestamp_now = millis();
   
   // lcd light timer
   if ( ( timestamp_now - timestamp_lcd_on ) >= LCD_ON_TIME ) {
@@ -1872,11 +1843,6 @@ void loop ( void ) {
       float64_t liters = compute_liters ( distance );
       liters = sanitize_data ( liters, 0.0, maximum_capacity, 0.5, maximum_capacity );
 
-      // update needed if previous message was error or volume was different
-      if( ( compare_float ( previous_liters, liters, 0.1 ) == 0 ) || ( was_error == true ) ) {
-        must_update_lcd = true;
-        was_error       = false;
-      }
       previous_liters = liters;
 
       // compute the percentage
