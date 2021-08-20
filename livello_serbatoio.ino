@@ -29,271 +29,463 @@
 #endif
 
 // Defines
-#define VERSION "v0.9" /// Version tag
+#define VERSION "v0.9"    //!< Version tag
 
-#define CONF_DEBUG   1 /// Constant used to compile in DEBUG mode (Serial enabled).
-#define CONF_RELEASE 0 /// Constant used to compile in RELEASE mode (Serial disabled).
+#define CONF_DEBUG   1    //!< Constant used to compile in DEBUG mode (Serial enabled).
+#define CONF_RELEASE 0    //!< Constant used to compile in RELEASE mode (Serial disabled).
 
-#define SENSOR_HCSR04   0 /// Constant used to compile code for HC-SR04 ultrasonic sensor.
-#define SENSOR_JSNSR04T 1 /// Constant used to compile code for JSN-SR04T ultrasonic sensor (waterproof).
+#define SENSOR_HCSR04   0 //!< Constant used to compile code for HC-SR04 ultrasonic sensor.
+#define SENSOR_JSNSR04T 1 //!< Constant used to compile code for JSN-SR04T ultrasonic sensor (waterproof).
 
 // Configuration
 #ifndef UNIT_TEST
-# define DEBUG  CONF_RELEASE
-# define SENSOR SENSOR_HCSR04
+# define DEBUG  CONF_RELEASE   //!< Current configuration
+# define SENSOR SENSOR_HCSR04  //!< Current sensor
 #endif
 
-// Types
+///
+/// \defgroup TypesGroup Custom types
+/// @{
 typedef double float64_t;
+/// @}
 
-// Constants
+///
+/// \defgroup ConstGroup Constants
+/// @{
 
-// Median filter
-const int16_t     FILTER_SEED           = 0                                   ; /// Initial value for Median Filter.
-const int16_t     FILTER_SIZE           = 5                                   ; /// Median Filter size.
+///
+/// \defgroup MedFilterGroup Median filter
+/// @{
+const int16_t     FILTER_SEED           = 0                                   ; //!< Initial value for Median Filter.
+const int16_t     FILTER_SIZE           = 5                                   ; //!< Median Filter size.
+/// @}
 
-// Pins
-const int16_t     ECHO_DPIN             = 12                                  ; /// Digital pin for ultrasonic sensor ECHO pin.
-const int16_t     TRIG_DPIN             = 11                                  ; /// Digital pin for ultrasonic sensor TRIG pin.
-const int16_t     LED_CAPACITY_DPIN     = 13                                  ; /// Digital pin for LED.
-const int16_t     LCD_BUTTON_DPIN       = 2                                   ; /// Digital pin for Button.
-const int16_t     LCD_LIGHT_DPIN        = 9                                   ; /// Digital pin for LCD backlight.
+///
+/// \defgroup PinGroup Pins used
+/// @{
+const int16_t     ECHO_DPIN             = 12                                  ; //!< Digital pin for ultrasonic sensor ECHO pin.
+const int16_t     TRIG_DPIN             = 11                                  ; //!< Digital pin for ultrasonic sensor TRIG pin.
+const int16_t     LED_CAPACITY_DPIN     = 13                                  ; //!< Digital pin for LED.
+const int16_t     LCD_BUTTON_DPIN       = 2                                   ; //!< Digital pin for Button.
+const int16_t     LCD_LIGHT_DPIN        = 9                                   ; //!< Digital pin for LCD backlight.
+/// @}
 
-// Tank and volume
-const uint16_t    TANK_NUMBER           = 2U                                  ; /// The number of tanks.
-const float64_t   TANK_RADIUS_CM        = 35.0                                ; /// The radius of the tank(s) in cm.
-const float64_t   TANK_HEIGHT_CM        = 156.0                               ; /// The height of the tank(s) in cm.
-const float64_t   SENSOR_DISTANCE_CM    = 26.0                                ; /// The distance between sensor and the highest water level in cm.
-const float64_t   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE_CM ; /// The maximum water height in cm.
-const float64_t   LOW_LEVEL_THRESHOLD   = 30.0                                ; /// The percentage threshold used to indicate the low level of water.
-const float64_t   EMPTY_LEVEL_THRESHOLD = 10.0                                ; /// The percentage threshold used to indicate the tank(s) emptiness.
+///
+/// \defgroup TankGroup Tank and volume
+/// @{
+const uint16_t    TANK_NUMBER           = 2U                                  ; //!< The number of tanks.
+const float64_t   TANK_RADIUS_CM        = 35.0                                ; //!< The radius of the tank(s) in cm.
+const float64_t   TANK_HEIGHT_CM        = 156.0                               ; //!< The height of the tank(s) in cm.
+const float64_t   SENSOR_DISTANCE_CM    = 26.0                                ; //!< The distance between sensor and the highest water level in cm.
+const float64_t   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE_CM ; //!< The maximum water height in cm.
+const float64_t   LOW_LEVEL_THRESHOLD   = 30.0                                ; //!< The percentage threshold used to indicate the low level of water.
+const float64_t   EMPTY_LEVEL_THRESHOLD = 10.0                                ; //!< The percentage threshold used to indicate the tank(s) emptiness.
+/// @}
 
-// Conversion units
-const float64_t   CM3_PER_LITER         = 1000.0                              ; /// Constant used to convert liters in cm^3 (1 l = 1000 cm^3).
+///
+/// \defgroup ConversionGroup Conversion units
+/// @{
+const float64_t   CM3_PER_LITER         = 1000.0                              ; //!< Constant used to convert liters in cm^3 (1 l = 1000 cm^3).
+/// @}
 
-// Timers
-const uint32_t    MEASURE_LF_INTERVAL   = 10 * 1000                           ; // ms
-const uint32_t    MEASURE_HF_INTERVAL   =  1 * 1000                           ; // ms
-const uint32_t    LCD_ON_TIME           = 30 * 1000                           ; // ms
-const uint32_t    SLEEP_TIME            =  100                                ; // ms
-const uint32_t    SHOW_STAT_TIME        = 5000                                ; // ms
-const uint32_t    SHOW_PARAM_TIME       = 5000                                ; // ms
-const uint32_t    SHOW_VERSION_TIME     = 3000                                ; // ms
-const uint32_t    LED_CONTROL_TIME      = 1000                                ; // ms
-const uint32_t    READ_DISTANCE_TIME    = 1000                                ; // ms
-const uint32_t    BTN_INTERVAL_1_TIME   =  200                                ; // ms
-const uint32_t    BTN_INTERVAL_2_TIME   = 2000                                ; // ms
-const uint32_t    BTN_INTERVAL_3_TIME   = 3000                                ; // ms
-const uint32_t    BTN_INTERVAL_4_TIME   = 4000                                ; // ms
-const uint32_t    BTN_INTERVAL_5_TIME   = 5000                                ; // ms
-const uint32_t    BTN_INTERVAL_6_TIME   = 6000                                ; // ms
+///
+/// \defgroup TimerGroup Timers constants
+/// @{
+const uint32_t    MEASURE_LF_INTERVAL   = 10 * 1000                           ; //!< Inteval between two measurements (low frequency) in milliseconds.
+const uint32_t    MEASURE_HF_INTERVAL   =  1 * 1000                           ; //!< Inteval between two measurements (high frequency) in milliseconds.
+const uint32_t    LCD_ON_TIME           = 30 * 1000                           ; //!< LCD backlight duration in milliseconds.
+const uint32_t    SLEEP_TIME            =  100                                ; //!< Sleep time between two execution of #loop in milliseconds.
+const uint32_t    SHOW_STAT_TIME        = 5000                                ; //!< Duration for visualization of Statistics in milliseconds.
+const uint32_t    SHOW_PARAM_TIME       = 5000                                ; //!< Duration for visualization of Tank Parameters in milliseconds.
+const uint32_t    SHOW_VERSION_TIME     = 3000                                ; //!< Duration for visualization of SW Version in milliseconds.
+const uint32_t    LED_CONTROL_TIME      = 1000                                ; //!< Period of LED blinking in milliseconds.
+const uint32_t    READ_DISTANCE_TIME    = 1000                                ; //!< Period of distance reading from Median Filter in milliseconds.
+const uint32_t    BTN_INTERVAL_1_TIME   =  200                                ; //!< Duration to trig Slot 1 of menu in milliseconds.
+const uint32_t    BTN_INTERVAL_2_TIME   = 2000                                ; //!< Duration to trig Slot 2 of menu in milliseconds.
+const uint32_t    BTN_INTERVAL_3_TIME   = 3000                                ; //!< Duration to trig Slot 3 of menu in milliseconds.
+const uint32_t    BTN_INTERVAL_4_TIME   = 4000                                ; //!< Duration to trig Slot 4 of menu in milliseconds.
+const uint32_t    BTN_INTERVAL_5_TIME   = 5000                                ; //!< Duration to trig Slot 5 of menu in milliseconds.
+const uint32_t    BTN_INTERVAL_6_TIME   = 6000                                ; //!< Duration to trig Slot 6 of menu in milliseconds.
+/// @}
 
-// Sensor parameters
+///
+/// \defgroup SensorGroup Sensor parameters
+/// Constants related to the ultrasonic sensors.
+/// @{
 #if SENSOR == SENSOR_JSNSR04T
 
-const float64_t   SENSOR_CALIBRATION    = 1.7                                 ; // cm
-const float64_t   SENSOR_MIN_RANGE      = 20.0                                ; // cm
-const float64_t   SENSOR_MAX_RANGE      = 600.0                               ; // cm
-const float64_t   SENSOR_LSB            = 58.0                                ; // usec / cm
-const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; // usec
+const float64_t   SENSOR_CALIBRATION    = 1.7                                 ; //!< Sensor distance offset used for calibration in centimeters.
+const float64_t   SENSOR_MIN_RANGE      = 20.0                                ; //!< Sensor minimum readable distance in centimeters.
+const float64_t   SENSOR_MAX_RANGE      = 600.0                               ; //!< Sensor maximum readable distance in centimeters.
+const float64_t   SENSOR_LSB            = 58.0                                ; //!< Sensor LSB to achieve distance from ECHO pulse time in usec/cm.
+const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; //!< Duration of TRIG signal to perform a measurement.
 
-const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; // 500 ms
-const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; // 38 ms
+const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; //!< Timeout in microseconds used to determine when the sensor reading is failed.
+const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; //!< ECHO pulse time in microseconds which indicates the absence of sensor readable obstacles.
 
 #elif SENSOR == SENSOR_HCSR04
 
-const float64_t   SENSOR_CALIBRATION    = 0.0                                 ; // cm
-const float64_t   SENSOR_MIN_RANGE      = 2.0                                 ; // cm
-const float64_t   SENSOR_MAX_RANGE      = 400.0                               ; // cm
-const float64_t   SENSOR_LSB            = 58.0                                ; // usec / cm
-const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; // usec
+const float64_t   SENSOR_CALIBRATION    = 0.0                                 ; //!< Sensor distance offset used for calibration in centimeters.
+const float64_t   SENSOR_MIN_RANGE      = 2.0                                 ; //!< Sensor minimum readable distance in centimeters.
+const float64_t   SENSOR_MAX_RANGE      = 400.0                               ; //!< Sensor maximum readable distance in centimeters.
+const float64_t   SENSOR_LSB            = 58.0                                ; //!< Sensor LSB to achieve distance from ECHO pulse time in usec/cm.
+const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; //!< Duration of TRIG signal to perform a measurement.
 
-const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; // 500 ms
-const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; // 38 ms
+const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; //!< Timeout in microseconds used to determine when the sensor reading is failed.
+const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; //!< ECHO pulse time in microseconds which indicates the absence of sensor readable obstacles.
 
 #else
 
-const float64_t   SENSOR_CALIBRATION    = 0.0                                 ; // cm
-const float64_t   SENSOR_MIN_RANGE      = 0.0                                 ; // cm
-const float64_t   SENSOR_MAX_RANGE      = 0.0                                 ; // cm
-const float64_t   SENSOR_LSB            = 1.0                                 ; // usec / cm
-const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; // usec
+const float64_t   SENSOR_CALIBRATION    = 0.0                                 ; //!< Sensor distance offset used for calibration in centimeters.
+const float64_t   SENSOR_MIN_RANGE      = 0.0                                 ; //!< Sensor minimum readable distance in centimeters.
+const float64_t   SENSOR_MAX_RANGE      = 0.0                                 ; //!< Sensor maximum readable distance in centimeters.
+const float64_t   SENSOR_LSB            = 1.0                                 ; //!< Sensor LSB to achieve distance from ECHO pulse time in usec/cm.
+const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; //!< Duration of TRIG signal to perform a measurement.
 
-const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; // 500 ms
-const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; // 38 ms
+const uint32_t    SENSOR_RESPONSE_TIMEOUT_US = 500000UL                       ; //!< Timeout in microseconds used to determine when the sensor reading is failed.
+const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; //!< ECHO pulse time in microseconds which indicates the absence of sensor readable obstacles.
 
 #endif
+/// @}
 
-// LCD constants
-const int32_t     LCD_COLS              = 16                                  ;
-const int32_t     LCD_ROWS              =  2                                  ;
+///
+/// \defgroup LCDGroup LCD Constants
+/// Constants related to the LCD.
+/// @{
 
-// LCD special characters
-const byte        PROGRESS_CHAR         = 1                                   ;
-const int32_t     LCD_CHAR_SIZE         = 8                                   ;
-const byte        LCD_PROGRESS[LCD_CHAR_SIZE] = { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
+// LCD Dimensions
+const int32_t     LCD_COLS              = 16                                  ; //!< Number of columns of LCD.
+const int32_t     LCD_ROWS              =  2                                  ; //!< Number of rows of LCD.
+
+//LCD Special Characters
+const byte        PROGRESS_CHAR         = 1                                   ;                     //!< Index of special character used for progress bar.
+const int32_t     LCD_CHAR_SIZE         = 8                                   ;                     //!< Size of special character definition array.
+const byte        LCD_PROGRESS[LCD_CHAR_SIZE] = { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F }; //!< Definition of special character used for progress bar.
 
 // LCD pins
-const int16_t     RS                    = 3                                   ;
-const int16_t     E                     = 4                                   ;
-const int16_t     DB4                   = 5                                   ;
-const int16_t     DB5                   = 6                                   ;
-const int16_t     DB6                   = 7                                   ;
-const int16_t     DB7                   = 8                                   ;
+const int16_t     RS                    = 3                                   ; //!< LCD's RS digital pin.
+const int16_t     E                     = 4                                   ; //!< LCD's E digital pin.
+const int16_t     DB4                   = 5                                   ; //!< LCD's DB4 digital pin.
+const int16_t     DB5                   = 6                                   ; //!< LCD's DB5 digital pin.
+const int16_t     DB6                   = 7                                   ; //!< LCD's DB6 digital pin.
+const int16_t     DB7                   = 8                                   ; //!< LCD's DB7 digital pin.
+/// @}
 
-// Error codes
-const int32_t     ERR_OK                = 0                                   ; //<! All ok
-const int32_t     ERR_SENS              = 1                                   ; //<! Sensor reading error
-const int32_t     ERR_RANGE             = 2                                   ; //<! Sensor reading out of range
-const int32_t     ERR_STAT              = 3                                   ; //<! Consumption calculation error
+///
+/// \defgroup ErrCodesGroup Error Codes
+/// Error codes used to determine the status in DEBUG mode.
+/// @{
+const int32_t     ERR_OK                = 0                                   ; //!< All ok. No error occurred.
+const int32_t     ERR_SENS              = 1                                   ; //!< Sensor reading error.
+const int32_t     ERR_RANGE             = 2                                   ; //!< Sensor reading out of range.
+const int32_t     ERR_STAT              = 3                                   ; //!< Consumption calculation error.
+/// @}
 
-// Global variables
+/// @}
 
-// Status flags
-static volatile bool        led_on                    ;
-static volatile bool        led_status                ;
-static volatile bool        in_debug                  ;
-static volatile bool        first_measure_done        ;
-static volatile byte        btn_status                ;
-static volatile byte        last_btn_status           ;
-static volatile int32_t     err_code                  ;
+/// \defgroup VarsGroup Global variables
+/// @{
 
-// Timestamps
-static volatile uint32_t    timestamp_lcd_on          ;
-static volatile uint32_t    timestamp_measurement     ;
-static volatile uint32_t    timestamp_last_led_ctrl   ;
-static volatile uint32_t    timestamp_last_read_dist  ;
-static volatile uint32_t    timestamp_last_filling    ;
-static volatile uint32_t    timestamp_btn_press       ;
+/// \defgroup StatusGroup Status flags
+/// Status variables.
+/// @{
+static volatile bool        led_on                    ;  //!< Indicates if LED is turned on (true) or off (false).
+static volatile bool        led_status                ;  //!< Indicates if LED is on or blinking (true) or off (false).
+static volatile bool        in_debug                  ;  //!< Indicates if the SW is in DEBUG mode (true) or NORMAL mode (false).
+static volatile bool        first_measure_done        ;  //!< Establishes if the first measurements used to feed the Median Filter have been done (true) or not (false).
+static volatile byte        last_btn_status           ;  //!< Indicates if the button was pressed (HIGH) of not (LOW), to detect long pressure.
+static volatile int32_t     err_code                  ;  //!< Contains the current error code (see \ref ErrCodesGroup).
+/// @}
 
-// Timings
-static uint32_t             measure_interval          ;
+/// \defgroup TimestampsGroup Timestamps
+/// The timestamps used to implement non-blocking timers.
+/// @{
+static volatile uint32_t    timestamp_lcd_on          ;  //!< Timestamp of the last LCD backlight activation in milliseconds.
+static volatile uint32_t    timestamp_measurement     ;  //!< Timestamp of the last reading from Median Filter in milliseconds.
+static volatile uint32_t    timestamp_last_led_ctrl   ;  //!< Timestamp of the last LED activation in milliseconds.
+static volatile uint32_t    timestamp_last_read_dist  ;  //!< Timestamp of the last sensor reading in milliseconds.
+static volatile uint32_t    timestamp_btn_press       ;  //!< Timestamp of the last button pressing in milliseconds.
+/// @}
 
-// Computed tank(s) parameters
-static float64_t            tank_capacity             ;
-static float64_t            maximum_capacity          ;
+/// \defgroup TimingGroup Timings
+/// The timing settings (for variable frequency timers).
+/// @{
+static uint32_t             measure_interval          ;  //!< Contains the current sensor reading period (based on current SW state) in milliseconds.
+/// @}
 
-// Current reads
-static uint16_t             number_measures_done      ;   
-static float64_t            percentage                ;
-static volatile float64_t   distance                  ;
-static volatile float64_t   previous_liters           ;
 
-// Classes
+/// \defgroup TankParamsCompGroup Computed tank(s) parameters
+/// The computed paramaters based on the currently compiled tank data.
+/// @{
+static float64_t            tank_capacity             ; //!< The capacity of one tank in liters.
+static float64_t            maximum_capacity          ; //!< The capacity of all tanks summed in liters (assume all tanks equals).
+/// @}
 
+/// \defgroup ReadingGroup Current reads
+/// The last reading status.
+/// @{
+static uint16_t             number_measures_done      ; //!< The number of measures done during initialization phase.  
+static float64_t            percentage                ; //!< The current water level in percentage.
+static volatile float64_t   distance                  ; //!< The last distance read from sensor (in centimeters).
+static volatile float64_t   previous_liters           ; //!< The previous capacity read in liters.
+/// @}
+
+/// @}
+
+//!
+//! \brief Helper class to write on LCD.
+//! \details The purpose is to try the optimization of writings on LCD to prevent unwanted screen flickering.
+//!          It uses a buffer to keep the current LCD content. When the user writes using the "print" or "write" methods,
+//!          data are written in the buffer. The user has in charge the responsibility to update the LCD view by 
+//!          explicitly invoking the "update_lcd" method. The latter verifies which characters have been changed from previous view and
+//!          updates only the different ones.
+//!
 class LcdHelper {
 public:
+
+  //!
+  //! \brief Class default constructor.
+  //!
   LcdHelper ( void ) {
+
+    // NULL instance
     this->lcd_instance = nullptr;
+
+    // LCD backlight not controllable
+    this->backlight_digital_pin = -1;
   }
 
-  void begin ( LiquidCrystal * const lcd, const int32_t backlight_dpin ) {
+  //!
+  //! \brief Initializes this instance with current LCD instance.
+  //!
+  //! \param[in] lcd The pointer to the LiquidCrystal lcd instance.
+  //! \param[in] backlight_dpin The digital pin number used to control LCD backlight (default: -1, if not controllable).
+  //!
+  void begin ( LiquidCrystal * const lcd, const int32_t backlight_dpin = -1 ) {
 
-    this->lcd_instance = lcd;
-    this->backlight_digital_pin = backlight_dpin;
+    // check null pointer
+    if ( lcd != nullptr ) {
 
-    for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
-      for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
-         this->lcd_matrix[i][j] = EMPTY_CHAR;
-         this->last_lcd_matrix[i][j] = EMPTY_CHAR;
-         this->special_char_map[i][j] = false;
-         this->last_special_char_map[i][j] = false;
+      // assign passed data to internal members
+      this->lcd_instance = lcd;
+      this->backlight_digital_pin = backlight_dpin;
+
+      // initializes all members
+      for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
+        for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
+           this->lcd_matrix[i][j] = EMPTY_CHAR;
+           this->last_lcd_matrix[i][j] = EMPTY_CHAR;
+           this->special_char_map[i][j] = false;
+           this->last_special_char_map[i][j] = false;
+        }
       }
+
+      // set cursor to initial position
+      this->home();
+
+      // clear LCD
+      this->lcd_instance->clear();
     }
-    this->home();
-
-    this->lcd_instance->clear();
   }
 
+  //!
+  //! \brief Turns on the LCD backlight if configured.
+  //! 
   void turn_on_backlight ( void ) {
-    digitalWrite ( this->backlight_digital_pin, HIGH );
+    // check if configured
+    if ( this->backlight_digital_pin != -1 ) {
+
+      // Turn on light
+      digitalWrite ( this->backlight_digital_pin, HIGH );
+    }
   }
 
+  //!
+  //! \brief Turns off the LCD backlight if configured.
+  //! 
   void turn_off_backlight ( void ) {
-    digitalWrite ( this->backlight_digital_pin, LOW );
+    // check if configured
+    if ( this->backlight_digital_pin != -1 ) {
+
+      // Turn off light
+      digitalWrite ( this->backlight_digital_pin, LOW );
+    }
   }
 
+  //!
+  //! \brief Clears the current LCD content (the internal buffer) and resets the cursor position.
+  //! 
   void clear ( void ) {    
     for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
       for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
-         this->lcd_matrix[i][j] = EMPTY_CHAR;
-         this->special_char_map[i][j] = false;
+
+        // reset the internal buffer 
+        this->lcd_matrix[i][j] = EMPTY_CHAR;
+        this->special_char_map[i][j] = false;
       }
     }
+
+    // reset the cursor
     this->home();
   }
 
+  //!
+  //! \brief Sets the cursor position if valid (in LCD sizes).
+  //!
+  //! \param[in] c The column index.
+  //! \param[in] r The row index.
+  //!
   void setCursor ( const uint16_t c, const uint16_t r ) {
+
+    // check the LCD sizes
     if ( ( c < LCD_COLS ) && ( r < LCD_ROWS ) ) {
+
+      // set the cursor
       this->cursor_c = c;
       this->cursor_r = r;
     }
   }
 
+  //!
+  //! \brief Sets the cursor position to (0, 0).
+  //!
   void home ( void ) {
     this->setCursor ( 0U, 0U );
   }
 
+  //!
+  //! \brief Prints a string to the internal buffer without exceeding the limits of the LCD.
+  //!
+  //! \param[in] str The string (char pointer).
+  //! \param[in] str_length The string length.
+  //!
   void print ( const char * str, const uint16_t str_length = LCD_COLS ) {
     for ( uint16_t str_i = 0U; str_i < str_length; str_i ++ ) {
+      // if terminator has been reached than exit
       if ( str[str_i] == '\0' ) {
         break;
       }
 
+      // check if we are in LCD boundaries
       if ( this->cursor_c < LCD_COLS ) {
+
+        // write the current character
         this->lcd_matrix[this->cursor_r][this->cursor_c] = str[str_i];
+
+        // shift the cursor to thr right by 1
         this->cursor_c ++;
       }
     }
         
   }
 
+  //!
+  //! \brief Prints a number to the LCD.
+  //!
+  //! \param[in] number The integer number to write.
+  //!
   void print ( const int32_t number ) {
+    // convert the number to string
     const String number_str = String ( number );
+
+    // write the string
     this->print ( number_str.c_str() );
   }
 
+
+  //!
+  //! \brief Prints a String to the LCD.
+  //!
+  //! \param[in] str The string to write.
+  //!
   void print ( const String& str ) {
     this->print ( str.c_str() );
   }
 
+  //!
+  //! \brief Prints a integer number to the LCD.
+  //!
+  //! \param[in] number The number to write.
+  //!
   void print ( const int16_t number ) {
+    // convert the number to string
     const String number_str = String ( number );
+
+    // write the string
     this->print ( number_str.c_str() );
   }
 
+  //!
+  //! \brief Prints a integer number to the LCD.
+  //!
+  //! \param[in] number The number to write.
+  //!
   void print ( const uint16_t number ) {
+    // convert the number to string
     const String number_str = String ( number );
+
+    // write the string
     this->print ( number_str.c_str() );
   }
 
+  //!
+  //! \brief Prints a floating point number to the LCD.
+  //!
+  //! \param[in] number The number to write.
+  //!
   void print ( const float64_t number ) {
+    // convert the number to string
     const String number_str = String ( number );
+
+    // write the string
     this->print ( number_str.c_str() );
   }
 
+  //!
+  //! \brief Writes a special character to the LCD.
+  //! 
+  //! \details It writes the number on the buffer and set to true the #special_char_map matrix in the corresponding position on screen.
+  //!
+  //! \param[in] special_char_index The special character number.
+  //!
   void write ( const int32_t special_char_index ) {
+    // check if the special character is in 0-9 range
     if ( ( special_char_index >= 0 ) && ( special_char_index <= 9 ) ) {
+      // flag position as "special character"
       this->special_char_map[this->cursor_r][this->cursor_c] = true;
-  
+
+      // print the number
       this->print ( special_char_index );
     }
   }
 
+  //!
+  //! \brief Updates the LCD HW with the current written data.
+  //!
   void update_lcd ( void ) {
-    if ( this->need_update() == true ) {
-      // write different chars
+    // check if an update is needed and if the LCD instance is valid
+    if ( ( this->need_update() == true ) && ( this->lcd_instance != nullptr ) ) {
+      // write the different chars
       for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
         for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
           if ( ( this->lcd_matrix[i][j] != this->last_lcd_matrix[i][j]             ) ||
                ( this->special_char_map[i][j] != this->last_special_char_map[i][j] )    ) {
+            // if the content is changed with respect to displayed data
+
+            // set the cursor to the correct position
             this->lcd_instance->setCursor(j, i);
+
+            // if it is a special symbol
             if ( this->is_special_symbol ( i, j ) == true ) {
+
+              // Write the special symbol (if configured)
               this->lcd_instance->write ( static_cast<byte> ( String ( this->lcd_matrix[i][j] ).toInt() ) );
             } else {
+              // else if a normal character, write it
               this->lcd_instance->print ( String ( this->lcd_matrix[i][j] ) );
             }
-            
+
+            // update the current LCD HW content for next writing
             this->last_lcd_matrix[i][j] = this->lcd_matrix[i][j];
             this->last_special_char_map[i][j] = this->special_char_map[i][j];
           }
@@ -303,24 +495,50 @@ public:
   }
 
 private:
+
+  //!
+  //! \brief Checks if the symbol in the given position is special or not.
+  //!
+  //! \details Checks if the symbol is a number in 0-9 and it flagged true in #special_char_map.
+  //!
+  //! \param[in] r The row.
+  //! \param[in] c The column.
+  //!
+  //! \return true if the symbol in (#r, #c) is special or false otherwise.
+  //!
   bool is_special_symbol ( const uint16_t r, const uint16_t c ) {
     bool is_ss = false;
+
+    // check if cursor position is valid
     if ( ( r < LCD_ROWS ) && ( c < LCD_COLS ) ) {
+
+      // get the symbol
       char symbol = this->lcd_matrix[r][c];
-      if ( ( symbol >= '0' ) && ( symbol <= '9' ) && this->special_char_map[r][c] == true ) {
+
+      // check if is special
+      if ( ( symbol >= '0' ) && ( symbol <= '9' ) && ( this->special_char_map[r][c] == true ) ) {
         is_ss = true;
       }
     }
     return is_ss;
   }
 
+  //!
+  //! \brief Checks if the LCD HW view needs an update.
+  //!
+  //! \details Checks if there is a symbol different from the currently displayed data
+  //!
+  //! \return true if there is a difference to display or false otherwise.
+  //!
   bool need_update ( void ) {
     bool is_update_needed = false;
     
     for ( uint16_t i = 0U; i < LCD_ROWS; i++ ) {
       for ( uint16_t j = 0U; j < LCD_COLS; j++ ) {
+        // check if it is different
         if ( this->last_lcd_matrix[i][j] != this->lcd_matrix[i][j] ) {
           is_update_needed = true;
+          break;
         }
       }
     }
@@ -328,23 +546,23 @@ private:
     return is_update_needed;
   }
 
-  uint16_t cursor_r;
+  uint16_t cursor_r; //<! The current cursor position in row.
   
-  uint16_t cursor_c;
+  uint16_t cursor_c; //<! The current cursor position in column.
 
-  int32_t backlight_digital_pin;
+  int32_t backlight_digital_pin; //<! The current digital pin for LCD backlight.
 
-  static const char EMPTY_CHAR = ' ';
+  static const char EMPTY_CHAR = ' '; //<! The empty character for LCD.
   
-  char lcd_matrix[LCD_ROWS][LCD_COLS];
+  char lcd_matrix[LCD_ROWS][LCD_COLS]; //<! The internal buffer containing data to display.
 
-  char last_lcd_matrix[LCD_ROWS][LCD_COLS];
+  char last_lcd_matrix[LCD_ROWS][LCD_COLS]; //<! The current LCD displayed content.
 
-  bool special_char_map[LCD_ROWS][LCD_COLS];
+  bool special_char_map[LCD_ROWS][LCD_COLS]; //<! The special characters map.
 
-  bool last_special_char_map[LCD_ROWS][LCD_COLS];
+  bool last_special_char_map[LCD_ROWS][LCD_COLS]; //<! The currently displayed special characters.
 
-  LiquidCrystal *lcd_instance; 
+  LiquidCrystal *lcd_instance; //<! The configured LiquidCrystal instance.
 };
 
 //!
@@ -489,12 +707,12 @@ public:
   }
 
 private:
-  byte    medFilterWin;                //<! Samples number in the sliding window of the filter - usually an odd value.
-  byte    medDataPointer;              //<! Central point of the filter sliding window.
-  int16_t data        [FILTER_SIZE];   //<! Array of data ordered by age (Circular buffer).
-  byte    sizeMap     [FILTER_SIZE];   //<! Array used to store data locations ordered by size.
-  byte    locationMap [FILTER_SIZE];   //<! Array used to store data locations in the map.
-  byte    oldestDataPoint;             //<! Position of the oldest value in the circular buffer.
+  byte    medFilterWin;                //!< Samples number in the sliding window of the filter - usually an odd value.
+  byte    medDataPointer;              //!< Central point of the filter sliding window.
+  int16_t data        [FILTER_SIZE];   //!< Array of data ordered by age (Circular buffer).
+  byte    sizeMap     [FILTER_SIZE];   //!< Array used to store data locations ordered by size.
+  byte    locationMap [FILTER_SIZE];   //!< Array used to store data locations in the map.
+  byte    oldestDataPoint;             //!< Position of the oldest value in the circular buffer.
 };
 
 
@@ -716,34 +934,39 @@ private:
     consumption_samples[index] = 0U;
   }
 
-  static const uint16_t STAT_SIZE         = (24U * 3U) + 1U; //<! The sample dimension (3 days).
-  static const uint32_t LITERS_THRESHOLD  = 15U;             //<! Minimum consumption threshold to be inserted as sample.
+  static const uint16_t STAT_SIZE         = (24U * 3U) + 1U; //!< The sample dimension (3 days).
+  static const uint32_t LITERS_THRESHOLD  = 15U;             //!< Minimum consumption threshold to be inserted as sample.
 
-  static const uint32_t ONE_SECOND_MS     = 1000U;           //<! 1 second constant.
-  static const uint32_t ONE_HOUR_S        = (60U * 60U);     //<! 1 hour constant.
+  static const uint32_t ONE_SECOND_MS     = 1000U;           //!< 1 second constant.
+  static const uint32_t ONE_HOUR_S        = (60U * 60U);     //!< 1 hour constant.
   
-  uint32_t index                          ;        //<! Buffer current index.
-  uint32_t consumption_samples[STAT_SIZE] ;        //<! The buffer with samples. 
-  volatile uint32_t last_liters           ;        //<! The last known volume of water in the tank (in liters).
-  volatile uint32_t consumption           ;        //<! The last hour water consumption.
+  uint32_t index                          ;        //!< Buffer current index.
+  uint32_t consumption_samples[STAT_SIZE] ;        //!< The buffer with samples. 
+  volatile uint32_t last_liters           ;        //!< The last known volume of water in the tank (in liters).
+  volatile uint32_t consumption           ;        //!< The last hour water consumption.
 
-  volatile uint32_t last_millis           ;        //<! Last timestamp (value from power-on).
-  volatile uint32_t millis_passed         ;        //<! Passed milliseconds from last invocation of #updateTime.
-  volatile uint32_t seconds_passed        ;        //<! Passed seconds from last invocation of #updateTime.
+  volatile uint32_t last_millis           ;        //!< Last timestamp (value from power-on).
+  volatile uint32_t millis_passed         ;        //!< Passed milliseconds from last invocation of #updateTime.
+  volatile uint32_t seconds_passed        ;        //!< Passed seconds from last invocation of #updateTime.
 };
 
-// Instances of the classes
+
+/// \defgroup ClassInstGroup Instances of the classes
+/// @{
 
 //Format (RS, E, DB4, DB5, DB6, DB7)
-static LiquidCrystal lcd_if ( RS, E, DB4, DB5, DB6, DB7 );
+static LiquidCrystal lcd_if ( RS, E, DB4, DB5, DB6, DB7 ); //!< The instance of LCD HW.
 
-static LcdHelper lcd;
+static LcdHelper lcd; //!< The LCD helper instance.
 
-static MedianFilter filter;
+static MedianFilter filter; //!< The Median Filter instance.
 
-static ConsumptionData stats;
+static ConsumptionData stats; //!< The Consumption Data instance.
 
-// SW Functions
+/// @}
+
+/// \defgroup SWFuncGroup SW Functions
+/// @{
 
 //!
 //! \brief Determines if two float values are equal.
@@ -789,7 +1012,6 @@ inline void initialize ( void ) {
   led_status               = false               ;
   first_measure_done       = false               ;
   err_code                 = ERR_OK              ;
-  btn_status               = LOW                 ;
   last_btn_status          = LOW                 ;
   
   tank_capacity            = 0.0                 ; // L
@@ -804,7 +1026,6 @@ inline void initialize ( void ) {
 
   timestamp_lcd_on         = 0                   ; // ms
   timestamp_measurement    = 0                   ; // ms
-  timestamp_last_filling   = 0                   ; // ms
   timestamp_last_read_dist = 0                   ; // ms 
   timestamp_btn_press      = 0                   ; // ms
   timestamp_last_led_ctrl  = 0                   ; // ms
@@ -1662,7 +1883,7 @@ inline void do_menu_actions ( const uint32_t btn_press_time ) {
 //!
 inline void manage_button ( void ) {
   // read button status
-  btn_status = static_cast < byte > ( digitalRead ( LCD_BUTTON_DPIN ) );
+  const byte btn_status = static_cast < byte > ( digitalRead ( LCD_BUTTON_DPIN ) );
 
   // get current time
   const uint32_t timestamp_now = millis();
@@ -1698,8 +1919,14 @@ inline void manage_button ( void ) {
   }
 }
 
-// Setup function
+/// @}
 
+/// \defgroup ArduinoFuncGroup Arduino functions
+/// @{
+
+//!
+//! \brief Setup function (executed once).
+//!
 void setup ( void ) {
   // pin setup
   pinMode ( ECHO_DPIN,         INPUT  );
@@ -1766,7 +1993,6 @@ void setup ( void ) {
   timestamp_measurement    = timestamp_now;
   timestamp_last_led_ctrl  = timestamp_now;
   timestamp_last_read_dist = timestamp_now;
-  timestamp_last_filling   = timestamp_now;
 
 #if DEBUG
   Serial.begin ( 9600 );
@@ -1787,8 +2013,9 @@ void setup ( void ) {
   lcd.update_lcd();
 }
 
-// Loop function
-
+//!
+//! \brief Loop function.
+//!
 void loop ( void ) {
   // consumption time management
   stats.updateTime();
@@ -1870,3 +2097,5 @@ void loop ( void ) {
   // go to sleep
   delay ( SLEEP_TIME );
 }
+
+/// @}
