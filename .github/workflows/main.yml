@@ -6,7 +6,7 @@ name: Doxygen Action
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [ lcd_helper ]
 
 
   
@@ -26,7 +26,7 @@ jobs:
       uses: mattnotmitt/doxygen-action@v1.1.0
       with:
         # Path to Doxyfile
-        doxyfile-path: "./doc/Doxyfile"
+        doxyfile-path: "./docs/Doxyfile"
         # Working directory
         working-directory: "." # default is .
     
@@ -36,4 +36,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         # Default Doxyfile build documentation to html directory. 
         # Change the directory if changes in Doxyfile
-        publish_dir: ./doc
+        publish_dir: ./docs
