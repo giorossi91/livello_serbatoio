@@ -1,0 +1,12 @@
+*.gcda
+*.gcno
+*.d
+*.o
+*.a
+livello_serbatoio_test
+livello_serbatoio_uut.hpp
+build*/*
+*.pro.user*
+old
+deploy/*
+test_result

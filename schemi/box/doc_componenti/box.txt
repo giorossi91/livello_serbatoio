@@ -1,0 +1,52 @@
+Dimensioni box attuale
+
+15 * 9 * 4.5 cm
+
+Disegno (compreso spessore 2mm)
+150 x 100 x 60
+
+da bordo scheda a bottone 20mm
+
+LCD
+
+18mm da sopra
+36mm di altezza
+18 da sotto
+
+quota viti (mm)
+58-1,60-8-3-1,6-7+2
+
+58   (spessore box) (60 - 2 spessore)
+1,60 (spessore pcb scheda)
+8    (spessore pin socket LCD)
+3    (spessore pin header LCD)
+1,60 (spessore pcb LCD)
+7    (spessore blocco LCD)
+2    (spessore coperchio)
+
+==================
+Senza viti
+
+quota pcb
+58-1,60-8-3-1,6-7+2
+
++ 10mm perno
+
+incastro a T
+      2mm (2,5)
+      ++
+      ||------> 3mm (2,7)
+   +--  --+
+   |      | 5mm (5,6)
+   |      |
+   +------+
+      4mm
+      
+  6+2mm
+-----+
+     |
+     | 12mm (centrato su 100mm di altezza)
+     |
+-----+
+      
+
