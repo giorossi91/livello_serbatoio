@@ -1,7 +1,0 @@
-test/livello_serbatoio_testapp
-test/build
-test/old
-
-test/simulator/build-simulator-Desktop_Qt_5_12_3_GCC_64bit-Debug
-test/simulator/simulator/build_ui
-test/simulator/simulator/simulator.pro.user
