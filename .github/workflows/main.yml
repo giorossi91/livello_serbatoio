@@ -24,7 +24,7 @@ jobs:
     
     - name: Setup assets
       run: |
-        mkdir -p ./docs/doxydoc
+        mkdir -p ./doxydoc/
         
     - name: Doxygen Action
       uses: mattnotmitt/doxygen-action@v1.1.0
@@ -41,7 +41,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         # Default Doxyfile build documentation to html directory. 
         # Change the directory if changes in Doxyfile
-        publish_dir: ./docs/doxydoc/
+        publish_dir: ./doxydoc/
         destination_dir: ./docs/doxydoc/
         keep_files: no
         enable_jekyll: true
