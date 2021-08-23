@@ -43,4 +43,4 @@ jobs:
         # Change the directory if changes in Doxyfile
         publish_dir: ./doxydoc/
         destination_dir: ./doxydoc/
-        keep_files: true
+        keep_files: no
