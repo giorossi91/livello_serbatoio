@@ -42,6 +42,6 @@ jobs:
         # Default Doxyfile build documentation to html directory. 
         # Change the directory if changes in Doxyfile
         publish_dir: ./doxydoc/
-        destination_dir: ./docs/doxydoc/
+        destination_dir: ./doxydoc/
         keep_files: no
         enable_jekyll: true
