@@ -8,3 +8,6 @@ See box and lid 3D models [here](https://giorossi91.github.io/livello_serbatoio/
 
 ## SW documentation
 See SW documentation [here](https://giorossi91.github.io/livello_serbatoio/doxydoc/html/index.html).
+
+## Finished result
+![Box Integrated](https://giorossi91.github.io/livello_serbatoio/box_integrated.jpg).
