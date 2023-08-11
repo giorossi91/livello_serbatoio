@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "livello_serbatoio_espansione-rescue")(type "KiCad")(uri "${KIPRJMOD}/livello_serbatoio_espansione-rescue.kicad_sym")(options "")(descr ""))
+)
