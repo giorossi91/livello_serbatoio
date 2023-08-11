@@ -17,7 +17,7 @@
 #define SENSOR SENSOR_HCSR04 //<-- sensor actually used
 
 #define private public
-#define volatile 
+#define volatile
 
 namespace uut {
 #include "livello_serbatoio_uut.hpp"
@@ -361,70 +361,66 @@ void LivelloSerbatoioTests::test_sanitize_data ( void ) {
 
 void LivelloSerbatoioTests::test_update_lcd ( void ) {
     std::string text = "";
+    uut::lcd_if.clear();
     uut::lcd.clear();
 
 
     // Update off
-    uut::must_update_lcd = false;
     uut::update_lcd(0.0, 0.0);
 
-    text = uut::lcd.harness_getLcdText();
+    text = uut::lcd_if.harness_getLcdText();
     CPPUNIT_ASSERT_EQUAL(std::string("                \n                "), text);
 
 
     // Update on
-    uut::must_update_lcd = true;
     uut::update_lcd(0.0, 0.0);
+    uut::lcd.update_lcd();
 
-    text = uut::lcd.harness_getLcdText();
+    text = uut::lcd_if.harness_getLcdText();
     CPPUNIT_ASSERT_EQUAL(std::string("    0 L     0 % \n     Vuoto      "), text);
 
-    uut::must_update_lcd = true;
     uut::update_lcd(15.0, 150.0);
+    uut::lcd.update_lcd();
 
-    text = uut::lcd.harness_getLcdText();
+    text = uut::lcd_if.harness_getLcdText();
     CPPUNIT_ASSERT_EQUAL(std::string("  150 L    15 % \n ##  Riserva    "), text);
 
-    uut::must_update_lcd = true;
     uut::update_lcd(14.0, 140.0);
+    uut::lcd.update_lcd();
 
-    text = uut::lcd.harness_getLcdText();
+    text = uut::lcd_if.harness_getLcdText();
     CPPUNIT_ASSERT_EQUAL(std::string("  140 L    14 % \n #   Riserva    "), text);
 
-    uut::must_update_lcd = true;
     uut::update_lcd(9.0, 90.0);
+    uut::lcd.update_lcd();
 
-    text = uut::lcd.harness_getLcdText();
+    text = uut::lcd_if.harness_getLcdText();
     CPPUNIT_ASSERT_EQUAL(std::string("   90 L     9 % \n #   Riserva    "), text);
 
-    uut::must_update_lcd = true;
     uut::update_lcd(100.0, 1000.0);
+    uut::lcd.update_lcd();
 
-    text = uut::lcd.harness_getLcdText();
+    text = uut::lcd_if.harness_getLcdText();
     CPPUNIT_ASSERT_EQUAL(std::string(" 1000 L   100 % \n ############## "), text);
 
     // check ranges
-    text = uut::lcd.harness_getLcdText();
+    text = uut::lcd_if.harness_getLcdText();
 
-    uut::must_update_lcd = true;
     uut::update_lcd(-0.1, 0.0);
-    CPPUNIT_ASSERT_EQUAL( false, uut::must_update_lcd         );
-    CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
+    uut::lcd.update_lcd();
+    CPPUNIT_ASSERT_EQUAL( text , uut::lcd_if.harness_getLcdText());
 
-    uut::must_update_lcd = true;
     uut::update_lcd(100.1, 0.0);
-    CPPUNIT_ASSERT_EQUAL( false, uut::must_update_lcd         );
-    CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
+    uut::lcd.update_lcd();
+    CPPUNIT_ASSERT_EQUAL( text , uut::lcd_if.harness_getLcdText());
 
-    uut::must_update_lcd = true;
     uut::update_lcd(0.0, -0.1);
-    CPPUNIT_ASSERT_EQUAL( false, uut::must_update_lcd         );
-    CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
+    uut::lcd.update_lcd();
+    CPPUNIT_ASSERT_EQUAL( text , uut::lcd_if.harness_getLcdText());
 
-    uut::must_update_lcd = true;
     uut::update_lcd(0.0, 10000.0);
-    CPPUNIT_ASSERT_EQUAL( false, uut::must_update_lcd         );
-    CPPUNIT_ASSERT_EQUAL( text , uut::lcd.harness_getLcdText());
+    uut::lcd.update_lcd();
+    CPPUNIT_ASSERT_EQUAL( text , uut::lcd_if.harness_getLcdText());
 }
 
 void LivelloSerbatoioTests::test_loop_btn ( void ) {
@@ -439,7 +435,7 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
     // force lcd backlight off
     harness_getBoard()->harness_setPinValue(uut::LCD_LIGHT_DPIN, OUTPUT, LOW);
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // inteval 1 (LCD light)
 
@@ -448,13 +444,13 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
     loopNTimes( 1 );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     CPPUNIT_ASSERT_EQUAL(LOW, harness_getBoard()->harness_getPinInternalValue(uut::LCD_LIGHT_DPIN));
 
     loopNTimes( uut::BTN_INTERVAL_1_TIME / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     CPPUNIT_ASSERT_EQUAL(HIGH, harness_getBoard()->harness_getPinInternalValue(uut::LCD_LIGHT_DPIN));
 
@@ -464,7 +460,7 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
     // wait for lcd turn off
     loopNTimes( uut::LCD_ON_TIME / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     CPPUNIT_ASSERT_EQUAL(LOW, harness_getBoard()->harness_getPinInternalValue(uut::LCD_LIGHT_DPIN));
 
@@ -477,14 +473,14 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
     loopNTimes( uut::BTN_INTERVAL_2_TIME / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // release button
     harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
 
     loopNTimes( 1 );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // interval 3 (debug mode)
 
@@ -493,14 +489,14 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
     loopNTimes( uut::BTN_INTERVAL_3_TIME / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // release button
     harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
 
     loopNTimes( 1 );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     CPPUNIT_ASSERT_EQUAL( true, uut::in_debug );
 
@@ -509,14 +505,14 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
     loopNTimes( uut::BTN_INTERVAL_3_TIME / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // release button
     harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
 
     loopNTimes( 1 );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     CPPUNIT_ASSERT_EQUAL( false, uut::in_debug );
 
@@ -527,14 +523,14 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
     loopNTimes( uut::BTN_INTERVAL_4_TIME / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // release button
     harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
 
     loopNTimes( 1 );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // interval 5 (tank parameters)
 
@@ -543,14 +539,14 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
     loopNTimes( uut::BTN_INTERVAL_5_TIME / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // release button
     harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
 
     loopNTimes( 1 );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // interval 6 (tank parameters)
 
@@ -559,14 +555,14 @@ void LivelloSerbatoioTests::test_loop_btn ( void ) {
 
     loopNTimes( uut::BTN_INTERVAL_6_TIME / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(HIGH) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     // release button
     harness_getBoard()->harness_setPinValue(uut::LCD_BUTTON_DPIN, INPUT, LOW);
 
     loopNTimes( 1 );
 
-    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , uut::btn_status );
+    CPPUNIT_ASSERT_EQUAL( static_cast<byte>(LOW) , static_cast<byte>(digitalRead(uut::LCD_BUTTON_DPIN)) );
 
     stop_time();
 }
@@ -638,7 +634,7 @@ void LivelloSerbatoioTests::setUp ( void ) {
     ArduinoBoardStub *board = new ArduinoBoardStub();
     harness_setBoard(board);
 
-    uut::lcd.harness_setPrintFailFunction(printFail);
+    uut::lcd_if.harness_setPrintFailFunction(printFail);
 
     cycle_num = 0U;
 }

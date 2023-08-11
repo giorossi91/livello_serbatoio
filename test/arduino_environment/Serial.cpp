@@ -7,9 +7,9 @@ void SerialClass::begin ( int32_t baudrate ) {
 }
 
 void SerialClass::print ( String str ) {
-  emit printSerialText(str);
+  emit printSerialText(str.getString());
 
-  std::cout << str << std::flush;
+  std::cout << str.getString() << std::flush;
 }
 
 void SerialClass::print ( double n ) {

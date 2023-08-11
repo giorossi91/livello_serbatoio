@@ -12,6 +12,7 @@ CONFIG += c++11
 SOURCES += \
     LiquidCrystal.cpp \
     Serial.cpp \
+    String.cpp \
     arduino_stubs.cpp \
     arduinoboard.cpp \
     arduinoboardstub.cpp
@@ -19,6 +20,7 @@ SOURCES += \
 HEADERS += \
     LiquidCrystal.h \
     Serial.h \
+    String.h \
     arduino_stubs.h \
     arduino_types.h \
     arduinoboard.h \

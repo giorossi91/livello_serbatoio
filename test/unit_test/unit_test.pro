@@ -8,7 +8,7 @@ LIBS += -L$$PWD/../deploy/arduino_environment/lib -larduino_environment
 
 INCLUDEPATH += $$PWD/../deploy/arduino_environment/inc
 
-QMAKE_CXXFLAGS += -O0 -g2 -ftest-coverage -fprofile-arcs
+QMAKE_CXXFLAGS += -O0 -g2 -ftest-coverage -fprofile-arcs -Wno-keyword-macro
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

@@ -10,9 +10,10 @@
 #include <cmath>
 #include <atomic>
 
+#include <String.h>
+
 typedef uint8_t     byte;
 typedef bool        boolean;
-typedef std::string String;
 typedef void ( *isr_t ) ( void );
 
 #define HARNESS_PREFIX "[Harness] "
