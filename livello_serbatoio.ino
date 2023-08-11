@@ -29,7 +29,7 @@
 #endif
 
 // Defines
-#define VERSION "v0.8"
+#define VERSION "v0.9"
 
 #define CONF_DEBUG   1
 #define CONF_RELEASE 0
@@ -61,9 +61,9 @@ const int16_t     LCD_LIGHT_DPIN        = 9                                   ;
 
 // Tank and volume
 const uint16_t    TANK_NUMBER           = 2U                                  ;
-const float64_t   TANK_RADIUS_CM        = 35.0                                ; // cm
-const float64_t   TANK_HEIGHT_CM        = 156.0                               ; // cm
-const float64_t   SENSOR_DISTANCE_CM    = 26.0                                ; // cm
+const float64_t   TANK_RADIUS_CM        = 65.0 / 2.0                          ; // cm
+const float64_t   TANK_HEIGHT_CM        = 150.0                               ; // cm
+const float64_t   SENSOR_DISTANCE_CM    = 18.0                                ; // cm
 const float64_t   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE_CM ; // cm
 const float64_t   LOW_LEVEL_THRESHOLD   = 30.0                                ; // %
 const float64_t   EMPTY_LEVEL_THRESHOLD = 10.0                                ; // %
@@ -102,9 +102,9 @@ const uint32_t    SENSOR_NO_OBSTACLE_US      = 38000UL                        ; 
 
 #elif SENSOR == SENSOR_HCSR04
 
-const float64_t   SENSOR_CALIBRATION    = 0.0                                 ; // cm
+const float64_t   SENSOR_CALIBRATION    = 1.0                                 ; // cm
 const float64_t   SENSOR_MIN_RANGE      = 2.0                                 ; // cm
-const float64_t   SENSOR_MAX_RANGE      = 400.0                               ; // cm
+const float64_t   SENSOR_MAX_RANGE      = 450.0                               ; // cm
 const float64_t   SENSOR_LSB            = 58.0                                ; // usec / cm
 const int32_t     SENSOR_ACTIVATION_TH  = 15                                  ; // usec
 
