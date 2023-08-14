@@ -95,6 +95,8 @@ private:
 
   void loopNTimes ( uint32_t n );
 
+  static double expected_liters (const double d);
+
   [[noreturn]] static void printFail ( const char * str );
 };
 

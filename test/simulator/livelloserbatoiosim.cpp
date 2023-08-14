@@ -20,7 +20,7 @@
 // --> UUT
 #define UNIT_TEST
 
-#define DEBUG  CONF_RELEASE  //<-- release configuration
+#define DEBUG  CONF_DEBUG  //<-- release configuration
 #define SENSOR SENSOR_HCSR04 //<-- sensor actually used
 
 namespace uut {
@@ -28,15 +28,17 @@ namespace uut {
 }
 // <--
 
-const int LivelloSerbatoioSim::DISTANCE_LSB = 58;
-
 LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::LivelloSerbatoioSim) {
+    ui(new Ui::LivelloSerbatoioSim), randomTimer{nullptr}, linearChargeTimer{nullptr}, linearDischargeTimer{nullptr} {
     ui->setupUi(this);
 
     // setup arduino board to use for simulator
     harness_initBoard();
+
+    uut::lcd_if.harness_mapSymbol(uut::PROGRESS_CHAR  , "#");
+    uut::lcd_if.harness_mapSymbol(uut::ARROW_DOWN_CHAR, "V");
+    uut::lcd_if.harness_mapSymbol(uut::ARROW_UP_CHAR  , "^");
 
     showEventsPanel = new ShowEvents(this);
 
@@ -58,14 +60,17 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     qRegisterMetaType<std::string>();
     qRegisterMetaType<int32_t>("int32_t");
 
+    ui->manual_button->setEnabled(false);
+
     ui->serial_textbrowser->setText("");
     ui->lcd_textedit->setText("");
 
-    ui->distance_vslider->setMinimum(0);
+    ui->distance_vslider->setMinimum(-2);
     ui->distance_vslider->setMaximum(static_cast<uint32_t>(uut::TANK_HEIGHT_CM + 2));
 
-    ui->distance_spinbox->setMinimum(0);
+    ui->distance_spinbox->setMinimum(-2);
     ui->distance_spinbox->setMaximum(static_cast<uint32_t>(uut::TANK_HEIGHT_CM + 2));
+    ui->distance_vslider->setValue( static_cast<uint32_t>(uut::SENSOR_DISTANCE_CM - uut::SENSOR_CALIBRATION) );
 
     connect(&uut::lcd_if      , SIGNAL(printTextOnLcd(std::string)) , this, SLOT(updateLcdScreen(std::string))     , Qt::QueuedConnection);
     connect(&Serial           , SIGNAL(printSerialText(std::string)), this, SLOT(updateSerialMonitor(std::string)) , Qt::QueuedConnection);
@@ -81,15 +86,16 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     ui->statusBar->showMessage(status);
 
     simOn = true;
+    threadExit = false;
     ui->actionPause ->setEnabled(true );
     ui->actionResume->setEnabled(false);
 
     executor = QThread::create([=](void) {
-        harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(ui->distance_spinbox->value() * DISTANCE_LSB));
+        harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(ui->distance_spinbox->value() * uut::SENSOR_LSB));
 
         uut::setup();
 
-        while(1) {
+        while(!threadExit) {
             simOnMutex.lock();
             while(simOn == false) {
                 simOnCondition.wait(&simOnMutex);
@@ -104,6 +110,13 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
 }
 
 LivelloSerbatoioSim::~LivelloSerbatoioSim ( void ) {
+    threadExit = true;
+
+    simOnMutex.lock();
+    simOn = true;
+    simOnCondition.notify_all();
+    simOnMutex.unlock();
+
     delete ui;
 
     delete showEventsPanel;
@@ -125,7 +138,8 @@ void LivelloSerbatoioSim::monitorSignal(int32_t id, int32_t periodMs) {
 }
 
 void LivelloSerbatoioSim::updateSerialMonitor ( std::string text ) {
-    ui->serial_textbrowser->setPlainText(ui->serial_textbrowser->toPlainText() + QString::fromStdString(text));
+    ui->serial_textbrowser->moveCursor(QTextCursor::End);
+    ui->serial_textbrowser->insertPlainText(QString::fromStdString(text));
     ui->serial_textbrowser->verticalScrollBar()->setValue(ui->serial_textbrowser->verticalScrollBar()->maximum());
 }
 
@@ -150,13 +164,23 @@ void LivelloSerbatoioSim::updatePinStatus ( int32_t pin, int32_t value ) {
 
 void LivelloSerbatoioSim::on_distance_vslider_valueChanged ( int value ) {
     ui->distance_spinbox->setValue(value);
-    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(value * DISTANCE_LSB));
+    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(value * uut::SENSOR_LSB));
 }
 
 
 void LivelloSerbatoioSim::on_distance_spinbox_valueChanged ( double position ) {
     ui->distance_vslider->setValue(static_cast<int>(position));
-    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(position * DISTANCE_LSB));
+    harness_getBoard()->harness_setPulseTime(uut::ECHO_DPIN, static_cast<uint32_t>(position * uut::SENSOR_LSB));
+}
+
+void LivelloSerbatoioSim::on_tankMax_button_clicked()
+{
+    ui->distance_spinbox->setValue(static_cast<int>(uut::TANK_HEIGHT_CM - uut::SENSOR_CALIBRATION) );
+}
+
+void LivelloSerbatoioSim::on_sensMax_button_clicked()
+{
+    ui->distance_spinbox->setValue(static_cast<int>(uut::SENSOR_DISTANCE_CM - uut::SENSOR_CALIBRATION) );
 }
 
 void LivelloSerbatoioSim::on_show_button_pressed ( void ) {
@@ -227,4 +251,158 @@ void LivelloSerbatoioSim::on_actionResume_triggered ( void ) {
 void LivelloSerbatoioSim::on_actionShow_Digital_I_O_triggered ( void )
 {
     showEventsPanel->show();
+}
+
+
+void LivelloSerbatoioSim::on_manual_button_clicked()
+{
+    ui->manual_button->setEnabled( false );
+    ui->distance_spinbox->setEnabled( true );
+    ui->distance_vslider->setEnabled( true );
+
+    ui->linearcharge_button->setEnabled( true );
+    ui->lineardischarge_button->setEnabled( true );
+    ui->random_button->setEnabled( true );
+
+    if ( randomTimer != nullptr ) {
+        randomTimer->stop();
+        delete randomTimer;
+        randomTimer = nullptr;
+    }
+
+    if ( linearChargeTimer != nullptr ) {
+        linearChargeTimer->stop();
+        delete linearChargeTimer;
+        linearChargeTimer = nullptr;
+    }
+
+    if ( linearDischargeTimer != nullptr ) {
+        linearDischargeTimer->stop();
+        delete linearDischargeTimer;
+        linearDischargeTimer = nullptr;
+    }
+}
+
+void LivelloSerbatoioSim::on_random_button_clicked()
+{
+    ui->manual_button->setEnabled( true );
+    ui->distance_spinbox->setEnabled( false );
+    ui->distance_vslider->setEnabled( false );
+
+    ui->linearcharge_button->setEnabled( true );
+    ui->lineardischarge_button->setEnabled( true );
+    ui->random_button->setEnabled( true );
+
+    if ( randomTimer != nullptr ) {
+        randomTimer->stop();
+        delete randomTimer;
+        randomTimer = nullptr;
+    }
+
+    if ( linearChargeTimer != nullptr ) {
+        linearChargeTimer->stop();
+        delete linearChargeTimer;
+        linearChargeTimer = nullptr;
+    }
+
+    if ( linearDischargeTimer != nullptr ) {
+        linearDischargeTimer->stop();
+        delete linearDischargeTimer;
+        linearDischargeTimer = nullptr;
+    }
+
+    randomTimer = new QTimer();
+    randomTimer->setInterval( 1000 );
+    randomTimer->setSingleShot( false );
+    randomTimer->callOnTimeout ( [&]() {
+        const double value = static_cast<double>( QRandomGenerator::system()->bounded( 0,  static_cast<int>(uut::TANK_HEIGHT_CM)));
+        ui->distance_spinbox->setValue( value );
+    });
+    randomTimer->start( );
+}
+
+void LivelloSerbatoioSim::on_linearcharge_button_clicked()
+{
+    ui->manual_button->setEnabled( true );
+    ui->distance_spinbox->setEnabled( false );
+    ui->distance_vslider->setEnabled( false );
+
+    ui->linearcharge_button->setEnabled( true );
+    ui->lineardischarge_button->setEnabled( true );
+    ui->random_button->setEnabled( true );
+
+    if ( randomTimer != nullptr ) {
+        randomTimer->stop();
+        delete randomTimer;
+        randomTimer = nullptr;
+    }
+
+    if ( linearChargeTimer != nullptr ) {
+        linearChargeTimer->stop();
+        delete linearChargeTimer;
+        linearChargeTimer = nullptr;
+    }
+
+    if ( linearDischargeTimer != nullptr ) {
+        linearDischargeTimer->stop();
+        delete linearDischargeTimer;
+        linearDischargeTimer = nullptr;
+    }
+
+    linearChargeTimer = new QTimer();
+    linearChargeTimer->setInterval( 60 * 1000 );
+    linearChargeTimer->setSingleShot( false );
+    linearChargeTimer->callOnTimeout ( [&]() {
+        double current = ui->distance_spinbox->value();
+        if ( current > uut::SENSOR_DISTANCE_CM )
+        {
+            current -= 1.0;
+        }
+
+        ui->distance_spinbox->setValue( current );
+    });
+    linearChargeTimer->start( );
+}
+
+void LivelloSerbatoioSim::on_lineardischarge_button_clicked()
+{
+    ui->manual_button->setEnabled( true );
+    ui->distance_spinbox->setEnabled( false );
+    ui->distance_vslider->setEnabled( false );
+
+    ui->linearcharge_button->setEnabled( true );
+    ui->lineardischarge_button->setEnabled( true );
+    ui->random_button->setEnabled( true );
+
+    if ( randomTimer != nullptr ) {
+        randomTimer->stop();
+        delete randomTimer;
+        randomTimer = nullptr;
+    }
+
+    if ( linearChargeTimer != nullptr ) {
+        linearChargeTimer->stop();
+        delete linearChargeTimer;
+        linearChargeTimer = nullptr;
+    }
+
+    if ( linearDischargeTimer != nullptr ) {
+        linearDischargeTimer->stop();
+        delete linearDischargeTimer;
+        linearDischargeTimer = nullptr;
+    }
+
+    linearDischargeTimer = new QTimer();
+    linearDischargeTimer->setInterval( 60 * 1000 );
+    linearDischargeTimer->setSingleShot( false );
+    linearDischargeTimer->callOnTimeout ( [&]() {
+        double current = ui->distance_spinbox->value();
+        if ( current < uut::TANK_HEIGHT_CM )
+        {
+            current += 1.0;
+        }
+
+        ui->distance_spinbox->setValue( current );
+    });
+    linearDischargeTimer->start( );
 }

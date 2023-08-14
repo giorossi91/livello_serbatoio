@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QMap>
 
 #include "arduino_types.h"
 #include "arduino_stubs.h"
@@ -40,6 +41,9 @@ public:
 
   void harness_setPrintFailFunction ( printFailFunc func = harness_defaultPrintFail );
 
+  void harness_mapSymbol(const byte index, const String& c);
+
+
 private:
   static constexpr int32_t LCD_COLS_MAX_SIZE = 50;
   static constexpr int32_t LCD_ROWS_MAX_SIZE = 10;
@@ -53,6 +57,8 @@ private:
   int32_t cursor_row;
 
   printFailFunc printFailFunction;
+
+  QMap<byte, String> specialSymbolsMap;
 
 signals:
   void printTextOnLcd(std::string text);

@@ -29,7 +29,7 @@
 #endif
 
 // Defines
-#define VERSION "v0.10"    //!< Version tag
+#define VERSION "v0.11"    //!< Version tag
 #define BANNER  "GR23"     //!< Author and year of build
 
 #define CONF_DEBUG   1    //!< Constant used to compile in DEBUG mode (Serial enabled).
@@ -77,10 +77,10 @@ const int16_t     LCD_LIGHT_DPIN        = 9                                   ; 
 const uint16_t    TANK_NUMBER           = 2U                                  ; //!< The number of tanks.
 const float64_t   TANK_RADIUS_CM        = 65.0 / 2.0                          ; //!< The radius of the tank(s) in cm.
 const float64_t   TANK_HEIGHT_CM        = 150.0                               ; //!< The height of the tank(s) in cm.
-const float64_t   SENSOR_DISTANCE_CM    = 18.0                                ; //!< The distance between sensor and the highest water level in cm.
+const float64_t   SENSOR_DISTANCE_CM    = 19.0                                ; //!< The distance between sensor and the highest water level in cm.
 const float64_t   WATER_MAX_HEIGHT_CM   = TANK_HEIGHT_CM - SENSOR_DISTANCE_CM ; //!< The maximum water height in cm.
-const float64_t   LOW_LEVEL_THRESHOLD   = 30.0                                ; //!< The percentage threshold used to indicate the low level of water.
-const float64_t   EMPTY_LEVEL_THRESHOLD = 10.0                                ; //!< The percentage threshold used to indicate the tank(s) emptiness.
+const float64_t   LOW_LEVEL_THRESHOLD   = 40.0                                ; //!< The percentage threshold used to indicate the low level of water.
+const float64_t   EMPTY_LEVEL_THRESHOLD = 20.0                                ; //!< The percentage threshold used to indicate the tank(s) emptiness.
 /// @}
 
 ///
@@ -92,7 +92,7 @@ const float64_t   CM3_PER_LITER         = 1000.0                              ; 
 ///
 /// \defgroup TimerGroup Timers constants
 /// @{
-const uint32_t    MEASURE_LF_INTERVAL   = 10 * 1000                           ; //!< Inteval between two measurements (low frequency) in milliseconds.
+const uint32_t    MEASURE_LF_INTERVAL   = 30 * 1000                           ; //!< Inteval between two measurements (low frequency) in milliseconds.
 const uint32_t    MEASURE_HF_INTERVAL   =  1 * 1000                           ; //!< Inteval between two measurements (high frequency) in milliseconds.
 const uint32_t    LCD_ON_TIME           = 30 * 1000                           ; //!< LCD backlight duration in milliseconds.
 const uint32_t    SLEEP_TIME            =  100                                ; //!< Sleep time between two execution of #loop in milliseconds.
@@ -159,9 +159,14 @@ const int32_t     LCD_COLS              = 16                                  ; 
 const int32_t     LCD_ROWS              =  2                                  ; //!< Number of rows of LCD.
 
 //LCD Special Characters
-const byte        PROGRESS_CHAR         = 1                                   ;                     //!< Index of special character used for progress bar.
-const int32_t     LCD_CHAR_SIZE         = 8                                   ;                     //!< Size of special character definition array.
-const byte        LCD_PROGRESS[LCD_CHAR_SIZE] = { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F }; //!< Definition of special character used for progress bar.
+const byte        PROGRESS_CHAR         = 1                                   ;                      //!< Index of special character used for progress bar.
+const byte        ARROW_UP_CHAR         = 2                                   ;                      //!< Index of special character used for arrow up.
+const byte        ARROW_DOWN_CHAR       = 3                                   ;                      //!< Index of special character used for arrow downn.
+const int32_t     LCD_CHAR_SIZE         = 8                                   ;                      //!< Size of special character definition array.
+const byte        LCD_PROGRESS[LCD_CHAR_SIZE]   = { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };//!< Definition of special character used for progress bar.
+const byte        LCD_ARROW_DOWN[LCD_CHAR_SIZE] = { 0x00, 0x00, 0x00, 0x1F, 0x0E, 0x04, 0x00, 0x00 };//!< Definition of special character used for arrow down.
+const byte        LCD_ARROW_UP[LCD_CHAR_SIZE]   = { 0x00, 0x00, 0x04, 0x0E, 0x1F, 0x00, 0x00, 0x00 };//!< Definition of special character used for arrow up.
+
 
 // LCD pins
 const int16_t     RS                    = 3                                   ; //!< LCD's RS digital pin.
@@ -180,6 +185,7 @@ const int32_t     ERR_OK                = 0                                   ; 
 const int32_t     ERR_SENS              = 1                                   ; //!< Sensor reading error.
 const int32_t     ERR_RANGE             = 2                                   ; //!< Sensor reading out of range.
 const int32_t     ERR_STAT              = 3                                   ; //!< Consumption calculation error.
+const int32_t     ERR_NOISY             = 4                                   ; //!< Noisy error.
 /// @}
 
 /// @}
@@ -951,6 +957,177 @@ private:
   volatile uint32_t seconds_passed        ;        //!< Passed seconds from last invocation of #updateTime.
 };
 
+//!
+//! @brief Analyzes the readings from distance sensor to determine if the water level is increasing, decreasing or stationary.
+//!        Permits also to detect sensor failure if the readings appear to be random.
+//!
+class ReadingsAnalyzer 
+{
+public:
+  //!
+  //! \brief Default constructor.
+  //!
+  //! \details Creates and instance of this class.
+  //! 
+  //! \return An instance of this class to be initialized with #begin method.
+  //!
+  ReadingsAnalyzer ( void ) {
+  }
+
+  //!
+  //! \brief Initializes this instance.
+  //!
+  void begin ( void ) {
+    lastReading = 0.0;
+    
+    nDecreasing = 0.0;
+    nIncreasing = 0.0;
+    nStationary = 0.0;
+    nNoisy      = 0.0;
+  }
+
+  //!
+  //! \brief Adds a measurement to the statistic.
+  //! 
+  //! \param[in] reading The distance measurement.
+  //!
+  void addReading ( const float64_t reading ) {
+    if ( lastReading != 0.0 ) {
+      const int16_t diffReading = static_cast<int16_t> ( reading - lastReading );
+      if ( abs(diffReading) > NOISY_THREASHOLD ) {
+        // noisy
+        increase ( nNoisy     , 1.0 );
+        decrease ( nDecreasing, nDecreasing );
+        decrease ( nIncreasing, nIncreasing );
+        decrease ( nStationary, nStationary );
+      } else if ( diffReading > 0 ) {
+        // decreasing
+        decrease ( nNoisy     , nNoisy );
+        increase ( nDecreasing, 1.0 );
+        decrease ( nIncreasing, 0.2 );
+        decrease ( nStationary, 1.0 );
+      } else if ( diffReading < 0 ) {
+        // increasing
+        decrease ( nNoisy     , nNoisy );
+        decrease ( nDecreasing, 0.2 );
+        increase ( nIncreasing, 1.0 );   
+        decrease ( nStationary, 1.0 );      
+      } else {
+        decrease ( nNoisy     , nNoisy );
+        decrease ( nDecreasing, 0.2 );
+        decrease ( nIncreasing, 0.2 );
+        increase ( nStationary, 0.2 ); 
+      }
+    }
+    
+    lastReading = reading;
+  }
+
+  //!
+  //! \brief Checks the measurements and gives a response.
+  //!
+  //! \details Checks which events occurred more times.
+  //!
+  //! \return The analysis result which can be any of the following:
+  //!         #UNKNOWN, #STATIONARY, #DECREASING, #INCREASING, #NOISY.
+  //!
+  uint8_t getAnalysis ( void ) {
+    uint8_t result = UNKNOWN;
+
+    const uint16_t SIZE = 4U;
+
+    // prepare values for sorting
+    uint8_t   index  [ SIZE ] = {  NOISY,  DECREASING,  INCREASING,  STATIONARY };
+    float64_t values [ SIZE ] = { nNoisy, nDecreasing, nIncreasing, nStationary };
+
+    // sort (bubblesort for 4 values is not so inefficient)
+    for ( uint16_t j = 0U; j < ( SIZE - 1U ); j++ ) {
+      for ( uint16_t i = 0U; i < ( SIZE - 1U ); i++ ) {
+        if ( values [ i ] > values [ i + 1U ] ) {
+          // swap values
+          float64_t temp    = values [ i ]      ;
+          values [ i ]      = values [ i + 1U ] ;
+          values [ i + 1U ] = temp              ;
+
+          // swap indexes
+          uint8_t tempi    = index [ i ]        ;
+          index [ i ]      = index [ i + 1U ]   ;
+          index [ i + 1U ] = tempi              ;
+        }
+      }
+    }
+
+    // get maximum value
+    result = index [ ( SIZE - 1U ) ];
+
+#if DEBUG
+    // print in DEBUG mode
+    Serial.print ( " N: " ); Serial.print ( nNoisy      );
+    Serial.print ( " D: " ); Serial.print ( nDecreasing );
+    Serial.print ( " I: " ); Serial.print ( nIncreasing );
+    Serial.print ( " S: " ); Serial.print ( nStationary );
+    Serial.print ( " => " );
+    switch ( result ) {
+      case NOISY      : { Serial.println("noisy")     ; } break;
+      case DECREASING : { Serial.println("decreasing"); } break;
+      case INCREASING : { Serial.println("increasing"); } break;
+      case STATIONARY : { Serial.println("stationary"); } break;
+      default         : { Serial.println("stationary"); } break;
+    }
+#endif
+
+    return result;
+  }
+
+  static const uint8_t UNKNOWN    = 0U; //!< Unknown analysis result (initialization value).
+  static const uint8_t STATIONARY = 1U; //!< Water level is stationary.
+  static const uint8_t DECREASING = 2U; //!< Water level is decreasing.
+  static const uint8_t INCREASING = 3U; //!< Water level is increasing.
+  static const uint8_t NOISY      = 4U; //!< Water level is not stable (possible sensor fault).
+
+private:
+  float64_t lastReading; //!< Last water measurement.
+
+  float64_t nDecreasing; //!< Number of "decreasing" readings.
+  float64_t nIncreasing; //!< Number of "increasing" readings.
+  float64_t nStationary; //!< Number of "stationary" readings.
+  float64_t nNoisy;      //!< Number of "noisy" readings.
+
+  static const float64_t SATURATION       = 3.0; //!< Saturation threashold to prevent counter to diverge.
+  static const int16_t   NOISY_THREASHOLD = 5;   //!< Threashold to determine if the reading is noisy.
+
+  //!
+  //! \brief Decrease by #by the value #val.
+  //! 
+  //! \param[in, out] val The value to decrease.
+  //! \param[in] by The decrement (default 1.0).
+  //!
+  //! \return The value decremented #val - #by or 0.0 if #by > #val.
+  //!
+  static inline void decrease ( float64_t &val, float64_t by = 1.0 ) {
+    if ( val > by ) {
+      val = val - by;
+    } else {
+      val = 0.0;
+    }
+  }
+
+  //!
+  //! \brief Decrease by #by the value #val.
+  //! 
+  //! \param[in, out] val The value to increase.
+  //! \param[in] by The increment (default 1.0).
+  //!
+  //! \return The value incremented #val + #by or #SATURATION if #val + #by > #SATURATION.
+  //!
+  static inline void increase ( float64_t &val, float64_t by = 1.0 ) {
+    if ( ( val + by ) < SATURATION ) {
+      val = val + by;
+    } else {
+      val = SATURATION;
+    }
+  }
+};
 
 /// \defgroup ClassInstGroup Instances of the classes
 /// @{
@@ -963,6 +1140,8 @@ static LcdHelper lcd; //!< The LCD helper instance.
 static MedianFilter filter; //!< The Median Filter instance.
 
 static ConsumptionData stats; //!< The Consumption Data instance.
+
+static ReadingsAnalyzer analyzer; //!< Readings analyzer instance
 
 /// @}
 
@@ -1060,18 +1239,27 @@ inline void initialize ( void ) {
 //!
 inline float64_t compute_liters ( float64_t read_distance ) {
 
-  // sanitize data below 0
   if ( read_distance < 0.0 ) {
+    
+    // sanitize data below 0
     read_distance = 0.0;
+    
+  } else if ( read_distance > TANK_HEIGHT_CM ) {
+    
+    // sanitize data over tank height
+    read_distance = WATER_MAX_HEIGHT_CM;
+    
+  } else if ( read_distance >= SENSOR_DISTANCE_CM ) {
+    
+    // remove sensor distance from water
+    read_distance -= SENSOR_DISTANCE_CM;
+    
+  } else {
+    
+    // sanitize data less than sensor distance
+    read_distance = 0.0;
+    
   }
-
-  // sanitize data over tank height
-  if ( read_distance > TANK_HEIGHT_CM ) {
-    read_distance = TANK_HEIGHT_CM;
-  }
-
-  // remove sensor distance from water
-  read_distance -= SENSOR_DISTANCE_CM;
 
   // compute the volume
   const float64_t volume = TANK_NUMBER * ( ( TANK_RADIUS_CM * TANK_RADIUS_CM * PI * ( WATER_MAX_HEIGHT_CM - read_distance ) ) / CM3_PER_LITER );
@@ -1206,6 +1394,31 @@ inline void update_lcd_debug ( const float64_t distance_to_print, const float64_
   }
 }
 
+inline void monitorReadings ( void ) {
+  const uint8_t result = analyzer.getAnalysis();
+
+  if ( in_debug == false ) {
+    lcd.setCursor ( 8, 0 );
+    if ( result == ReadingsAnalyzer::NOISY ) {
+      lcd.print ( "!" );
+    } else if ( result == ReadingsAnalyzer::INCREASING ) {
+      lcd.write ( ARROW_UP_CHAR );
+    } else if ( result == ReadingsAnalyzer::DECREASING ) {
+      lcd.write ( ARROW_DOWN_CHAR );
+    } else {
+      lcd.print ( "-" );
+    }
+  } else {
+    if ( result == ReadingsAnalyzer::NOISY ) {
+      // assign proper error code
+      err_code = ERR_NOISY;
+  
+      // show error code if in debug
+      show_err_code_debug();
+    }
+  }
+}
+
 //!
 //! \brief Executes a measurement of water level.
 //!
@@ -1238,6 +1451,8 @@ inline float64_t measure_level ( void ) {
 
     // convert to cm
     const float64_t distance_read = static_cast< float64_t > ( pulse_time ) / SENSOR_LSB;
+
+    analyzer.addReading ( distance_read );
     
     // apply calibration
     const float64_t dist_compensated = distance_read + SENSOR_CALIBRATION;
@@ -1945,18 +2160,18 @@ void setup ( void ) {
   // initialize consumption statistics
   stats.begin();
 
+  analyzer.begin();
+
   // initialize the LCD
   
   // configure LCD size
   lcd_if.begin ( LCD_COLS, LCD_ROWS );
 
   // add special symbols
-
-  byte lcd_progress_array [ LCD_CHAR_SIZE ];
-  for ( int32_t i = 0;  i < LCD_CHAR_SIZE; i++ ) {
-    lcd_progress_array [ i ] = LCD_PROGRESS [ i ];
-  }
-  lcd_if.createChar ( PROGRESS_CHAR, lcd_progress_array );
+  
+  lcd_if.createChar ( PROGRESS_CHAR  , const_cast<byte*> ( LCD_PROGRESS   ) );
+  lcd_if.createChar ( ARROW_UP_CHAR  , const_cast<byte*> ( LCD_ARROW_UP   ) );
+  lcd_if.createChar ( ARROW_DOWN_CHAR, const_cast<byte*> ( LCD_ARROW_DOWN ) );
 
   lcd.begin ( &lcd_if, LCD_LIGHT_DPIN );
   
@@ -2083,6 +2298,9 @@ void loop ( void ) {
       if ( in_debug == false ) {       
         update_lcd ( percentage, liters );
       }
+
+      // update indicator
+      monitorReadings ( );
     }
 
     // update the timestamp for next value
