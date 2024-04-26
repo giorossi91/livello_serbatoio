@@ -2,6 +2,7 @@
 #define STRING_H
 
 #include <string>
+#include <cstdint>
 
 class String
 {

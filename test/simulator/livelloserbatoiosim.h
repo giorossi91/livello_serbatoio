@@ -29,13 +29,16 @@ private:
 
     QThread *executor;
 
-    bool           simOn;
-    QMutex         simOnMutex;
-    QWaitCondition simOnCondition;
-
-    static const int DISTANCE_LSB;
-
+    bool               simOn;
+    QMutex             simOnMutex;
+    QWaitCondition     simOnCondition;
+    std::atomic <bool> threadExit;
     ShowEvents *showEventsPanel;
+
+    QTimer             *randomTimer;
+    QTimer             *linearChargeTimer;
+    QTimer             *linearDischargeTimer;
+
 
     void monitorSignal(int32_t id, int32_t periodMs);
 
@@ -52,6 +55,12 @@ private slots:
     void on_actionPause_triggered            ( void );
     void on_actionResume_triggered           ( void );
     void on_actionShow_Digital_I_O_triggered ( void );
+    void on_tankMax_button_clicked();
+    void on_sensMax_button_clicked();
+    void on_manual_button_clicked();
+    void on_random_button_clicked();
+    void on_linearcharge_button_clicked();
+    void on_lineardischarge_button_clicked();
 };
 
 #endif // LIVELLOSERBATOIOSIM_H

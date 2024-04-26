@@ -78,36 +78,35 @@ void LivelloSerbatoioTests::test_compute_percentage ( void ) {
 
 void LivelloSerbatoioTests::test_compute_liters ( void ) {
     double distance;
-
     //
     distance = -DBL_MAX;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1200.7, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(uut::SENSOR_DISTANCE_CM), uut::compute_liters(distance), 0.1);
 
     distance = -1.0;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1200.7, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(uut::SENSOR_DISTANCE_CM), uut::compute_liters(distance), 0.1);
 
     distance = 0.0;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1200.7, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(uut::SENSOR_DISTANCE_CM), uut::compute_liters(distance), 0.1);
 
     distance = 1.0;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1193.0, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(uut::SENSOR_DISTANCE_CM), uut::compute_liters(distance), 0.1);
 
     //
     distance = uut::SENSOR_DISTANCE_CM - 1.0;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1008.2, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(uut::SENSOR_DISTANCE_CM), uut::compute_liters(distance), 0.1);
 
     distance = uut::SENSOR_DISTANCE_CM;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1000.5, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(distance), uut::compute_liters(distance), 0.1);
 
     distance = uut::SENSOR_DISTANCE_CM + 1.0;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(992.9, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(distance), uut::compute_liters(distance), 0.1);
 
     //
     distance = uut::TANK_HEIGHT_CM - 1.0;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(7.6, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(distance), uut::compute_liters(distance), 0.1);
 
     distance = uut::TANK_HEIGHT_CM;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, uut::compute_liters(distance), 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(expected_liters(distance), uut::compute_liters(distance), 0.1);
 
     distance = uut::TANK_HEIGHT_CM + 1.0;
     CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, uut::compute_liters(distance), 0.1); //volume can't be negative
@@ -610,9 +609,12 @@ void LivelloSerbatoioTests::test_loop ( void ) {
 
     loopNTimes( ( ( ( uut::FILTER_SIZE / 2 ) + 1  ) * uut::MEASURE_LF_INTERVAL ) / uut::SLEEP_TIME );
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(81.0  , uut::percentage    , 1.0 );
-    CPPUNIT_ASSERT_EQUAL        (false , uut::led_on              );
-    CPPUNIT_ASSERT_EQUAL        (false , uut::led_status          );
+    double maxLiters = expected_liters( uut::SENSOR_DISTANCE_CM );
+    double currLiters = expected_liters( 50 );
+
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( ( currLiters / maxLiters ) * 100.0  , uut::percentage    , 1.0 );
+    CPPUNIT_ASSERT_EQUAL        ( false                               , uut::led_on              );
+    CPPUNIT_ASSERT_EQUAL        ( false                               , uut::led_status          );
 
     stop_time();
 }
@@ -635,6 +637,9 @@ void LivelloSerbatoioTests::setUp ( void ) {
     harness_setBoard(board);
 
     uut::lcd_if.harness_setPrintFailFunction(printFail);
+    uut::lcd_if.harness_mapSymbol(uut::PROGRESS_CHAR  , "#");
+    uut::lcd_if.harness_mapSymbol(uut::ARROW_DOWN_CHAR, "V");
+    uut::lcd_if.harness_mapSymbol(uut::ARROW_UP_CHAR  , "^");
 
     cycle_num = 0U;
 }
@@ -665,6 +670,10 @@ void LivelloSerbatoioTests::loopNTimes ( uint32_t n ) {
 
         uut::loop();
     }
+}
+
+double LivelloSerbatoioTests::expected_liters(const double d) {
+    return 2.0 * ( uut::TANK_RADIUS_CM * uut::TANK_RADIUS_CM * PI * ( uut::WATER_MAX_HEIGHT_CM - (d - uut::SENSOR_DISTANCE_CM) ) ) / uut::CM3_PER_LITER;
 }
 
 void LivelloSerbatoioTests::printFail(const char *str) {

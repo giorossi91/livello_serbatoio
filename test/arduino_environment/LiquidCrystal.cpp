@@ -102,11 +102,15 @@ void LiquidCrystal::print ( int32_t d, bool pout ) {
 }
 
 void LiquidCrystal::write ( byte c ) {
-  if ( c == 1 ) {
-    print("#", true);
-  } else {
-    print("$", true);
-  }
+    if( specialSymbolsMap.contains( c ) ) {
+        print (specialSymbolsMap[c], true);
+    } else {
+        print("$", true);
+    }
+}
+
+void LiquidCrystal::harness_mapSymbol(const byte index, const String& c) {
+    specialSymbolsMap.insert(index, c);
 }
 
 std::string LiquidCrystal::harness_getLcdText ( void ) {
@@ -149,3 +153,4 @@ void LiquidCrystal::harness_printLcd ( void ) {
 void LiquidCrystal::harness_setPrintFailFunction ( printFailFunc func ) {
     this->printFailFunction = func;
 }
+
