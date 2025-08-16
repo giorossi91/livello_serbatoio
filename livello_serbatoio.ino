@@ -29,8 +29,8 @@
 #endif
 
 // Defines
-#define VERSION "v0.11"    //!< Version tag
-#define BANNER  "GR23"     //!< Author and year of build
+#define VERSION "v0.12"    //!< Version tag
+#define BANNER  "GR25"     //!< Author and year of build
 
 #define CONF_DEBUG   1    //!< Constant used to compile in DEBUG mode (Serial enabled).
 #define CONF_RELEASE 0    //!< Constant used to compile in RELEASE mode (Serial disabled).
@@ -980,10 +980,9 @@ public:
   void begin ( void ) {
     lastReading = 0.0;
     
-    nDecreasing = 0.0;
-    nIncreasing = 0.0;
-    nStationary = 0.0;
-    nNoisy      = 0.0;
+    nDecreasing = 0U;
+    nIncreasing = 0U;
+    isNoisy     = false;
   }
 
   //!
@@ -993,30 +992,24 @@ public:
   //!
   void addReading ( const float64_t reading ) {
     if ( lastReading != 0.0 ) {
-      const int16_t diffReading = static_cast<int16_t> ( reading - lastReading );
-      if ( abs(diffReading) > NOISY_THREASHOLD ) {
+
+      isNoisy = false;
+
+      const float64_t diffReading = reading - lastReading;
+      if ( fabs(diffReading) > 5. ) {
         // noisy
-        increase ( nNoisy     , 1.0 );
-        decrease ( nDecreasing, nDecreasing );
-        decrease ( nIncreasing, nIncreasing );
-        decrease ( nStationary, nStationary );
-      } else if ( diffReading > 0 ) {
+        isNoisy = true;
+      } else if ( diffReading > 0.2 ) {
         // decreasing
-        decrease ( nNoisy     , nNoisy );
-        increase ( nDecreasing, 1.0 );
-        decrease ( nIncreasing, 0.2 );
-        decrease ( nStationary, 1.0 );
-      } else if ( diffReading < 0 ) {
+        nDecreasing = increase ( nDecreasing );
+        nIncreasing = decrease ( nIncreasing );
+      } else if ( diffReading < -0.2 ) {
         // increasing
-        decrease ( nNoisy     , nNoisy );
-        decrease ( nDecreasing, 0.2 );
-        increase ( nIncreasing, 1.0 );   
-        decrease ( nStationary, 1.0 );      
+        nDecreasing = decrease ( nDecreasing );
+        nIncreasing = increase ( nIncreasing );
       } else {
-        decrease ( nNoisy     , nNoisy );
-        decrease ( nDecreasing, 0.2 );
-        decrease ( nIncreasing, 0.2 );
-        increase ( nStationary, 0.2 ); 
+        nDecreasing = decrease ( nDecreasing );
+        nIncreasing = decrease ( nIncreasing );
       }
     }
     
@@ -1034,45 +1027,35 @@ public:
   uint8_t getAnalysis ( void ) {
     uint8_t result = UNKNOWN;
 
-    const uint16_t SIZE = 4U;
-
-    // prepare values for sorting
-    uint8_t   index  [ SIZE ] = {  NOISY,  DECREASING,  INCREASING,  STATIONARY };
-    float64_t values [ SIZE ] = { nNoisy, nDecreasing, nIncreasing, nStationary };
-
-    // sort (bubblesort for 4 values is not so inefficient)
-    for ( uint16_t j = 0U; j < ( SIZE - 1U ); j++ ) {
-      for ( uint16_t i = 0U; i < ( SIZE - 1U ); i++ ) {
-        if ( values [ i ] > values [ i + 1U ] ) {
-          // swap values
-          float64_t temp    = values [ i ]      ;
-          values [ i ]      = values [ i + 1U ] ;
-          values [ i + 1U ] = temp              ;
-
-          // swap indexes
-          uint8_t tempi    = index [ i ]        ;
-          index [ i ]      = index [ i + 1U ]   ;
-          index [ i + 1U ] = tempi              ;
-        }
-      }
+    if ( isNoisy == true )
+    {
+      result = NOISY;
     }
-
-    // get maximum value
-    result = index [ ( SIZE - 1U ) ];
+    else if ( nIncreasing < nDecreasing)
+    {
+      result = DECREASING;
+    }
+    else if ( nIncreasing > nDecreasing)
+    {
+      result = INCREASING;
+    }
+    else
+    {
+      result = STATIONARY;
+    }
 
 #if DEBUG
     // print in DEBUG mode
-    Serial.print ( " N: " ); Serial.print ( nNoisy      );
+    Serial.print ( " N: " ); Serial.print ( isNoisy     );
     Serial.print ( " D: " ); Serial.print ( nDecreasing );
     Serial.print ( " I: " ); Serial.print ( nIncreasing );
-    Serial.print ( " S: " ); Serial.print ( nStationary );
     Serial.print ( " => " );
     switch ( result ) {
       case NOISY      : { Serial.println("noisy")     ; } break;
       case DECREASING : { Serial.println("decreasing"); } break;
       case INCREASING : { Serial.println("increasing"); } break;
       case STATIONARY : { Serial.println("stationary"); } break;
-      default         : { Serial.println("stationary"); } break;
+      default         : { Serial.println("unknown")   ; } break;
     }
 #endif
 
@@ -1088,44 +1071,37 @@ public:
 private:
   float64_t lastReading; //!< Last water measurement.
 
-  float64_t nDecreasing; //!< Number of "decreasing" readings.
-  float64_t nIncreasing; //!< Number of "increasing" readings.
-  float64_t nStationary; //!< Number of "stationary" readings.
-  float64_t nNoisy;      //!< Number of "noisy" readings.
+  uint16_t nDecreasing; //!< Number of "decreasing" readings.
+  uint16_t nIncreasing; //!< Number of "increasing" readings.
+  bool     isNoisy;
 
-  static const float64_t SATURATION       = 3.0; //!< Saturation threashold to prevent counter to diverge.
-  static const int16_t   NOISY_THREASHOLD = 5;   //!< Threashold to determine if the reading is noisy.
+  static inline uint16_t increase ( const uint16_t val, const uint16_t by = 1U )
+  {
+    uint16_t retValue = 0U;
 
-  //!
-  //! \brief Decrease by #by the value #val.
-  //! 
-  //! \param[in, out] val The value to decrease.
-  //! \param[in] by The decrement (default 1.0).
-  //!
-  //! \return The value decremented #val - #by or 0.0 if #by > #val.
-  //!
-  static inline void decrease ( float64_t &val, float64_t by = 1.0 ) {
-    if ( val > by ) {
-      val = val - by;
-    } else {
-      val = 0.0;
+    // overflow detection
+    if ( ( val + by ) < val )
+    {
+      retValue = UINT16_MAX;
     }
+    else
+    {
+      retValue = val + by;
+    }
+
+    return retValue;
   }
 
-  //!
-  //! \brief Decrease by #by the value #val.
-  //! 
-  //! \param[in, out] val The value to increase.
-  //! \param[in] by The increment (default 1.0).
-  //!
-  //! \return The value incremented #val + #by or #SATURATION if #val + #by > #SATURATION.
-  //!
-  static inline void increase ( float64_t &val, float64_t by = 1.0 ) {
-    if ( ( val + by ) < SATURATION ) {
-      val = val + by;
-    } else {
-      val = SATURATION;
+  static inline uint16_t decrease ( const uint16_t val, const uint16_t by = 1U )
+  {
+    uint16_t retValue = 0U;
+
+    if (by < val)
+    {
+      retValue = val - by;
     }
+
+    return retValue;
   }
 };
 
@@ -1319,9 +1295,6 @@ inline void turn_off_lcd_light ( void ) {
 
   // deactivate backlight
   lcd.turn_off_backlight();
-#if DEBUG
-  Serial.println ( "LCD off" );
-#endif
 }
 
 //!
