@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['read_5fdistance_5ftime_0',['READ_DISTANCE_TIME',['../group___timer_group.html#gaf48f95002573e0593db812aaf1255fc0',1,'livello_serbatoio.ino']]],
-  ['readme_2emd_1',['README.md',['../_r_e_a_d_m_e_8md.html',1,'']]],
-  ['round_5ffloat_5fvalue_2',['round_float_value',['../group___s_w_func_group.html#gafee69d5c8338bc50434f77ab40d9a07a',1,'livello_serbatoio.ino']]],
-  ['rs_3',['RS',['../group___l_c_d_group.html#ga215c1cefbfb026933bf5743ca65710bd',1,'livello_serbatoio.ino']]]
+  ['of_20the_20classes_0',['Instances of the classes',['../group___class_inst_group.html',1,'']]],
+  ['of_20the_20project_1',['Phases of the project',['../md__r_e_a_d_m_e.html#autotoc_md4',1,'']]],
+  ['oldestdatapoint_2',['oldestDataPoint',['../class_median_filter.html#aa058e4e8dfce2807a4f036aa0ec2752c',1,'MedianFilter']]],
+  ['one_5fhour_5fs_3',['ONE_HOUR_S',['../class_consumption_data.html#ac7b551270c2b774406d116cb6bb29bed',1,'ConsumptionData']]],
+  ['one_5fsecond_5fms_4',['ONE_SECOND_MS',['../class_consumption_data.html#a80cba4b03d879ac0f48fc954e147e54a',1,'ConsumptionData']]],
+  ['out_5',['out',['../class_median_filter.html#a5113ddd15cc76cbb150c359ffbac6a8c',1,'MedianFilter']]]
 ];

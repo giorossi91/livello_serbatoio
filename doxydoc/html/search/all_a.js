@@ -1,14 +1,12 @@
 var searchData=
 [
-  ['manage_5fbutton_0',['manage_button',['../group___s_w_func_group.html#ga63eee1903356c0a903bb01a595c4250b',1,'livello_serbatoio.ino']]],
-  ['maximum_5fcapacity_1',['maximum_capacity',['../group___tank_params_comp_group.html#gabf2a5a457282303b8367e88c2304dfe6',1,'livello_serbatoio.ino']]],
-  ['measure_5fhf_5finterval_2',['MEASURE_HF_INTERVAL',['../group___timer_group.html#ga86da39c1ccf906665616cc1cc5cf1f0c',1,'livello_serbatoio.ino']]],
-  ['measure_5finterval_3',['measure_interval',['../group___timing_group.html#ga54c4b9c471bcc2cf49e6ee93a61600ec',1,'livello_serbatoio.ino']]],
-  ['measure_5flevel_4',['measure_level',['../group___s_w_func_group.html#ga78f21a8bc3ef0c3002c97519702ffb7a',1,'livello_serbatoio.ino']]],
-  ['measure_5flf_5finterval_5',['MEASURE_LF_INTERVAL',['../group___timer_group.html#ga0a52034076647303b4f9a10c35aae832',1,'livello_serbatoio.ino']]],
-  ['meddatapointer_6',['medDataPointer',['../class_median_filter.html#ab6b235597f5509b42e0589a97105607a',1,'MedianFilter']]],
-  ['medfilterwin_7',['medFilterWin',['../class_median_filter.html#a92026e683d73bdc9816782972a5ddb5d',1,'MedianFilter']]],
-  ['median_20filter_8',['Median filter',['../group___med_filter_group.html',1,'']]],
-  ['medianfilter_9',['MedianFilter',['../class_median_filter.html',1,'MedianFilter'],['../class_median_filter.html#acc3e5b76870916f486abe4df42df54b7',1,'MedianFilter::MedianFilter()']]],
-  ['millis_5fpassed_10',['millis_passed',['../class_consumption_data.html#a266899e868c42abe03ce820403dd214a',1,'ConsumptionData']]]
+  ['in_0',['in',['../class_median_filter.html#ac22fb451651a1f170c24727af4af9d91',1,'MedianFilter']]],
+  ['in_5fdebug_1',['in_debug',['../group___status_group.html#ga2bf55760d027aab967fabd72ae9527ff',1,'livello_serbatoio.ino']]],
+  ['increase_2',['increase',['../class_readings_analyzer.html#a4cc938e4c41765050afb09185990f87c',1,'ReadingsAnalyzer']]],
+  ['increasing_3',['INCREASING',['../class_readings_analyzer.html#a1c0be67f483b645f2fdfa27e01eeb5fa',1,'ReadingsAnalyzer']]],
+  ['index_4',['index',['../class_consumption_data.html#a6ef59927af77dbc7f7fa8fe2db0a6d84',1,'ConsumptionData']]],
+  ['initialize_5',['initialize',['../group___s_w_func_group.html#ga9efe22aaead3a5e936b5df459de02eba',1,'livello_serbatoio.ino']]],
+  ['instances_20of_20the_20classes_6',['Instances of the classes',['../group___class_inst_group.html',1,'']]],
+  ['is_5fspecial_5fsymbol_7',['is_special_symbol',['../class_lcd_helper.html#aba7b4c828dc12e6c0bbea68df36facc7',1,'LcdHelper']]],
+  ['isnoisy_8',['isNoisy',['../class_readings_analyzer.html#a42aa7486cd50e9358d0ab9775d3cf9d2',1,'ReadingsAnalyzer']]]
 ];

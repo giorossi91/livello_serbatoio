@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lcd_20constants_0',['LCD Constants',['../group___l_c_d_group.html',1,'']]]
+  ['instances_20of_20the_20classes_0',['Instances of the classes',['../group___class_inst_group.html',1,'']]]
 ];

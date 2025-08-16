@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['oldestdatapoint_0',['oldestDataPoint',['../class_median_filter.html#aa058e4e8dfce2807a4f036aa0ec2752c',1,'MedianFilter']]],
-  ['one_5fhour_5fs_1',['ONE_HOUR_S',['../class_consumption_data.html#ac7b551270c2b774406d116cb6bb29bed',1,'ConsumptionData']]],
-  ['one_5fsecond_5fms_2',['ONE_SECOND_MS',['../class_consumption_data.html#a80cba4b03d879ac0f48fc954e147e54a',1,'ConsumptionData']]]
+  ['ndecreasing_0',['nDecreasing',['../class_readings_analyzer.html#a4fefde3374adf7e2eeaaa508b238c18a',1,'ReadingsAnalyzer']]],
+  ['nincreasing_1',['nIncreasing',['../class_readings_analyzer.html#a4ed19b5bf91611b37ff54126c9ed38de',1,'ReadingsAnalyzer']]],
+  ['noisy_2',['NOISY',['../class_readings_analyzer.html#a35cfb0a3043300681678701367a7dd99',1,'ReadingsAnalyzer']]],
+  ['number_5fmeasures_5fdone_3',['number_measures_done',['../group___reading_group.html#ga7edd87ccf36c9de1b852a171100ced33',1,'livello_serbatoio.ino']]]
 ];

@@ -1,13 +1,21 @@
 var searchData=
 [
-  ['tank_5fcapacity_0',['tank_capacity',['../group___tank_params_comp_group.html#gae6f518f67ffc9ea2b2ea1e3b4b02cc6a',1,'livello_serbatoio.ino']]],
-  ['tank_5fheight_5fcm_1',['TANK_HEIGHT_CM',['../group___tank_group.html#ga91d2c0245347daaf39bcdac3104f2a8b',1,'livello_serbatoio.ino']]],
-  ['tank_5fnumber_2',['TANK_NUMBER',['../group___tank_group.html#ga66973a161a522e4e2a6b5c8db9165ddd',1,'livello_serbatoio.ino']]],
-  ['tank_5fradius_5fcm_3',['TANK_RADIUS_CM',['../group___tank_group.html#ga58761b735a403cd67bf1892bef2c859d',1,'livello_serbatoio.ino']]],
-  ['timestamp_5fbtn_5fpress_4',['timestamp_btn_press',['../group___timestamps_group.html#gacdeab9229d34cce59335eb94b73d04b3',1,'livello_serbatoio.ino']]],
-  ['timestamp_5flast_5fled_5fctrl_5',['timestamp_last_led_ctrl',['../group___timestamps_group.html#ga1a513cb5343b598e191ba3d897efa023',1,'livello_serbatoio.ino']]],
-  ['timestamp_5flast_5fread_5fdist_6',['timestamp_last_read_dist',['../group___timestamps_group.html#gafb780b0650073cf53815ab3d7e0f1a1f',1,'livello_serbatoio.ino']]],
-  ['timestamp_5flcd_5fon_7',['timestamp_lcd_on',['../group___timestamps_group.html#ga4e85c8f99b1591b283559002dce63dee',1,'livello_serbatoio.ino']]],
-  ['timestamp_5fmeasurement_8',['timestamp_measurement',['../group___timestamps_group.html#gae37651555dd29b3d3db005a6af03e0b0',1,'livello_serbatoio.ino']]],
-  ['trig_5fdpin_9',['TRIG_DPIN',['../group___pin_group.html#ga6955e3fe36e6fc234a881f743308d0b3',1,'livello_serbatoio.ino']]]
+  ['seconds_5fpassed_0',['seconds_passed',['../class_consumption_data.html#ac8e636b19e5058a44a435ad12b9869db',1,'ConsumptionData']]],
+  ['sensor_5factivation_5fth_1',['SENSOR_ACTIVATION_TH',['../group___sensor_group.html#ga6f651831a2f52dac53eded1a46b3e214',1,'livello_serbatoio.ino']]],
+  ['sensor_5fcalibration_2',['SENSOR_CALIBRATION',['../group___sensor_group.html#ga7dc78ba2feaa56bdd660477ee9fd21a2',1,'livello_serbatoio.ino']]],
+  ['sensor_5fdistance_5fcm_3',['SENSOR_DISTANCE_CM',['../group___tank_group.html#ga69520633ae0c1af023c1dd9a5f12bbeb',1,'livello_serbatoio.ino']]],
+  ['sensor_5flsb_4',['SENSOR_LSB',['../group___sensor_group.html#ga8b45880caa6d730783859c2220b251dc',1,'livello_serbatoio.ino']]],
+  ['sensor_5fmax_5frange_5',['SENSOR_MAX_RANGE',['../group___sensor_group.html#gac4c48d4f6e1d15a58a94acb5cbcea5d7',1,'livello_serbatoio.ino']]],
+  ['sensor_5fmin_5frange_6',['SENSOR_MIN_RANGE',['../group___sensor_group.html#gac8b1f5d006fda0741ad90d49469271b1',1,'livello_serbatoio.ino']]],
+  ['sensor_5fno_5fobstacle_5fus_7',['SENSOR_NO_OBSTACLE_US',['../group___sensor_group.html#ga358d43dc597dbef6e5e230dd986b16b8',1,'livello_serbatoio.ino']]],
+  ['sensor_5fresponse_5ftimeout_5fus_8',['SENSOR_RESPONSE_TIMEOUT_US',['../group___sensor_group.html#ga4ec591df8517d0964a8d4b73f82d91f2',1,'livello_serbatoio.ino']]],
+  ['show_5fparam_5ftime_9',['SHOW_PARAM_TIME',['../group___timer_group.html#gafc9a50a795afb3bc51b3b1b3c8b3df09',1,'livello_serbatoio.ino']]],
+  ['show_5fstat_5ftime_10',['SHOW_STAT_TIME',['../group___timer_group.html#ga2cf118c2b04eb2838cadf0fe8d219c93',1,'livello_serbatoio.ino']]],
+  ['show_5fversion_5ftime_11',['SHOW_VERSION_TIME',['../group___timer_group.html#ga683dcd30f8178686c35e4eb8b4e18678',1,'livello_serbatoio.ino']]],
+  ['sizemap_12',['sizeMap',['../class_median_filter.html#aba8006e91e30595113c8e404f249b303',1,'MedianFilter']]],
+  ['sleep_5ftime_13',['SLEEP_TIME',['../group___timer_group.html#gadbe8082dbf221e6f21f6a496e46e36a0',1,'livello_serbatoio.ino']]],
+  ['special_5fchar_5fmap_14',['special_char_map',['../class_lcd_helper.html#a5ee0e2207b3b97a22c8217ef7713ce29',1,'LcdHelper']]],
+  ['stat_5fsize_15',['STAT_SIZE',['../class_consumption_data.html#a0e2cd42178724386ee3668691c361c7a',1,'ConsumptionData']]],
+  ['stationary_16',['STATIONARY',['../class_readings_analyzer.html#ab6f38caa428839cda2a0353f1b75b6be',1,'ReadingsAnalyzer']]],
+  ['stats_17',['stats',['../group___class_inst_group.html#ga4b520c77edbf7536f9a9bb5e1a111aab',1,'livello_serbatoio.ino']]]
 ];

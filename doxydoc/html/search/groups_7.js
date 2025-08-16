@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pins_20used_0',['Pins used',['../group___pin_group.html',1,'']]]
+  ['median_20filter_0',['Median filter',['../group___med_filter_group.html',1,'']]]
 ];

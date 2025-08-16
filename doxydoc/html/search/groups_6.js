@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['median_20filter_0',['Median filter',['../group___med_filter_group.html',1,'']]]
+  ['lcd_20constants_0',['LCD Constants',['../group___l_c_d_group.html',1,'']]]
 ];

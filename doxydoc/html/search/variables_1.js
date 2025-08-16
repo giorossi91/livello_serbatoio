@@ -1,8 +1,10 @@
 var searchData=
 [
-  ['cm3_5fper_5fliter_0',['CM3_PER_LITER',['../group___conversion_group.html#ga3685e171ad6cc564e0e6129549f0644d',1,'livello_serbatoio.ino']]],
-  ['consumption_1',['consumption',['../class_consumption_data.html#a4292fc61b4dc397fb8e0f4b128749266',1,'ConsumptionData']]],
-  ['consumption_5fsamples_2',['consumption_samples',['../class_consumption_data.html#ab5072b2fa9e3f6354ef03f4c82519067',1,'ConsumptionData']]],
-  ['cursor_5fc_3',['cursor_c',['../class_lcd_helper.html#aa95b143349c5502667a14d6871434f07',1,'LcdHelper']]],
-  ['cursor_5fr_4',['cursor_r',['../class_lcd_helper.html#a4b828cc7fb3cdbd904e0407da5c74b44',1,'LcdHelper']]]
+  ['backlight_5fdigital_5fpin_0',['backlight_digital_pin',['../class_lcd_helper.html#ab3ce55b07b5d600d217b1978e41a0d53',1,'LcdHelper']]],
+  ['btn_5finterval_5f1_5ftime_1',['BTN_INTERVAL_1_TIME',['../group___timer_group.html#ga722541e0ed49b60c0f6d2a58a61ec1e0',1,'livello_serbatoio.ino']]],
+  ['btn_5finterval_5f2_5ftime_2',['BTN_INTERVAL_2_TIME',['../group___timer_group.html#gae2bfd7a3e51a0b867e1cc1f4868a2f1e',1,'livello_serbatoio.ino']]],
+  ['btn_5finterval_5f3_5ftime_3',['BTN_INTERVAL_3_TIME',['../group___timer_group.html#ga0dfde9ca4e8ba2cf1b2762f08ec60044',1,'livello_serbatoio.ino']]],
+  ['btn_5finterval_5f4_5ftime_4',['BTN_INTERVAL_4_TIME',['../group___timer_group.html#gafbd93e46a2aa7aa4efc7d9a1283a5c6e',1,'livello_serbatoio.ino']]],
+  ['btn_5finterval_5f5_5ftime_5',['BTN_INTERVAL_5_TIME',['../group___timer_group.html#ga7fce3ee4f85b8f65cb1b3ebe8b9f85da',1,'livello_serbatoio.ino']]],
+  ['btn_5finterval_5f6_5ftime_6',['BTN_INTERVAL_6_TIME',['../group___timer_group.html#ga20ab5b223ee58690cca7fae00b2b8182',1,'livello_serbatoio.ino']]]
 ];

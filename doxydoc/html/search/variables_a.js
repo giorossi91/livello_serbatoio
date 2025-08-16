@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['percentage_0',['percentage',['../group___reading_group.html#ga43e9f20d1710a44535017e1e06f7140b',1,'livello_serbatoio.ino']]],
-  ['previous_5fliters_1',['previous_liters',['../group___reading_group.html#ga5514176e598aef5362456fc4717bf70e',1,'livello_serbatoio.ino']]],
-  ['progress_5fchar_2',['PROGRESS_CHAR',['../group___l_c_d_group.html#ga29afbb776824915df5697ec7f2e938a9',1,'livello_serbatoio.ino']]]
+  ['oldestdatapoint_0',['oldestDataPoint',['../class_median_filter.html#aa058e4e8dfce2807a4f036aa0ec2752c',1,'MedianFilter']]],
+  ['one_5fhour_5fs_1',['ONE_HOUR_S',['../class_consumption_data.html#ac7b551270c2b774406d116cb6bb29bed',1,'ConsumptionData']]],
+  ['one_5fsecond_5fms_2',['ONE_SECOND_MS',['../class_consumption_data.html#a80cba4b03d879ac0f48fc954e147e54a',1,'ConsumptionData']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['begin_0',['begin',['../class_lcd_helper.html#a5251874d50284afb2e7ccd81f123f899',1,'LcdHelper::begin()'],['../class_median_filter.html#a7f2841bc717a3255bdcaa92153985b69',1,'MedianFilter::begin()'],['../class_consumption_data.html#a1a501402a7555739383117bd193cde10',1,'ConsumptionData::begin()']]],
+  ['begin_0',['begin',['../class_lcd_helper.html#a5251874d50284afb2e7ccd81f123f899',1,'LcdHelper::begin()'],['../class_median_filter.html#a7f2841bc717a3255bdcaa92153985b69',1,'MedianFilter::begin()'],['../class_consumption_data.html#a1a501402a7555739383117bd193cde10',1,'ConsumptionData::begin()'],['../class_readings_analyzer.html#ac66611a37e6861844b95c9308d181065',1,'ReadingsAnalyzer::begin()']]],
   ['button_5finterval_5f1_5fhandle_1',['button_interval_1_handle',['../group___s_w_func_group.html#gaff4ae8558fccbf5c309f7a0fa0d00a45',1,'livello_serbatoio.ino']]],
   ['button_5finterval_5f2_5fhandle_2',['button_interval_2_handle',['../group___s_w_func_group.html#gab60fffd669059c59539ad1013070e29e',1,'livello_serbatoio.ino']]],
   ['button_5finterval_5f3_5fhandle_3',['button_interval_3_handle',['../group___s_w_func_group.html#gacf8e31a102e81cec071dcedef626773f',1,'livello_serbatoio.ino']]],
