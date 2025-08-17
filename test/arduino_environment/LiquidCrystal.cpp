@@ -1,4 +1,6 @@
 #include "LiquidCrystal.h"
+#include <iomanip>
+#include <sstream>
 
 LiquidCrystal::LiquidCrystal ( int16_t RS, int16_t E, int16_t DB4, int16_t DB5, int16_t DB6, int16_t DB7 ) {
   ( void ) RS;
@@ -95,6 +97,20 @@ void LiquidCrystal::print ( const char *pStr, bool pout ) {
     }
 
   }
+}
+
+void LiquidCrystal::print ( double d, bool pout ) {
+  std::stringstream ss;
+  ss << std::setprecision(2) << d;
+
+  print ( ss.str(), pout );
+}
+
+void LiquidCrystal::print ( float d, bool pout ) {
+  std::stringstream ss;
+  ss << std::setprecision(2) << d;
+
+  print ( ss.str(), pout );
 }
 
 void LiquidCrystal::print ( int32_t d, bool pout ) {

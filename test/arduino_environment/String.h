@@ -17,6 +17,7 @@ public:
     String(int32_t n);
     String(uint32_t n);
     String(double n);
+    String(float n);
 
     int32_t toInt() const;
 

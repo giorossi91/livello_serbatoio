@@ -31,6 +31,10 @@ public:
 
   void print ( int32_t d, bool pout = true );
 
+  void print ( float d, bool pout = true );
+
+  void print ( double d, bool pout = true );
+
   void write ( byte c );
 
   static void harness_defaultPrintFail ( const char * str );

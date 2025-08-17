@@ -65,9 +65,12 @@ LivelloSerbatoioSim::LivelloSerbatoioSim(QWidget *parent) :
     ui->serial_textbrowser->setText("");
     ui->lcd_textedit->setText("");
 
+    ui->distance_spinbox->setDecimals(2);
     ui->distance_vslider->setMinimum(-2);
     ui->distance_vslider->setMaximum(static_cast<uint32_t>(uut::TANK_HEIGHT_CM + 2));
 
+    ui->distance_spinbox->setDecimals(2);
+    ui->distance_spinbox->setSingleStep(0.2);
     ui->distance_spinbox->setMinimum(-2);
     ui->distance_spinbox->setMaximum(static_cast<uint32_t>(uut::TANK_HEIGHT_CM + 2));
     ui->distance_vslider->setValue( static_cast<uint32_t>(uut::SENSOR_DISTANCE_CM - uut::SENSOR_CALIBRATION) );
@@ -350,13 +353,13 @@ void LivelloSerbatoioSim::on_linearcharge_button_clicked()
     }
 
     linearChargeTimer = new QTimer();
-    linearChargeTimer->setInterval( 60 * 1000 );
+    linearChargeTimer->setInterval( 30 * 1000 );
     linearChargeTimer->setSingleShot( false );
     linearChargeTimer->callOnTimeout ( [&]() {
         double current = ui->distance_spinbox->value();
         if ( current > uut::SENSOR_DISTANCE_CM )
         {
-            current -= 1.0;
+            current -= 0.2;
         }
 
         ui->distance_spinbox->setValue( current );
@@ -393,13 +396,13 @@ void LivelloSerbatoioSim::on_lineardischarge_button_clicked()
     }
 
     linearDischargeTimer = new QTimer();
-    linearDischargeTimer->setInterval( 60 * 1000 );
+    linearDischargeTimer->setInterval( 30 * 1000 );
     linearDischargeTimer->setSingleShot( false );
     linearDischargeTimer->callOnTimeout ( [&]() {
         double current = ui->distance_spinbox->value();
         if ( current < uut::TANK_HEIGHT_CM )
         {
-            current += 1.0;
+            current += 0.2;
         }
 
         ui->distance_spinbox->setValue( current );

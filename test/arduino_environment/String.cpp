@@ -1,5 +1,6 @@
 #include "String.h"
-
+#include <iomanip>
+#include <sstream>
 
 String::String()
 {
@@ -48,7 +49,16 @@ String::String(uint32_t n)
 
 String::String(double n)
 {
-    internalString = std::to_string(n);
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2) << n;
+    internalString = ss.str();
+}
+
+String::String(float n)
+{
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2) << n;
+    internalString = ss.str();
 }
 
 int32_t String::toInt() const

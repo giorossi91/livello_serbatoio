@@ -29,7 +29,7 @@
 #endif
 
 // Defines
-#define VERSION "v0.12"    //!< Version tag
+#define VERSION "v0.13"    //!< Version tag
 #define BANNER  "GR25"     //!< Author and year of build
 
 #define CONF_DEBUG   1    //!< Constant used to compile in DEBUG mode (Serial enabled).
@@ -40,7 +40,7 @@
 
 // Configuration
 #ifndef UNIT_TEST
-# define DEBUG  CONF_RELEASE   //!< Current configuration
+# define DEBUG  CONF_DEBUG   //!< Current configuration
 # define SENSOR SENSOR_HCSR04  //!< Current sensor
 #endif
 
@@ -93,7 +93,7 @@ const float64_t   CM3_PER_LITER         = 1000.0                              ; 
 /// \defgroup TimerGroup Timers constants
 /// @{
 const uint32_t    MEASURE_LF_INTERVAL   = 30 * 1000                           ; //!< Inteval between two measurements (low frequency) in milliseconds.
-const uint32_t    MEASURE_HF_INTERVAL   =  1 * 1000                           ; //!< Inteval between two measurements (high frequency) in milliseconds.
+const uint32_t    MEASURE_HF_INTERVAL   =  5 * 1000                           ; //!< Inteval between two measurements (high frequency) in milliseconds.
 const uint32_t    LCD_ON_TIME           = 30 * 1000                           ; //!< LCD backlight duration in milliseconds.
 const uint32_t    SLEEP_TIME            =  100                                ; //!< Sleep time between two execution of #loop in milliseconds.
 const uint32_t    SHOW_STAT_TIME        = 5000                                ; //!< Duration for visualization of Statistics in milliseconds.
@@ -202,6 +202,7 @@ static volatile bool        in_debug                  ;  //!< Indicates if the S
 static volatile bool        first_measure_done        ;  //!< Establishes if the first measurements used to feed the Median Filter have been done (true) or not (false).
 static volatile byte        last_btn_status           ;  //!< Indicates if the button was pressed (HIGH) of not (LOW), to detect long pressure.
 static volatile int32_t     err_code                  ;  //!< Contains the current error code (see \ref ErrCodesGroup).
+static volatile uint8_t     measureAnalysis           ;
 /// @}
 
 /// \defgroup TimestampsGroup Timestamps
@@ -1031,17 +1032,21 @@ public:
     {
       result = NOISY;
     }
-    else if ( nIncreasing < nDecreasing)
+    else 
     {
-      result = DECREASING;
-    }
-    else if ( nIncreasing > nDecreasing)
-    {
-      result = INCREASING;
-    }
-    else
-    {
-      result = STATIONARY;
+      const int32_t diffCounter = (static_cast<int32_t>(nIncreasing) - static_cast<int32_t>(nDecreasing)); 
+      if ( diffCounter <= -2 )
+      {
+        result = DECREASING;
+      }
+      else if ( diffCounter >= 2 )
+      {
+        result = INCREASING;
+      }
+      else
+      {
+        result = STATIONARY;
+      }
     }
 
 #if DEBUG
@@ -1060,6 +1065,12 @@ public:
 #endif
 
     return result;
+  }
+
+  void get_debug_values(uint16_t& dec, uint16_t& inc )
+  {
+    dec = nDecreasing;
+    inc = nIncreasing;
   }
 
   static const uint8_t UNKNOWN    = 0U; //!< Unknown analysis result (initialization value).
@@ -1341,9 +1352,8 @@ inline void show_err_code_debug ( void ) {
 //! \details Used only in debug mode.
 //!  
 //! \param[in] distance_to_print The distance from the water in centimeters.
-//! \param[in] distance_comp The distance from water (calibrated value in centimeters).
 //!
-inline void update_lcd_debug ( const float64_t distance_to_print, const float64_t distance_comp ) {
+inline void update_lcd_debug ( const float64_t distance_to_print ) {
   if ( in_debug == true ) {
     // if in debug mode and LCD needs an update
 
@@ -1353,42 +1363,49 @@ inline void update_lcd_debug ( const float64_t distance_to_print, const float64_
     // show distance
     lcd.setCursor ( 0, 0 );
     lcd.print ( "D:" );
-    lcd.print ( static_cast< int32_t > ( distance_to_print ) );
-    lcd.print ( " cm" );
+    lcd.print ( distance_to_print );
 
     // show the calibrated distance (depending on sensor)
     lcd.setCursor ( 0, 1 );
-    lcd.print ( "DC:" );
-    lcd.print ( static_cast< int32_t > ( distance_comp ) );
 
     // show volume
-    lcd.print ( " L:" );
-    lcd.print ( static_cast< int32_t > ( compute_liters ( distance_comp ) ) );
+    lcd.print ( "L:" );
+    lcd.print ( static_cast< int32_t > ( compute_liters ( distance_to_print + SENSOR_CALIBRATION ) ) );
+
+    uint16_t dec = 0U;
+    uint16_t inc = 0U;
+    analyzer.get_debug_values(dec, inc);
+
+    lcd.print ( " d" );
+    lcd.print ( dec );
+    lcd.print ( " i" );
+    lcd.print ( inc );
+
   }
 }
 
 inline void monitorReadings ( void ) {
-  const uint8_t result = analyzer.getAnalysis();
-
   if ( in_debug == false ) {
     lcd.setCursor ( 8, 0 );
-    if ( result == ReadingsAnalyzer::NOISY ) {
-      lcd.print ( "!" );
-    } else if ( result == ReadingsAnalyzer::INCREASING ) {
-      lcd.write ( ARROW_UP_CHAR );
-    } else if ( result == ReadingsAnalyzer::DECREASING ) {
-      lcd.write ( ARROW_DOWN_CHAR );
-    } else {
-      lcd.print ( "-" );
-    }
   } else {
-    if ( result == ReadingsAnalyzer::NOISY ) {
+    if ( measureAnalysis == ReadingsAnalyzer::NOISY ) {
       // assign proper error code
       err_code = ERR_NOISY;
   
       // show error code if in debug
       show_err_code_debug();
     }
+    lcd.setCursor ( 9, 0 );
+  }
+
+  if ( measureAnalysis == ReadingsAnalyzer::NOISY ) {
+    lcd.print ( "!" );
+  } else if ( measureAnalysis == ReadingsAnalyzer::INCREASING ) {
+    lcd.write ( ARROW_UP_CHAR );
+  } else if ( measureAnalysis == ReadingsAnalyzer::DECREASING ) {
+    lcd.write ( ARROW_DOWN_CHAR );
+  } else {
+    lcd.print ( "-" );
   }
 }
 
@@ -1433,7 +1450,7 @@ inline float64_t measure_level ( void ) {
     if ( ( in_debug == true ) && ( last_btn_status == LOW ) ) {
 
       // update LCD with debug data
-      update_lcd_debug ( distance_read, dist_compensated );
+      update_lcd_debug ( distance_read );
     }
   
     // check ranges
@@ -2174,6 +2191,7 @@ void setup ( void ) {
   in_debug           = false; // NORMAL mode
   led_on             = false; // LED off
   led_status         = false; // LED not blinking
+  measureAnalysis    = ReadingsAnalyzer::UNKNOWN;
 
   // initialize timestamps
   const uint32_t timestamp_now = millis();
@@ -2236,6 +2254,9 @@ void loop ( void ) {
 
     // feed the filter
     ( void ) filter.in ( static_cast < int16_t > ( round_float_value ( distance ) ) );
+
+    // update indicator
+    measureAnalysis = analyzer.getAnalysis();
   }
 
   // read distance timer
