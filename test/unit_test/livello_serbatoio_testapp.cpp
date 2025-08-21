@@ -5,7 +5,6 @@
 // Test suites
 #include "livello_serbatoio_test.h"
 
-
 CPPUNIT_TEST_SUITE_REGISTRATION( livelloSerbatoio_tests::LivelloSerbatoioTests );
 
 int main( void ) {

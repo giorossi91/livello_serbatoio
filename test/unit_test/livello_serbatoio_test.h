@@ -3,8 +3,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "arduinoboardstub.h"
-
 #include <thread>
 #include <atomic>
 #include <cstdint>

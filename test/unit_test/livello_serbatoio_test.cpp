@@ -2,13 +2,13 @@
 
 #include <string>
 #include <cstdint>
-#include <cmath>
 
 // dependencies
 #include "arduino_types.h"
 #include "arduino_stubs.h"
-#include "Serial.h"
 #include "LiquidCrystal.h"
+#include "arduinoboard.h"
+#include "arduinoboardstub.h"
 
 // --> UUT
 #define UNIT_TEST
@@ -26,7 +26,8 @@ namespace uut {
 #undef private
 // <--
 
-using namespace livelloSerbatoio_tests;
+namespace livelloSerbatoio_tests
+{
 
 const uint32_t LivelloSerbatoioTests::TIME_STEP_MS = 100U;
 
@@ -975,3 +976,4 @@ void LivelloSerbatoioTests::test_ConsumptionData_updateIndex ( void ) {
     CPPUNIT_ASSERT_EQUAL(static_cast<uint32_t>( 0U ) , sc1.consumption_samples[sc1.index]);
 }
 
+}
