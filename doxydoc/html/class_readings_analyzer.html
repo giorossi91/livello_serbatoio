@@ -90,6 +90,7 @@ $(function(){ initResizable(false); });
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
 <a href="class_readings_analyzer-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">ReadingsAnalyzer Class Reference</div></div>
 </div><!--header-->
@@ -113,6 +114,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a308419a51e2e12eb8db3fdce0a098925"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks the measurements and gives a response.  <br /></td></tr>
 <tr class="separator:a308419a51e2e12eb8db3fdce0a098925"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd84d813ef567e55f1df9f2394be48ce" id="r_abd84d813ef567e55f1df9f2394be48ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd84d813ef567e55f1df9f2394be48ce">get_debug_values</a> (uint16_t &amp;dec, uint16_t &amp;inc)</td></tr>
+<tr class="memdesc:abd84d813ef567e55f1df9f2394be48ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current counters values for debug purpose.  <br /></td></tr>
 <tr class="separator:abd84d813ef567e55f1df9f2394be48ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
@@ -136,23 +138,41 @@ Static Public Attributes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
 <tr class="memitem:a4cc938e4c41765050afb09185990f87c" id="r_a4cc938e4c41765050afb09185990f87c"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cc938e4c41765050afb09185990f87c">increase</a> (const uint16_t val, const uint16_t by=1U)</td></tr>
+<tr class="memdesc:a4cc938e4c41765050afb09185990f87c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increase the value <code class="param">val</code> by <code class="param">by</code> and returns it.  <br /></td></tr>
 <tr class="separator:a4cc938e4c41765050afb09185990f87c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9344fb85858b251c93535763c0e478b4" id="r_a9344fb85858b251c93535763c0e478b4"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9344fb85858b251c93535763c0e478b4">decrease</a> (const uint16_t val, const uint16_t by=1U)</td></tr>
+<tr class="memdesc:a9344fb85858b251c93535763c0e478b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrease the value <code class="param">val</code> by <code class="param">by</code> and returns it.  <br /></td></tr>
 <tr class="separator:a9344fb85858b251c93535763c0e478b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ae0de0dd88d278df144bb6aabd5f7f907" id="r_ae0de0dd88d278df144bb6aabd5f7f907"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___types_group.html#gac55f3ae81b5bc9053760baacf57e47f4">float64_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0de0dd88d278df144bb6aabd5f7f907">lastReading</a></td></tr>
-<tr class="memdesc:ae0de0dd88d278df144bb6aabd5f7f907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last water measurement.  <br /></td></tr>
-<tr class="separator:ae0de0dd88d278df144bb6aabd5f7f907"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fefde3374adf7e2eeaaa508b238c18a" id="r_a4fefde3374adf7e2eeaaa508b238c18a"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fefde3374adf7e2eeaaa508b238c18a">nDecreasing</a></td></tr>
-<tr class="memdesc:a4fefde3374adf7e2eeaaa508b238c18a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of "decreasing" readings.  <br /></td></tr>
-<tr class="separator:a4fefde3374adf7e2eeaaa508b238c18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ed19b5bf91611b37ff54126c9ed38de" id="r_a4ed19b5bf91611b37ff54126c9ed38de"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ed19b5bf91611b37ff54126c9ed38de">nIncreasing</a></td></tr>
-<tr class="memdesc:a4ed19b5bf91611b37ff54126c9ed38de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of "increasing" readings.  <br /></td></tr>
-<tr class="separator:a4ed19b5bf91611b37ff54126c9ed38de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42aa7486cd50e9358d0ab9775d3cf9d2" id="r_a42aa7486cd50e9358d0ab9775d3cf9d2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42aa7486cd50e9358d0ab9775d3cf9d2">isNoisy</a></td></tr>
-<tr class="separator:a42aa7486cd50e9358d0ab9775d3cf9d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6ac7b24466f0183155fe0f61954dc6c" id="r_ae6ac7b24466f0183155fe0f61954dc6c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___types_group.html#gac55f3ae81b5bc9053760baacf57e47f4">float64_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6ac7b24466f0183155fe0f61954dc6c">last_reading</a></td></tr>
+<tr class="memdesc:ae6ac7b24466f0183155fe0f61954dc6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last water measurement.  <br /></td></tr>
+<tr class="separator:ae6ac7b24466f0183155fe0f61954dc6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36dfa11c4b5781401c5f3dbf41f0c907" id="r_a36dfa11c4b5781401c5f3dbf41f0c907"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36dfa11c4b5781401c5f3dbf41f0c907">n_decreasing_readings</a></td></tr>
+<tr class="memdesc:a36dfa11c4b5781401c5f3dbf41f0c907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of "decreasing" readings.  <br /></td></tr>
+<tr class="separator:a36dfa11c4b5781401c5f3dbf41f0c907"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88b612814cfb40a9dca61e1de57105d9" id="r_a88b612814cfb40a9dca61e1de57105d9"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88b612814cfb40a9dca61e1de57105d9">n_increasing_readings</a></td></tr>
+<tr class="memdesc:a88b612814cfb40a9dca61e1de57105d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of "increasing" readings.  <br /></td></tr>
+<tr class="separator:a88b612814cfb40a9dca61e1de57105d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6935612abb18844f44d372dbc0657d6d" id="r_a6935612abb18844f44d372dbc0657d6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6935612abb18844f44d372dbc0657d6d">is_noisy</a></td></tr>
+<tr class="memdesc:a6935612abb18844f44d372dbc0657d6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Noisy readings flag.  <br /></td></tr>
+<tr class="separator:a6935612abb18844f44d372dbc0657d6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe94109a8ea23fb4240004489787e5de" id="r_abe94109a8ea23fb4240004489787e5de"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="group___types_group.html#gac55f3ae81b5bc9053760baacf57e47f4">float64_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe94109a8ea23fb4240004489787e5de">NOISY_THRESHOLD</a> = 5.0</td></tr>
+<tr class="memdesc:abe94109a8ea23fb4240004489787e5de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Difference in cm between readings to detect the noisy condition.  <br /></td></tr>
+<tr class="separator:abe94109a8ea23fb4240004489787e5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f0b2f5e3b639f57911fcc4bdc9e435c" id="r_a8f0b2f5e3b639f57911fcc4bdc9e435c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="group___types_group.html#gac55f3ae81b5bc9053760baacf57e47f4">float64_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f0b2f5e3b639f57911fcc4bdc9e435c">READING_STEP</a> = 0.2</td></tr>
+<tr class="memdesc:a8f0b2f5e3b639f57911fcc4bdc9e435c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minimum step in cm to detect an increasing or decreasing water tank level.  <br /></td></tr>
+<tr class="separator:a8f0b2f5e3b639f57911fcc4bdc9e435c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
+Static Private Attributes</h2></td></tr>
+<tr class="memitem:a2cd5c0968aa21f29db308b4a621661fd" id="r_a2cd5c0968aa21f29db308b4a621661fd"><td class="memItemLeft" align="right" valign="top">static const int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cd5c0968aa21f29db308b4a621661fd">INCREASING_COUNTER_THRESHOLD</a> = 2</td></tr>
+<tr class="memdesc:a2cd5c0968aa21f29db308b4a621661fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Difference between increasing and decreasing counter to detect an "increasing" water tank level.  <br /></td></tr>
+<tr class="separator:a2cd5c0968aa21f29db308b4a621661fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7e6ac4b62cba41720aa0c88775b11ae" id="r_ac7e6ac4b62cba41720aa0c88775b11ae"><td class="memItemLeft" align="right" valign="top">static const int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7e6ac4b62cba41720aa0c88775b11ae">DECREASING_COUNTER_THRESHOLD</a> = -2</td></tr>
+<tr class="memdesc:ac7e6ac4b62cba41720aa0c88775b11ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Difference between increasing and decreasing counter to detect a "decreasing" water tank level.  <br /></td></tr>
+<tr class="separator:ac7e6ac4b62cba41720aa0c88775b11ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Analyzes the readings from distance sensor to determine if the water level is increasing, decreasing or stationary. Permits also to detect sensor failure if the readings appear to be random. </p>
@@ -181,8 +201,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Default constructor. </p>
-<p>Creates and instance of this class.</p>
-<dl class="section return"><dt>Returns</dt><dd>An instance of this class to be initialized with <a class="el" href="#ac66611a37e6861844b95c9308d181065" title="Initializes this instance.">begin</a> method. </dd></dl>
+<p>Creates and instance of this class. </p>
 
 </div>
 </div>
@@ -274,6 +293,16 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Decrease the value <code class="param">val</code> by <code class="param">by</code> and returns it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>The value to decrease. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">by</td><td>The value to sum.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value of <code class="param">val</code> - <code class="param">by</code> or 0 if <code class="param">by</code> &gt;= <code class="param">val</code>. </dd></dl>
+
 </div>
 </div>
 <a id="abd84d813ef567e55f1df9f2394be48ce" name="abd84d813ef567e55f1df9f2394be48ce"></a>
@@ -302,6 +331,15 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Get current counters values for debug purpose. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">dec</td><td>The decreasing readings counter. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">inc</td><td>The increasing readings counter. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -361,6 +399,16 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Increase the value <code class="param">val</code> by <code class="param">by</code> and returns it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>The value to increase. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">by</td><td>The value to sum.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value of <code class="param">val</code> + <code class="param">by</code> or UINT16_MAX in case of overflow. </dd></dl>
+
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -388,6 +436,30 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="ac7e6ac4b62cba41720aa0c88775b11ae" name="ac7e6ac4b62cba41720aa0c88775b11ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7e6ac4b62cba41720aa0c88775b11ae">&#9670;&#160;</a></span>DECREASING_COUNTER_THRESHOLD</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int32_t ReadingsAnalyzer::DECREASING_COUNTER_THRESHOLD = -2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Difference between increasing and decreasing counter to detect a "decreasing" water tank level. </p>
+
+</div>
+</div>
 <a id="a1c0be67f483b645f2fdfa27e01eeb5fa" name="a1c0be67f483b645f2fdfa27e01eeb5fa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1c0be67f483b645f2fdfa27e01eeb5fa">&#9670;&#160;</a></span>INCREASING</h2>
 
@@ -412,8 +484,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a42aa7486cd50e9358d0ab9775d3cf9d2" name="a42aa7486cd50e9358d0ab9775d3cf9d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42aa7486cd50e9358d0ab9775d3cf9d2">&#9670;&#160;</a></span>isNoisy</h2>
+<a id="a2cd5c0968aa21f29db308b4a621661fd" name="a2cd5c0968aa21f29db308b4a621661fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cd5c0968aa21f29db308b4a621661fd">&#9670;&#160;</a></span>INCREASING_COUNTER_THRESHOLD</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -422,7 +494,31 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool ReadingsAnalyzer::isNoisy</td>
+          <td class="memname">const int32_t ReadingsAnalyzer::INCREASING_COUNTER_THRESHOLD = 2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Difference between increasing and decreasing counter to detect an "increasing" water tank level. </p>
+
+</div>
+</div>
+<a id="a6935612abb18844f44d372dbc0657d6d" name="a6935612abb18844f44d372dbc0657d6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6935612abb18844f44d372dbc0657d6d">&#9670;&#160;</a></span>is_noisy</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ReadingsAnalyzer::is_noisy</td>
         </tr>
       </table>
   </td>
@@ -432,10 +528,12 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Noisy readings flag. </p>
+
 </div>
 </div>
-<a id="ae0de0dd88d278df144bb6aabd5f7f907" name="ae0de0dd88d278df144bb6aabd5f7f907"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0de0dd88d278df144bb6aabd5f7f907">&#9670;&#160;</a></span>lastReading</h2>
+<a id="ae6ac7b24466f0183155fe0f61954dc6c" name="ae6ac7b24466f0183155fe0f61954dc6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6ac7b24466f0183155fe0f61954dc6c">&#9670;&#160;</a></span>last_reading</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -444,7 +542,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="group___types_group.html#gac55f3ae81b5bc9053760baacf57e47f4">float64_t</a> ReadingsAnalyzer::lastReading</td>
+          <td class="memname"><a class="el" href="group___types_group.html#gac55f3ae81b5bc9053760baacf57e47f4">float64_t</a> ReadingsAnalyzer::last_reading</td>
         </tr>
       </table>
   </td>
@@ -458,8 +556,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a4fefde3374adf7e2eeaaa508b238c18a" name="a4fefde3374adf7e2eeaaa508b238c18a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fefde3374adf7e2eeaaa508b238c18a">&#9670;&#160;</a></span>nDecreasing</h2>
+<a id="a36dfa11c4b5781401c5f3dbf41f0c907" name="a36dfa11c4b5781401c5f3dbf41f0c907"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36dfa11c4b5781401c5f3dbf41f0c907">&#9670;&#160;</a></span>n_decreasing_readings</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -468,7 +566,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t ReadingsAnalyzer::nDecreasing</td>
+          <td class="memname">uint16_t ReadingsAnalyzer::n_decreasing_readings</td>
         </tr>
       </table>
   </td>
@@ -482,8 +580,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a4ed19b5bf91611b37ff54126c9ed38de" name="a4ed19b5bf91611b37ff54126c9ed38de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ed19b5bf91611b37ff54126c9ed38de">&#9670;&#160;</a></span>nIncreasing</h2>
+<a id="a88b612814cfb40a9dca61e1de57105d9" name="a88b612814cfb40a9dca61e1de57105d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88b612814cfb40a9dca61e1de57105d9">&#9670;&#160;</a></span>n_increasing_readings</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -492,7 +590,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t ReadingsAnalyzer::nIncreasing</td>
+          <td class="memname">uint16_t ReadingsAnalyzer::n_increasing_readings</td>
         </tr>
       </table>
   </td>
@@ -527,6 +625,54 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Water level is not stable (possible sensor fault). </p>
+
+</div>
+</div>
+<a id="abe94109a8ea23fb4240004489787e5de" name="abe94109a8ea23fb4240004489787e5de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe94109a8ea23fb4240004489787e5de">&#9670;&#160;</a></span>NOISY_THRESHOLD</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="group___types_group.html#gac55f3ae81b5bc9053760baacf57e47f4">float64_t</a> ReadingsAnalyzer::NOISY_THRESHOLD = 5.0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Difference in cm between readings to detect the noisy condition. </p>
+
+</div>
+</div>
+<a id="a8f0b2f5e3b639f57911fcc4bdc9e435c" name="a8f0b2f5e3b639f57911fcc4bdc9e435c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f0b2f5e3b639f57911fcc4bdc9e435c">&#9670;&#160;</a></span>READING_STEP</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="group___types_group.html#gac55f3ae81b5bc9053760baacf57e47f4">float64_t</a> ReadingsAnalyzer::READING_STEP = 0.2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The minimum step in cm to detect an increasing or decreasing water tank level. </p>
 
 </div>
 </div>

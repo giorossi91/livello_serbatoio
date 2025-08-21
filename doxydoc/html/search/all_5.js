@@ -8,6 +8,7 @@ var searchData=
   ['debug_5',['DEBUG',['../livello__serbatoio_8ino.html#ad72dbcf6d0153db1b8d8a58001feed83',1,'livello_serbatoio.ino']]],
   ['decrease_6',['decrease',['../class_readings_analyzer.html#a9344fb85858b251c93535763c0e478b4',1,'ReadingsAnalyzer']]],
   ['decreasing_7',['DECREASING',['../class_readings_analyzer.html#acbe6b122840072c3d48d38d21264cd1c',1,'ReadingsAnalyzer']]],
-  ['distance_8',['distance',['../group___reading_group.html#ga59268ef7effa8bb56bef0026a638eb38',1,'livello_serbatoio.ino']]],
-  ['do_5fmenu_5factions_9',['do_menu_actions',['../group___s_w_func_group.html#ga493a333002def57ac6f01845e9d3cf8a',1,'livello_serbatoio.ino']]]
+  ['decreasing_5fcounter_5fthreshold_8',['DECREASING_COUNTER_THRESHOLD',['../class_readings_analyzer.html#ac7e6ac4b62cba41720aa0c88775b11ae',1,'ReadingsAnalyzer']]],
+  ['distance_9',['distance',['../group___reading_group.html#ga59268ef7effa8bb56bef0026a638eb38',1,'livello_serbatoio.ino']]],
+  ['do_5fmenu_5factions_10',['do_menu_actions',['../group___s_w_func_group.html#ga493a333002def57ac6f01845e9d3cf8a',1,'livello_serbatoio.ino']]]
 ];
