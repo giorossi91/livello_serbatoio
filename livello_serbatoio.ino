@@ -202,7 +202,7 @@ static volatile bool        in_debug                  ;  //!< Indicates if the S
 static volatile bool        first_measure_done        ;  //!< Establishes if the first measurements used to feed the Median Filter have been done (true) or not (false).
 static volatile byte        last_btn_status           ;  //!< Indicates if the button was pressed (HIGH) of not (LOW), to detect long pressure.
 static volatile int32_t     err_code                  ;  //!< Contains the current error code (see \ref ErrCodesGroup).
-static volatile uint8_t     measureAnalysis           ;
+static volatile uint8_t     measure_analysis          ;  //!< Contains the current analysis result.
 /// @}
 
 /// \defgroup TimestampsGroup Timestamps
@@ -512,7 +512,7 @@ private:
   //! \param[in] r The row.
   //! \param[in] c The column.
   //!
-  //! \return true if the symbol in (#r, #c) is special or false otherwise.
+  //! \return true if the symbol in ( \p r, \p c ) is special or false otherwise.
   //!
   bool is_special_symbol ( const uint16_t r, const uint16_t c ) {
     bool is_ss = false;
@@ -585,8 +585,6 @@ public:
   //! \brief Default constructor.
   //!
   //! \details Creates and instance of this class.
-  //! 
-  //! \return An instance of this class to be initialized with #begin method.
   //!
   MedianFilter ( void ) {
   }
@@ -734,8 +732,6 @@ public:
   //! \brief Default constructor.
   //!
   //! \details Creates and instance of this class.
-  //! 
-  //! \return An instance of this class to be initialized with #begin method.
   //!
   ConsumptionData ( void ) {
   }
@@ -969,8 +965,6 @@ public:
   //! \brief Default constructor.
   //!
   //! \details Creates and instance of this class.
-  //! 
-  //! \return An instance of this class to be initialized with #begin method.
   //!
   ReadingsAnalyzer ( void ) {
   }
@@ -979,11 +973,10 @@ public:
   //! \brief Initializes this instance.
   //!
   void begin ( void ) {
-    lastReading = 0.0;
-    
-    nDecreasing = 0U;
-    nIncreasing = 0U;
-    isNoisy     = false;
+    last_reading          = 0.0;
+    n_decreasing_readings = 0U;
+    n_increasing_readings = 0U;
+    is_noisy              = false;
   }
 
   //!
@@ -992,29 +985,34 @@ public:
   //! \param[in] reading The distance measurement.
   //!
   void addReading ( const float64_t reading ) {
-    if ( lastReading != 0.0 ) {
 
-      isNoisy = false;
+    // if there is at least one reading
+    if ( last_reading != 0.0 ) {
 
-      const float64_t diffReading = reading - lastReading;
-      if ( fabs(diffReading) > 5. ) {
+      is_noisy = false;
+
+      const float64_t diff_reading = ( reading - last_reading );
+
+      if ( fabs ( diff_reading ) > NOISY_THRESHOLD ) {
         // noisy
-        isNoisy = true;
-      } else if ( diffReading > 0.2 ) {
+        is_noisy = true;
+      } else if ( diff_reading > READING_STEP ) {
         // decreasing
-        nDecreasing = increase ( nDecreasing );
-        nIncreasing = decrease ( nIncreasing );
-      } else if ( diffReading < -0.2 ) {
+        n_decreasing_readings = increase ( n_decreasing_readings );
+        n_increasing_readings = decrease ( n_increasing_readings );
+      } else if ( diff_reading < -READING_STEP ) {
         // increasing
-        nDecreasing = decrease ( nDecreasing );
-        nIncreasing = increase ( nIncreasing );
+        n_decreasing_readings = decrease ( n_decreasing_readings );
+        n_increasing_readings = increase ( n_increasing_readings );
       } else {
-        nDecreasing = decrease ( nDecreasing );
-        nIncreasing = decrease ( nIncreasing );
+        // stationary
+        n_decreasing_readings = decrease ( n_decreasing_readings );
+        n_increasing_readings = decrease ( n_increasing_readings );
       }
     }
     
-    lastReading = reading;
+    // update the last reading
+    last_reading = reading;
   }
 
   //!
@@ -1028,32 +1026,29 @@ public:
   uint8_t getAnalysis ( void ) {
     uint8_t result = UNKNOWN;
 
-    if ( isNoisy == true )
+    if ( last_reading != 0.0 )
     {
-      result = NOISY;
-    }
-    else 
-    {
-      const int32_t diffCounter = (static_cast<int32_t>(nIncreasing) - static_cast<int32_t>(nDecreasing)); 
-      if ( diffCounter <= -2 )
-      {
-        result = DECREASING;
-      }
-      else if ( diffCounter >= 2 )
-      {
-        result = INCREASING;
-      }
-      else
-      {
-        result = STATIONARY;
+      if ( is_noisy == true ) {
+        result = NOISY;
+      } else {
+        const int32_t diff_counter = ( static_cast<int32_t> ( n_increasing_readings ) - 
+                                      static_cast<int32_t> ( n_decreasing_readings ) );
+
+        if ( diff_counter <= DECREASING_COUNTER_THRESHOLD ) {
+          result = DECREASING;
+        } else if ( diff_counter >= INCREASING_COUNTER_THRESHOLD ) {
+          result = INCREASING;
+        } else {
+          result = STATIONARY;
+        }
       }
     }
 
 #if DEBUG
     // print in DEBUG mode
-    Serial.print ( " N: " ); Serial.print ( isNoisy     );
-    Serial.print ( " D: " ); Serial.print ( nDecreasing );
-    Serial.print ( " I: " ); Serial.print ( nIncreasing );
+    Serial.print ( " N: " ); Serial.print ( is_noisy              );
+    Serial.print ( " D: " ); Serial.print ( n_decreasing_readings );
+    Serial.print ( " I: " ); Serial.print ( n_increasing_readings );
     Serial.print ( " => " );
     switch ( result ) {
       case NOISY      : { Serial.println("noisy")     ; } break;
@@ -1067,10 +1062,15 @@ public:
     return result;
   }
 
-  void get_debug_values(uint16_t& dec, uint16_t& inc )
-  {
-    dec = nDecreasing;
-    inc = nIncreasing;
+  //!
+  //! \brief Get current counters values for debug purpose.
+  //!
+  //! \param[out] dec The decreasing readings counter.
+  //! \param[out] inc The increasing readings counter.
+  //!
+  void get_debug_values ( uint16_t& dec, uint16_t& inc ) {
+    dec = n_decreasing_readings;
+    inc = n_increasing_readings;
   }
 
   static const uint8_t UNKNOWN    = 0U; //!< Unknown analysis result (initialization value).
@@ -1080,39 +1080,55 @@ public:
   static const uint8_t NOISY      = 4U; //!< Water level is not stable (possible sensor fault).
 
 private:
-  float64_t lastReading; //!< Last water measurement.
+  float64_t last_reading; //!< Last water measurement.
 
-  uint16_t nDecreasing; //!< Number of "decreasing" readings.
-  uint16_t nIncreasing; //!< Number of "increasing" readings.
-  bool     isNoisy;
+  uint16_t n_decreasing_readings; //!< Number of "decreasing" readings.
+  uint16_t n_increasing_readings; //!< Number of "increasing" readings.
+  bool     is_noisy;              //!< Noisy readings flag.
 
-  static inline uint16_t increase ( const uint16_t val, const uint16_t by = 1U )
-  {
-    uint16_t retValue = 0U;
+  const float64_t NOISY_THRESHOLD = 5.0; //!< Difference in cm between readings to detect the noisy condition.
+  const float64_t READING_STEP    = 0.2; //!< The minimum step in cm to detect an increasing or decreasing water tank level.
+
+  static const int32_t INCREASING_COUNTER_THRESHOLD =  2; //!< Difference between increasing and decreasing counter to detect an "increasing" water tank level.
+  static const int32_t DECREASING_COUNTER_THRESHOLD = -2; //!< Difference between increasing and decreasing counter to detect a "decreasing" water tank level.
+
+  //!
+  //! \brief Increase the value \p val by \p by and returns it.
+  //!
+  //! \param[in] val The value to increase.
+  //! \param[in] by The value to sum.
+  //!
+  //! \return The value of \p val + \p by or UINT16_MAX in case of overflow.
+  //!
+  static inline uint16_t increase ( const uint16_t val, const uint16_t by = 1U ) {
+    uint16_t ret_value = 0U;
 
     // overflow detection
-    if ( ( val + by ) < val )
-    {
-      retValue = UINT16_MAX;
-    }
-    else
-    {
-      retValue = val + by;
+    if ( ( val + by ) < val ) {
+      ret_value = UINT16_MAX;
+    } else {
+      ret_value = val + by;
     }
 
-    return retValue;
+    return ret_value;
   }
 
-  static inline uint16_t decrease ( const uint16_t val, const uint16_t by = 1U )
-  {
-    uint16_t retValue = 0U;
+  //!
+  //! \brief Decrease the value \p val by \p by and returns it.
+  //!
+  //! \param[in] val The value to decrease.
+  //! \param[in] by The value to sum.
+  //!
+  //! \return The value of \p val - \p by or 0 if \p by >= \p val.
+  //!
+  static inline uint16_t decrease ( const uint16_t val, const uint16_t by = 1U ) {
+    uint16_t ret_value = 0U;
 
-    if (by < val)
-    {
-      retValue = val - by;
+    if ( by < val ) {
+      ret_value = val - by;
     }
 
-    return retValue;
+    return ret_value;
   }
 };
 
@@ -1142,7 +1158,7 @@ static ReadingsAnalyzer analyzer; //!< Readings analyzer instance
 //! \param[in] y The second value.
 //! \param[in] th The threshold.
 //!
-//! \return 0 if different, 1 if equal (distance between #x and #y is below #th).
+//! \return 0 if different, 1 if equal (distance between \p x and \p y is below \p th).
 //!
 inline int32_t compare_float ( const float64_t x, const float64_t y, const float64_t th ) {
   int32_t ret_value = 0;
@@ -1388,7 +1404,7 @@ inline void monitorReadings ( void ) {
   if ( in_debug == false ) {
     lcd.setCursor ( 8, 0 );
   } else {
-    if ( measureAnalysis == ReadingsAnalyzer::NOISY ) {
+    if ( measure_analysis == ReadingsAnalyzer::NOISY ) {
       // assign proper error code
       err_code = ERR_NOISY;
   
@@ -1398,11 +1414,11 @@ inline void monitorReadings ( void ) {
     lcd.setCursor ( 9, 0 );
   }
 
-  if ( measureAnalysis == ReadingsAnalyzer::NOISY ) {
+  if ( measure_analysis == ReadingsAnalyzer::NOISY ) {
     lcd.print ( "!" );
-  } else if ( measureAnalysis == ReadingsAnalyzer::INCREASING ) {
+  } else if ( measure_analysis == ReadingsAnalyzer::INCREASING ) {
     lcd.write ( ARROW_UP_CHAR );
-  } else if ( measureAnalysis == ReadingsAnalyzer::DECREASING ) {
+  } else if ( measure_analysis == ReadingsAnalyzer::DECREASING ) {
     lcd.write ( ARROW_DOWN_CHAR );
   } else {
     lcd.print ( "-" );
@@ -1551,9 +1567,9 @@ inline void control_led ( const float64_t water_percentage ) {
 //!
 //! \brief Sanitizes the input value and contraints it in specified valid range.
 //!
-//! \details If #data is under #min_threshold it returns #min_val.
-//!          If #data is over #max_threshold it returns #max_val.
-//!          If in range it returns #data.
+//! \details If \p data is under \p min_threshold it returns \p min_val.
+//!          If \p data is over \p max_threshold it returns \p max_val.
+//!          If in range it returns \p data.
 //!        
 //! \param[in] data The value to be sanitized.
 //! \param[in] min_val The minimum value in the admissible range.
@@ -1561,7 +1577,7 @@ inline void control_led ( const float64_t water_percentage ) {
 //! \param[in] min_threshold The lowest threshold value.
 //! \param[in] max_threshold The highest threshold value.
 //! 
-//! \return The value in range [#min_val, #max_val].
+//! \return The value in range [ \p min_val, \p max_val ].
 //!
 inline float64_t sanitize_data ( const float64_t data, const float64_t min_val, const float64_t max_val, const float64_t min_threshold, const float64_t max_threshold ) {
   float64_t sanitized_data = min_val;
@@ -1608,8 +1624,8 @@ inline float64_t sanitize_data ( const float64_t data, const float64_t min_val, 
 //!  |     Vuoto      |
 //!  |----------------|
 //!  
-//!  <xxxx> = [0, 9999] L
-//!  <yyy> = [0, 100] %
+//!  \<xxxx> = [0, 9999] L
+//!  \<yyy> = [0, 100] %
 //!  # X 16 => 0 = 0%, 16 = 100%
 //! </pre>
 //!  
@@ -1764,7 +1780,7 @@ inline void autotest ( void ) {
 //! <pre>
 //!  |----------------| 
 //!  |<      str     >|
-//!  |Tot. <stat>   L |
+//!  |Tot. \<stat>   L |
 //!  |----------------|
 //! </pre>
 //!
@@ -1810,7 +1826,7 @@ inline void print_stat ( String str, const uint32_t stat ) {
 //! <pre>
 //!  |----------------| 
 //!  | Versione:      |
-//!  | <num_version>  |
+//!  | \<num_version>  |
 //!  |----------------|
 //! </pre>
 //!
@@ -2191,7 +2207,7 @@ void setup ( void ) {
   in_debug           = false; // NORMAL mode
   led_on             = false; // LED off
   led_status         = false; // LED not blinking
-  measureAnalysis    = ReadingsAnalyzer::UNKNOWN;
+  measure_analysis    = ReadingsAnalyzer::UNKNOWN;
 
   // initialize timestamps
   const uint32_t timestamp_now = millis();
@@ -2256,7 +2272,7 @@ void loop ( void ) {
     ( void ) filter.in ( static_cast < int16_t > ( round_float_value ( distance ) ) );
 
     // update indicator
-    measureAnalysis = analyzer.getAnalysis();
+    measure_analysis = analyzer.getAnalysis();
   }
 
   // read distance timer
