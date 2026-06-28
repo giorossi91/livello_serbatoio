@@ -1,10 +1,4 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2020-08-04T16:12:47
-#
-#-------------------------------------------------
-
-QT       += core gui charts
+QT += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,20 +6,12 @@ TARGET = simulator
 TEMPLATE = app
 
 LIBS += -L$$PWD/../deploy/arduino_environment/lib -larduino_environment
-INCLUDEPATH += $$PWD/../deploy/arduino_environment/inc
+INCLUDEPATH += $$PWD/../deploy/arduino_environment/inc $$PWD/../..
 
 QMAKE_CXXFLAGS += -Wno-deprecated-copy
+QMAKE_CXXFLAGS += -Wno-template-id-cdtor
 
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which has been marked as deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
 
@@ -39,7 +25,7 @@ SOURCES += \
 HEADERS += \
         chart.h \
         chartview.h \
-        livello_serbatoio_uut.hpp \
+        $$PWD/../../livello_serbatoio.ino \
         livelloserbatoiosim.h \
         showevents.h
 
