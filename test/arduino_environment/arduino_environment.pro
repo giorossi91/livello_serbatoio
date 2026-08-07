@@ -2,12 +2,7 @@ QT -= gui
 
 TEMPLATE = lib
 CONFIG += staticlib
-
 CONFIG += c++11
-
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
     LiquidCrystal.cpp \
@@ -26,8 +21,20 @@ HEADERS += \
     arduinoboard.h \
     arduinoboardstub.h
 
-# Default rules for deployment.
+# Deployment rules for unix env
 unix {
-    target.path = $$PWD/../deploy/arduino_environment
+    DEPLOY_BASE = $$absolute_path($$PWD/../deploy/arduino_environment)
+
+    # 1. static lib
+    static_lib_deploy.files = $$OUT_PWD/lib$${TARGET}.a
+    static_lib_deploy.path = $$DEPLOY_BASE/lib
+
+    # 2. headers
+    headers_deploy.files = $$HEADERS
+    headers_deploy.path = $$DEPLOY_BASE/inc
+
+    INSTALLS += static_lib_deploy headers_deploy
+
+    # install
+    QMAKE_POST_LINK += $(MAKE) -f $(MAKEFILE) install
 }
-!isEmpty(target.path): INSTALLS += target

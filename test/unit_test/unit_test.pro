@@ -6,7 +6,7 @@ CONFIG -= app_bundle
 LIBS += -lcppunit -lgcov -lpthread
 LIBS += -L$$PWD/../deploy/arduino_environment/lib -larduino_environment
 
-INCLUDEPATH += $$PWD/../deploy/arduino_environment/inc
+INCLUDEPATH += $$PWD/../deploy/arduino_environment/inc $$PWD/../../
 
 QMAKE_CXXFLAGS += -O0 -g2 -ftest-coverage -fprofile-arcs -Wno-keyword-macro
 
@@ -20,7 +20,7 @@ SOURCES += \
 
 HEADERS += \
     livello_serbatoio_test.h \
-    livello_serbatoio_uut.hpp
+    $$PWD/../../livello_serbatoio.ino
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
