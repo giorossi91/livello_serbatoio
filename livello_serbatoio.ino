@@ -29,8 +29,8 @@
 #endif
 
 // Defines
-#define VERSION "v0.13"    //!< Version tag
-#define BANNER  "GR25"     //!< Author and year of build
+#define VERSION "v0.14"    //!< Version tag
+#define BANNER  "GR26"     //!< Author and year of build
 
 #define CONF_DEBUG   1    //!< Constant used to compile in DEBUG mode (Serial enabled).
 #define CONF_RELEASE 0    //!< Constant used to compile in RELEASE mode (Serial disabled).
@@ -1361,6 +1361,30 @@ inline void show_err_code_debug ( void ) {
   }
 }
 
+inline void monitorReadings ( void ) {
+    if ( in_debug == false ) {
+        lcd.setCursor ( 8, 0 );
+    } else {
+        if ( measure_analysis == ReadingsAnalyzer::NOISY ) {
+            // assign proper error code
+            err_code = ERR_NOISY;
+
+            // show error code if in debug
+            show_err_code_debug();
+        }
+        lcd.setCursor ( 9, 0 );
+    }
+
+    if ( measure_analysis == ReadingsAnalyzer::NOISY ) {
+        lcd.print ( "!" );
+    } else if ( measure_analysis == ReadingsAnalyzer::INCREASING ) {
+        lcd.write ( ARROW_UP_CHAR );
+    } else if ( measure_analysis == ReadingsAnalyzer::DECREASING ) {
+        lcd.write ( ARROW_DOWN_CHAR );
+    } else {
+        lcd.print ( "-" );
+    }
+}
 
 //!
 //! \brief Updates the LCD.
@@ -1397,31 +1421,10 @@ inline void update_lcd_debug ( const float64_t distance_to_print ) {
     lcd.print ( " i" );
     lcd.print ( inc );
 
-  }
-}
 
-inline void monitorReadings ( void ) {
-  if ( in_debug == false ) {
-    lcd.setCursor ( 8, 0 );
-  } else {
-    if ( measure_analysis == ReadingsAnalyzer::NOISY ) {
-      // assign proper error code
-      err_code = ERR_NOISY;
-  
-      // show error code if in debug
-      show_err_code_debug();
-    }
-    lcd.setCursor ( 9, 0 );
-  }
+    // update indicator
+    monitorReadings ( );
 
-  if ( measure_analysis == ReadingsAnalyzer::NOISY ) {
-    lcd.print ( "!" );
-  } else if ( measure_analysis == ReadingsAnalyzer::INCREASING ) {
-    lcd.write ( ARROW_UP_CHAR );
-  } else if ( measure_analysis == ReadingsAnalyzer::DECREASING ) {
-    lcd.write ( ARROW_DOWN_CHAR );
-  } else {
-    lcd.print ( "-" );
   }
 }
 
@@ -1780,7 +1783,7 @@ inline void autotest ( void ) {
 //! <pre>
 //!  |----------------| 
 //!  |<      str     >|
-//!  |Tot. \<stat>   L |
+//!  |Tot. <stat>   L |
 //!  |----------------|
 //! </pre>
 //!
@@ -2307,10 +2310,10 @@ void loop ( void ) {
       // update LCD if not in debug
       if ( in_debug == false ) {       
         update_lcd ( percentage, liters );
-      }
 
-      // update indicator
-      monitorReadings ( );
+        // update indicator
+        monitorReadings ( );
+      }
     }
 
     // update the timestamp for next value

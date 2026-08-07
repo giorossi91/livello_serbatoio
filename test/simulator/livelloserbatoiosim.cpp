@@ -24,7 +24,7 @@
 #define SENSOR SENSOR_HCSR04 //<-- sensor actually used
 
 namespace uut {
-#include "livello_serbatoio_uut.hpp"
+#include "livello_serbatoio.ino"
 }
 // <--
 
